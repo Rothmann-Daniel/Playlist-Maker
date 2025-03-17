@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- text -->
+    <dimen name="text_Elements_12">12sp</dimen>
+    <dimen name="text_Regular_16">16sp</dimen>
+    <dimen name="text_Medium_22">22sp</dimen>
+    <dimen name="text_Primary_24">24sp</dimen>
+    <!-- padding -->
+    <dimen name="padding_10">10dp</dimen>
+    <dimen name="padding_12">12dp</dimen>
+    <dimen name="padding_16">16dp</dimen>
+    <dimen name="padding_20">20dp</dimen>
+    <!-- other -->
+    <dimen name="iconPadding_10">10dp</dimen>
+    <dimen name="cornerRadius_16">16dp</dimen>
+    <dimen name="layout_width_24">24dp</dimen>
+    <dimen name="layout_height_24">24dp</dimen>
+
+    <dimen name="minWidth_48">48dp</dimen>
+    <dimen name="minHeigh_48">48dp</dimen>
+
+
+</resources>
