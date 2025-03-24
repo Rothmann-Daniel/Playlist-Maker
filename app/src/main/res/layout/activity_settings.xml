@@ -1,222 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:orientation="vertical"
-    android:padding="@dimen/padding_16">
+    tools:context=".SettingsActivity">
 
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_12"
-        android:layout_marginTop="@dimen/padding_20"
-        android:layout_marginBottom="@dimen/padding_10"
-        android:text="@string/button_settings"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_Medium_22" />
-
-
-    <LinearLayout
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:contentInsetStart="0dp"
+        app:navigationIcon="@drawable/back"
+        app:title="@string/button_settings"
+        app:titleTextAppearance="@style/CustomToolbarTitle"
+        app:titleTextColor="@color/black" />
 
-        <!-- Переключатель темы -->
+    <!-- Переключатель темы -->
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_theme"
+        android:layout_marginTop="@dimen/padding_16"
+        style="@style/SettingsItemStyle"
+        android:text="@string/dark_theme"
+        app:thumbTint="@color/switch_thumb_color"
+        app:trackTint="@color/switch_track_color" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_theme"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:layout_marginTop="@dimen/padding_16"
-            android:layout_marginEnd="@dimen/padding_16"
-            android:text="@string/dark_theme"
-            android:textSize="@dimen/text_Regular_16" />
+    <!-- Кнопка "Поделиться" -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/share"
+        style="@style/SettingsItemStyle"
+        android:drawableEnd="@drawable/share"
+        android:text="@string/share" />
 
-        <!-- Поделиться-->
-
-        <TextView
-            android:id="@+id/share"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:layout_marginEnd="@dimen/padding_16"
-            android:background="@null"
-            android:clickable="true"
-            android:drawablePadding="@dimen/iconPadding_10"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:minWidth="@dimen/minWidth_48"
-            android:minHeight="@dimen/minHeigh_48"
-            android:text="@string/share"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_Regular_16"
-            app:drawableEndCompat="@drawable/share"
-            app:drawableTint="@color/black" />
-
-        <!-- Поддержка-->
-        <TextView
-            android:id="@+id/support"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:layout_marginEnd="@dimen/padding_16"
-            android:background="@null"
-            android:clickable="true"
-            android:drawablePadding="@dimen/iconPadding_10"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:minWidth="@dimen/minWidth_48"
-            android:minHeight="@dimen/minHeigh_48"
-            android:text="@string/support"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_Regular_16"
-            app:drawableEndCompat="@drawable/support"
-            app:drawableTint="@color/black" />
-
-        <!-- Соглашение-->
-
-        <TextView
-            android:id="@+id/user_agreement"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:layout_marginEnd="@dimen/padding_16"
-            android:background="@null"
-            android:clickable="true"
-            android:drawablePadding="@dimen/iconPadding_10"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:minWidth="@dimen/minWidth_48"
-            android:minHeight="@dimen/minHeigh_48"
-            android:text="@string/user_agreement"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_Regular_16"
-            app:drawableEndCompat="@drawable/user_agreement"
-            app:drawableTint="@color/black" />
-
-        <!-- Другие элементы интерфейса -->
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@color/white"
-                android:padding="@dimen/padding_16"
-                android:elevation="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
-
-                <!-- Поиск -->
-                <LinearLayout
-                    android:id="@+id/search_button"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="@dimen/padding_12"
-                    android:background="?attr/selectableItemBackgroundBorderless">
-
-                    <ImageView
-                        android:layout_width="@dimen/layout_width_24"
-                        android:layout_height="@dimen/layout_height_24"
-                        android:src="@drawable/search"
-                    />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/button_search"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/text_Elements_12"
-                        android:gravity="center"
-
-                        />
-                </LinearLayout>
-
-                <!-- Медиатека -->
-                <LinearLayout
-                    android:id="@+id/media_button"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="@dimen/padding_12"
-                    android:background="?attr/selectableItemBackgroundBorderless">
-
-                    <ImageView
-                        android:layout_width="@dimen/layout_width_24"
-                        android:layout_height="@dimen/layout_height_24"
-                        android:src="@drawable/media"
-                    />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/button_media"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/text_Elements_12"
-                        android:gravity="center"/>
-                </LinearLayout>
-
-                <!-- Настройки-->
-                <LinearLayout
-                    android:id="@+id/settings_button"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="@dimen/padding_12"
-                    android:background="?attr/selectableItemBackgroundBorderless">
-
-                    <ImageView
-                        android:layout_width="@dimen/layout_width_24"
-                        android:layout_height="@dimen/layout_height_24"
-                        android:src="@drawable/settings"
-                    />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/button_settings"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/text_Elements_12"
-                        android:gravity="center"/>
-
-                </LinearLayout>
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </LinearLayout>
+    <!-- Кнопка "Поддержка" -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/support"
+        style="@style/SettingsItemStyle"
+        android:drawableEnd="@drawable/support"
+        android:text="@string/support" />
 
 </LinearLayout>
-
-
-
-
-
-
-
-
-
-
-

@@ -11,14 +11,14 @@
 
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/padding_12"
         android:layout_marginTop="@dimen/padding_20"
         android:layout_marginBottom="@dimen/padding_10"
         android:text="@string/title"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_Medium_22"
+        android:textSize="@dimen/title_22"
         android:textStyle="bold"/>
 
 
@@ -31,16 +31,8 @@
 
         <Button
             android:id="@+id/search_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:layout_marginEnd="@dimen/padding_16"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
+            style="@style/ButtonMenu"
             android:text="@string/button_search"
-            android:textAllCaps="false"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_Medium_22"
             app:cornerRadius="@dimen/cornerRadius_16"
             app:icon="@drawable/search"
             app:iconGravity="textStart"
@@ -51,16 +43,8 @@
 
         <Button
             android:id="@+id/media_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:layout_marginEnd="@dimen/padding_16"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
+            style="@style/ButtonMenu"
             android:text="@string/button_media"
-            android:textAllCaps="false"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_Medium_22"
             app:cornerRadius="@dimen/cornerRadius_16"
             app:icon="@drawable/media"
             app:iconGravity="textStart"
@@ -71,16 +55,8 @@
 
         <Button
             android:id="@+id/settings_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:layout_marginEnd="@dimen/padding_16"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
+            style="@style/ButtonMenu"
             android:text="@string/button_settings"
-            android:textAllCaps="false"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_Medium_22"
             app:cornerRadius="@dimen/cornerRadius_16"
             app:icon="@drawable/settings"
             app:iconGravity="textStart"
