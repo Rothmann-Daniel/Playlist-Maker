@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SettingsActivity">
+
+    <!-- MaterialToolbar (заголовок + back) -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:contentInsetStart="0dp"
+        app:navigationIcon="@drawable/back"
+        app:title="@string/button_settings"
+        app:titleTextAppearance="@style/CustomToolbarTitle"
+        app:titleTextColor="@color/black" />
+
+    <!-- Переключатель темы -->
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_theme"
+        android:layout_marginTop="@dimen/padding_16"
+        style="@style/SettingsItemStyle"
+        android:text="@string/dark_theme"
+        app:thumbTint="@color/switch_thumb_color"
+        app:trackTint="@color/switch_track_color" />
+
+    <!-- Кнопка "Поделиться" -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/share"
+        style="@style/SettingsItemStyle"
+        android:drawableEnd="@drawable/share"
+        android:text="@string/share" />
+
+    <!-- Кнопка "Поддержка" -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/support"
+        style="@style/SettingsItemStyle"
+        android:drawableEnd="@drawable/support"
+        android:text="@string/support" />
+
+    <!-- Кнопка "Пользовательское соглашение" -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/user_agreement"
+        style="@style/SettingsItemStyle"
+        android:drawableEnd="@drawable/user_agreement"
+        android:text="@string/user_agreement" />
+
+
+</LinearLayout>
