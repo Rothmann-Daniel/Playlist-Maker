@@ -5,8 +5,27 @@
     <string name="button_media">Медиатека</string>
     <string name="button_settings">Настройки</string>
     <string name="dark_theme">Темная тема</string>
-    <string name="share">Поделиться приложением</string>
+
     <string name="support">Написать в поддержку</string>
     <string name="user_agreement">Пользовательское соглашение</string>
 
+
+    <!-- Кнопка "Поделиться / Share" -->
+    <string name="share">Поделиться приложением</string>
+    <string name="share_message">Посмотри этот курс по Android-разработке в Практикуме: https://practicum.yandex.ru/android-developer/?from=catalog</string>
+    <string name="share_title">Поделиться курсом</string>
+    <string name="share_error">Ошибка при попытке поделиться: </string>
+
+    <!-- Кнопка "Написать в поддержку / Support" -->
+
+    <string name="support_email">danilarothmann@gmail.com</string> <!--support email  -->
+    <string name="support_email_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="support_email_body">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="no_email_app">На устройстве не найдено приложение для отправки email</string>
+    <string name="choose_email_app">Выберите почтовое приложение</string>
+    <string name="email_send_error">Не удалось открыть почтовое приложение</string>
+
+    <!-- Кнопка "Пользовательское соглашение / User agreement" -->
+    <string name="no_browser_error">Не найдено приложение для открытия браузера</string>
+    <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
 </resources>
