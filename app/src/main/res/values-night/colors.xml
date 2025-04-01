@@ -4,4 +4,18 @@
     <color name="white">#FF000000</color>
     <color name="black">#FFFFFFFF</color> <!-- Белый цвет для текста и иконок в темной теме -->
 
+
+        <color name="background">#121212</color>
+        <color name="textColor">#FF000000</color>
+        <color name="buttonColor">#FFFFFFFF</color>
+        <color name="buttonTextColor">#FFFFFFFF</color>
+
+
+    <color name="switch_thumb_active_color">#3772E7</color>
+    <color name="switch_thumb_inactive_color">#CCCCCC</color>
+
+    <color name="switch_thumb_active_color_light">#3772E7</color>
+    <color name="switch_thumb_inactive_color_light">#CCCCCC</color>
+    <color name="switch_track_color_light">#9FBBF3</color>
+    <color name="switch_track_color_dark">#33000000</color> <!-- Полупрозрачный черный -->
 </resources>

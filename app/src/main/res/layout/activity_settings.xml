@@ -15,6 +15,7 @@
         android:layout_marginTop="@dimen/padding_16"
         android:contentInsetStart="0dp"
         app:navigationIcon="@drawable/back"
+        app:navigationIconTint="@color/black"
         app:title="@string/button_settings"
         app:titleTextAppearance="@style/CustomToolbarTitle"
         app:titleTextColor="@color/black" />
@@ -26,7 +27,7 @@
         style="@style/SettingsItemStyle"
         android:text="@string/dark_theme"
         app:thumbTint="@color/switch_thumb_color"
-        app:trackTint="@color/switch_track_color" />
+        app:trackTint="@color/switch_track_color" /> <!-- Цвет дорожки -->
 
     <!-- Кнопка "Поделиться" -->
     <com.google.android.material.textview.MaterialTextView
