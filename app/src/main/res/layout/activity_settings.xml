@@ -10,15 +10,8 @@
     <!-- MaterialToolbar (заголовок + back) -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding_16"
-        android:contentInsetStart="0dp"
-        app:navigationIcon="@drawable/back"
-        app:navigationIconTint="@color/black"
-        app:title="@string/button_settings"
-        app:titleTextAppearance="@style/CustomToolbarTitle"
-        app:titleTextColor="@color/black" />
+        style="@style/ToolBarButton"
+        app:title="@string/button_settings"/>
 
     <!-- Переключатель темы -->
     <com.google.android.material.switchmaterial.SwitchMaterial

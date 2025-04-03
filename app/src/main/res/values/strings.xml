@@ -6,8 +6,8 @@
     <string name="button_settings">Настройки</string>
     <string name="dark_theme">Темная тема</string>
 
-    <string name="support">Написать в поддержку</string>
-    <string name="user_agreement">Пользовательское соглашение</string>
+
+
 
 
     <!-- Кнопка "Поделиться / Share" -->
@@ -17,7 +17,7 @@
     <string name="share_error">Ошибка при попытке поделиться: </string>
 
     <!-- Кнопка "Написать в поддержку / Support" -->
-
+    <string name="support">Написать в поддержку</string>
     <string name="support_email">danilarothmann@gmail.com</string> <!--support email  -->
     <string name="support_email_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="support_email_body">Спасибо разработчикам и разработчицам за крутое приложение!</string>
@@ -26,6 +26,7 @@
     <string name="email_send_error">Не удалось открыть почтовое приложение</string>
 
     <!-- Кнопка "Пользовательское соглашение / User agreement" -->
+    <string name="user_agreement">Пользовательское соглашение</string>
     <string name="no_browser_error">Не найдено приложение для открытия браузера</string>
     <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
 </resources>

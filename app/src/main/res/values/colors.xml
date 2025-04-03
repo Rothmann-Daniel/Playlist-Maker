@@ -26,4 +26,9 @@
     <color name="switch_track_color_light">#3772E7</color>
     <color name="switch_track_color_dark">#33000000</color> <!-- Полупрозрачный черный -->
 
+
+    <color name="edit_text_background">#F5F5F5</color>  <!-- Светло-серый фон -->
+    <color name="edit_text_stroke">#E0E0E0</color>    <!-- Цвет границы -->
+    <color name="hint_color">#AEAFB4</color>
+
 </resources>
