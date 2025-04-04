@@ -4,7 +4,7 @@
     <solid android:color="@color/edit_text_background" />
 
     <!-- Скругленные углы -->
-    <corners android:radius="8dp" />
+    <corners android:radius="@dimen/search_background_Radius_8"/>
 
     <!-- Граница (1dp толщиной) -->
     <stroke

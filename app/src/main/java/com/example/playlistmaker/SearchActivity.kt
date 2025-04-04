@@ -15,7 +15,7 @@ import com.google.android.material.appbar.MaterialToolbar
 class SearchActivity : AppCompatActivity() {
 
     private var inputText: String = DEF_TEXT //для хранения текста из поисковой строки
-    private lateinit var searchInput: EditText // Объявление (без инициализации) поля для поисковой строки (EditText)
+    private lateinit var searchInput: EditText // поле для поисковой строки (EditText)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +41,7 @@ class SearchActivity : AppCompatActivity() {
             inputMethodManager?.hideSoftInputFromWindow(searchInput.windowToken, 0)
         }
 
-        //Создание объекта TextWatcher для отслеживания изменений текста. beforeTextChanged не используется.
+        //Создание объекта TextWatcher для отслеживания изменений текста.
         val searchInputTextWatcher = object : TextWatcher {
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}

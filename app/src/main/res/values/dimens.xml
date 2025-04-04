@@ -7,11 +7,13 @@
     <dimen name="title_22">22sp</dimen>
     <dimen name="text_Primary_24">24sp</dimen>
     <!-- padding -->
+    <dimen name="padding_8">8dp</dimen>
     <dimen name="padding_10">10dp</dimen>
     <dimen name="padding_12">12dp</dimen>
     <dimen name="padding_16">16dp</dimen>
     <dimen name="padding_20">20dp</dimen>
     <!-- other -->
+    <dimen name="search_background_Radius_8">8dp</dimen>
     <dimen name="iconPadding_10">10dp</dimen>
     <dimen name="cornerRadius_16">16dp</dimen>
     <dimen name="minWidth_48">48dp</dimen>

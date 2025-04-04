@@ -16,8 +16,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:paddingHorizontal="16dp"
-        android:layout_marginTop="8dp">
+        android:paddingHorizontal="@dimen/padding_16"
+        android:layout_marginTop="@dimen/padding_8">
 
         <EditText
             android:id="@+id/searchInput"

@@ -26,10 +26,13 @@
             android:name=".SettingsActivity"
             android:exported="false" />
 
-        <activity android:name=".SearchActivity" />
+        <activity
+            android:name=".SearchActivity"
+            android:exported="false" />
 
-
-        <activity android:name=".MediaActivity" />
+        <activity
+            android:name=".MediaActivity"
+            android:exported="false" />
 
     </application>
 

@@ -44,7 +44,7 @@ class SettingsActivity : AppCompatActivity() {
         // Обработчик кнопки "Написать в поддержку"
         val supportButton = findViewById<MaterialTextView>(R.id.support)
         supportButton.setOnClickListener {
-            openSupportEmail()
+            sendSupportEmail()
         }
 
         // Обработчик кнопки "Пользовательское соглашение"
@@ -101,9 +101,10 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+
     // <!-- Кнопка "Написать в поддержку / Support" -->
 
-    private fun openSupportEmail() {
+    private fun sendSupportEmail() {
         val emailIntent = Intent(Intent.ACTION_SEND).apply {
             type = "message/rfc822" // для любых приложений, работающих с email
             putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
