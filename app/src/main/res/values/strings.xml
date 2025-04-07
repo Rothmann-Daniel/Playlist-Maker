@@ -7,9 +7,6 @@
     <string name="dark_theme">Темная тема</string>
 
 
-
-
-
     <!-- Кнопка "Поделиться / Share" -->
     <string name="share">Поделиться приложением</string>
     <string name="share_message">Посмотри этот курс по Android-разработке в Практикуме: https://practicum.yandex.ru/android-developer/?from=catalog</string>

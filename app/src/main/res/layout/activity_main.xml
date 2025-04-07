@@ -13,8 +13,6 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding_20"
-        android:layout_marginBottom="@dimen/padding_10"
         android:minHeight="?attr/actionBarSize"
         app:title="@string/title"
         app:titleTextAppearance="@style/ToolbarTitleStyle"
@@ -34,7 +32,6 @@
         style="@style/ButtonMenu"
         android:text="@string/button_media"
         app:icon="@drawable/media"
-
         />
 
     <!-- Кнопка "Настройки" -->

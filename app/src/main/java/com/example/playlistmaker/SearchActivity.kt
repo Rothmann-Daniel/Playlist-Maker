@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.google.android.material.appbar.MaterialToolbar
 
 class SearchActivity : AppCompatActivity() {
@@ -24,7 +25,7 @@ class SearchActivity : AppCompatActivity() {
 
 
         //Обработчик нажатия на кнопку навигаци: Назад
-        val navBack = findViewById<MaterialToolbar>(R.id.tool_bar)
+        val navBack = findViewById<MaterialToolbar>(R.id.tool_bar_search)
         navBack.setNavigationOnClickListener {
             finish()
         }
@@ -47,7 +48,7 @@ class SearchActivity : AppCompatActivity() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchInputClear.visibility = inputClearVisibility(s)
+                searchInputClear.isVisible = !s.isNullOrEmpty() // При изменении текста обновляется видимость кнопки очистки
                 inputText = searchInput.text.toString()
             }
 
@@ -60,14 +61,6 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
-    // Метод для  определения видимости кнопки очистки
-    private fun inputClearVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
-    }
 
     // Сохранение состояния: текста из поисковой строки перед уничтожением активности
     override fun onSaveInstanceState(outState: Bundle) {

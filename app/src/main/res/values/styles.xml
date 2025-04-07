@@ -4,11 +4,11 @@
 
 
 
-    <style name="ButtonMenu">
+    <style name="ButtonMenu" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">@dimen/padding_16</item>
-        <item name="android:layout_marginEnd">@dimen/padding_16</item>
+        <item name="android:layout_marginTop">@dimen/padding_16</item>
+        <item name="android:layout_marginHorizontal">@dimen/padding_16</item>
         <item name="android:layout_weight">1</item>
         <item name="android:backgroundTint">@color/buttonColor</item>
         <item name="android:textColor">@color/textColor</item>
@@ -16,7 +16,7 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="textAllCaps">false</item>
         <item name="iconTint">@color/textColor</item>
-        <item name="iconPadding">@dimen/iconPadding_10</item>
+        <item name="iconPadding">@dimen/padding_8</item>
         <item name="cornerRadius">@dimen/cornerRadius_16</item>
         <item name="iconGravity">textStart</item>
 
@@ -71,9 +71,10 @@
         <item name="android:drawablePadding">@dimen/padding_8</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">@dimen/text_Regular_16</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/textColor</item>
         <item name="android:textColorHint">@color/gray</item>
         <item name="android:hint">@string/button_search</item>
+        <item name="android:textCursorDrawable">@drawable/custom_cursor</item>
     </style>
 
     <style name="SearchCancelButton">
