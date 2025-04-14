@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue"
+    android:background="@color/background"
     android:orientation="vertical"
     android:padding="@dimen/padding_10">
 
@@ -13,50 +13,33 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding_20"
-        android:layout_marginBottom="@dimen/padding_10"
         android:minHeight="?attr/actionBarSize"
         app:title="@string/title"
         app:titleTextAppearance="@style/ToolbarTitleStyle"
-        app:titleTextColor="@color/white" />
+        app:titleTextColor="@color/buttonTextColor" />
 
     <!-- Кнопка "Поиск" -->
     <Button
         android:id="@+id/search_button"
         style="@style/ButtonMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:text="@string/button_search"
-        app:cornerRadius="@dimen/cornerRadius_16"
         app:icon="@drawable/search"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/iconPadding_10"
-        app:iconTint="@color/black" />
+         />
 
     <!-- Кнопка "Медиатека" -->
     <Button
         android:id="@+id/media_button"
         style="@style/ButtonMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:text="@string/button_media"
-        app:cornerRadius="@dimen/cornerRadius_16"
         app:icon="@drawable/media"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/iconPadding_10"
-        app:iconTint="@color/black" />
+        />
 
     <!-- Кнопка "Настройки" -->
     <Button
         android:id="@+id/settings_button"
         style="@style/ButtonMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:text="@string/button_settings"
-        app:cornerRadius="@dimen/cornerRadius_16"
         app:icon="@drawable/settings"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/iconPadding_10"
-        app:iconTint="@color/black" />
+        />
 
 </LinearLayout>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Playlist Maker</string>
-    <string name="title">Playlist Maker</string>
+    <string name="title">Playlist maker</string>
     <string name="button_search">Search</string>
     <string name="button_media">Media</string>
     <string name="button_settings">Settings</string>
@@ -9,6 +9,17 @@
     <string name="share">Share</string>
     <string name="support">Support</string>
     <string name="user_agreement">User agreement</string>
+    <string name="share_message">Check out this Android development course in the Practicum: https://practicum.yandex.ru/android-developer/?from=catalog</string>
+    <string name="share_title">Share a course</string>
+    <string name="share_error">Error when trying to share:</string>
+    <string name="support_email_subject">A message to the developers and developers of the Playlist Maker app</string>
+    <string name="no_email_app">No email sending application was found on the device.</string>
+    <string name="support_email">danilarothmann@gmail.com</string>
+    <string name="support_email_body">Thanks to the developers and developers for the cool app!</string>
+    <string name="choose_email_app">Select an email application</string>
+    <string name="email_send_error">Couldn\'t open the mail application</string>
+    <string name="no_browser_error">No browser opening application found</string>
+    <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
 
 
 </resources>

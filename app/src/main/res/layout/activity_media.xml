@@ -2,14 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
+
+  <!-- MaterialToolbar (заголовок + back) -->
+  <com.google.android.material.appbar.MaterialToolbar
+      android:id="@+id/tool_bar_media"
+      style="@style/ToolBarButton"
+      app:title="@string/button_media"/>
 
   <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:text="Media Screen"
       android:textSize="@dimen/text_Primary_24"
+      android:padding="@dimen/padding_16"
       android:textStyle="bold" />
 
 </LinearLayout>
