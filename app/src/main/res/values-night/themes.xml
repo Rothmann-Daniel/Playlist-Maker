@@ -13,4 +13,10 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Theme.MyApp" parent="Theme.Material3.Light">
+
+        <item name="buttonSettings">@color/buttonSettings</item>
+        <item name="dotSeparatorColor">@color/dot_separator_color</item>
+    </style>
 </resources>

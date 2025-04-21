@@ -15,6 +15,12 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
+    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
+
+
+        <item name="buttonSettings">@color/buttonSettings</item>
+        <item name="dotSeparatorColor">@color/dot_separator_color</item>
+
+    </style>>
 
 </resources>

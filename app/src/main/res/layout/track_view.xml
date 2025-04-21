@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:layout_marginTop="@dimen/padding_16">
+
+    <!-- Обложка трека -->
+    <ImageView
+        android:id="@+id/track_image"
+        android:layout_width="@dimen/track_image_size"
+        android:layout_height="@dimen/track_image_size"
+        android:layout_marginStart="@dimen/padding_13"
+        android:layout_marginTop="@dimen/padding_8"
+        android:layout_marginBottom="@dimen/padding_8"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/track_cover_desc"
+        tools:src="@tools:sample/avatars"/>
+
+    <!-- Информация о треке -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_8"
+        android:layout_weight="4"
+        android:minHeight="@dimen/min_track_info_height">
+
+        <!-- Название трека -->
+        <TextView
+            android:id="@+id/track_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TrackNameText"
+            android:text="@string/track_name"
+            app:layout_constraintBottom_toTopOf="@id/track_artist"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"/>
+
+
+        <!-- Исполнитель -->
+        <TextView
+            android:id="@+id/track_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TrackArtistAndTimeText"
+            android:text="@string/artist_name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/track_name"
+            app:layout_constraintTop_toBottomOf="@+id/track_name"/>
+
+        <!-- Разделительная точка -->
+        <ImageView
+            android:id="@+id/dot_separator"
+            style="@style/DotSeparatorStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/separator_desc"
+            app:layout_constraintBottom_toBottomOf="@+id/track_artist"
+            app:layout_constraintStart_toEndOf="@id/track_artist"
+            app:layout_constraintTop_toTopOf="@+id/track_artist" />
+
+        <!-- Время трека -->
+        <TextView
+            android:id="@+id/track_time"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/padding_13"
+            android:textAppearance="@style/TrackArtistAndTimeText"
+            android:text="@string/track_time"
+            app:layout_constraintBottom_toBottomOf="@+id/dot_separator"
+            app:layout_constraintStart_toEndOf="@id/dot_separator"
+            app:layout_constraintTop_toTopOf="@+id/dot_separator" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Кнопка дополнительной информации -->
+    <ImageView
+        android:id="@+id/track_info"
+        style="@style/ArrowForwardIconStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="20dp"
+        android:contentDescription="@string/more_info_desc"/>
+</LinearLayout>

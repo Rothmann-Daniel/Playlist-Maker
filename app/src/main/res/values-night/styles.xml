@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <style name="SettingsItemStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">@dimen/padding_16</item>
+        <item name="android:paddingEnd">@dimen/padding_12</item>
+        <item name="android:paddingVertical">@dimen/padding_20</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/text_Regular_16</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:layout_marginStart">@dimen/padding_10</item>
+        <item name="android:layout_marginEnd">@dimen/padding_10</item>
+
+    </style>
+
+    <style name="TrackNameText">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/buttonTextColor</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <style name="TrackArtistAndTimeText">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/buttonTextColor</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+
+
+
+</resources>

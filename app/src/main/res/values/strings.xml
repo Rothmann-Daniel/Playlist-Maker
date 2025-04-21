@@ -26,4 +26,17 @@
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="no_browser_error">Не найдено приложение для открытия браузера</string>
     <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
+
+    <!-- Track -->
+    <string name="track_name">Название трека</string>
+    <string name="artist_name">Имя исполнителя</string>
+    <string name="track_time" translatable="false">1:01</string>
+    <string name="unknown_track">Неизвестный трек</string>
+    <string name="unknown_artist">Неизвестный исполнитель</string>
+
+    <!-- Скринридеры -->
+    <string name="track_cover_desc">Обложка трека</string>
+    <string name="separator_desc">Разделитель</string>
+    <string name="more_info_desc">Подробнее о треке</string>
+
 </resources>

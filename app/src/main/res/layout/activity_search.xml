@@ -11,7 +11,8 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/tool_bar_search"
         style="@style/ToolBarButton"
-        app:title="@string/button_search"/>
+        app:title="@string/button_search"
+        android:contentDescription="@string/button_search"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -27,5 +28,11 @@
             android:id="@+id/searchInputClear"
             style="@style/SearchCancelButton"/>
     </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerTrackView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
 </LinearLayout>

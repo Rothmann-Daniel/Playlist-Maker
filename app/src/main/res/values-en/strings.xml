@@ -20,6 +20,13 @@
     <string name="email_send_error">Couldn\'t open the mail application</string>
     <string name="no_browser_error">No browser opening application found</string>
     <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="track_name">Track name</string>
+    <string name="artist_name">Artist name</string>
+    <string name="unknown_track">Unknow Track</string>
+    <string name="unknown_artist">Unknow Artist</string>
+    <string name="track_cover_desc">"Track cover "</string>
+    <string name="separator_desc">Separator</string>
+    <string name="more_info_desc">More info</string>
 
 
 </resources>
