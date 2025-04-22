@@ -1,10 +1,14 @@
 package com.example.playlistmaker.track
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.playlistmaker.R
@@ -35,30 +39,57 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     // Загрузка обложки трека с обработкой ошибок и анимациями при загрузке
 
     fun bind(model: Track) {
-        loadTrackImage(model) // Загрузка обложки трека
-        setTrackTextInfo(model) // Установка текстовой информации
-
+        val isOnline = isNetworkAvailable(itemView.context)
+        loadTrackImage(model, isOnline)
+        setTrackTextInfo(model)
     }
 
-    private fun loadTrackImage(model: Track) {
+
+
+    private fun loadTrackImage(model: Track, isOnline: Boolean) {
+        val artworkUrl = if (isOnline) model.artworkUrl100 else null
+
         Glide.with(itemView)
-            .load(model.artworkUrl100?.takeIf { it.isNotBlank() }) // Проверка на пустой URL
-            .placeholder(R.drawable.search)// Заглушка во время загрузки
-            .error(R.drawable.error_53) // Заглушка при ошибке
-            .fallback(R.drawable.error_404) // Если URL null
+            .load(artworkUrl)
+            .placeholder(R.drawable.search)
+            .error(if (isOnline) R.drawable.error_53 else R.drawable.offline_placeholder)
+            .fallback(R.drawable.error_404)
             .centerCrop()
-            .transform(RoundedCorners(CORNER_RADIUS_DP.dpToPx())) // Динамическое скругление
-            .transition(DrawableTransitionOptions.withCrossFade(FADE_DURATION_MS)) // Анимация
+            .transform(RoundedCorners(CORNER_RADIUS_DP.dpToPx()))
+            .transition(DrawableTransitionOptions.withCrossFade(FADE_DURATION_MS))
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(trackImageView)
     }
 
+
     // Устанавливает текстовую информацию о треке (название, исполнитель, время)
     private fun setTrackTextInfo(model: Track) {
-        trackNameTextView.text = model.trackName ?: itemView.context.getString(R.string.unknown_track)
-        trackArtistTextView.text = model.artistName ?: itemView.context.getString(R.string.unknown_artist)
-        trackTimeTextView.text = model.trackTime   // при необходимости время возможно форматировать из миллисекунд в MM:SS
+        trackNameTextView.text =
+            model.trackName ?: itemView.context.getString(R.string.unknown_track)
+        trackArtistTextView.text =
+            model.artistName ?: itemView.context.getString(R.string.unknown_artist)
+        trackTimeTextView.text =
+            model.trackTime   // при необходимости время возможно форматировать из миллисекунд в MM:SS
     }
+
     // Конвертирует dp в пиксели в зависимости от текущего масштаба
     private fun Int.dpToPx(): Int = (this * itemView.resources.displayMetrics.density).toInt()
+
+    // Функция для проверки сети
+    private fun isNetworkAvailable(context: Context): Boolean {
+        return try {
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+            //Получаем текущую активную сеть (возвращает null если нет подключения)
+            connectivityManager?.activeNetwork?.let { network ->
+                connectivityManager.getNetworkCapabilities(network)?.run {
+                    // true если есть мобильный интернет ИЛИ Wi-Fi
+                    hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                            hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                }
+            } ?: false
+        } catch (e: Exception) {
+            false  // На случай если разрешение не предоставлено
+        }
+    }
 
 }

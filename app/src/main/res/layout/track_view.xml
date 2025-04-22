@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:layout_marginTop="@dimen/padding_16">
+    android:orientation="horizontal">
 
     <!-- Обложка трека -->
     <ImageView
