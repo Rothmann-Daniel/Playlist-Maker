@@ -40,10 +40,9 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(model: Track) {
         val isOnline = isNetworkAvailable(itemView.context)
-        loadTrackImage(model, isOnline)
-        setTrackTextInfo(model)
+        loadTrackImage(model, isOnline) // Загрузка обложки трека с обработкой ошибок
+        setTrackTextInfo(model) // Установка текстовой информации
     }
-
 
 
     private fun loadTrackImage(model: Track, isOnline: Boolean) {
@@ -51,12 +50,12 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         Glide.with(itemView)
             .load(artworkUrl)
-            .placeholder(R.drawable.search)
-            .error(if (isOnline) R.drawable.error_53 else R.drawable.offline_placeholder)
-            .fallback(R.drawable.error_404)
+            .placeholder(R.drawable.placeholder) // заглушка пока изображение загружается
+            .error(if (isOnline) R.drawable.placeholder else R.drawable.placeholder) // Если загрузка не удалась заглушка для ошибок онлайн и офлайн
+            .fallback(R.drawable.placeholder) // Если путь к изображению отсутствует/null
             .centerCrop()
-            .transform(RoundedCorners(CORNER_RADIUS_DP.dpToPx()))
-            .transition(DrawableTransitionOptions.withCrossFade(FADE_DURATION_MS))
+            .transform(RoundedCorners(CORNER_RADIUS_DP.dpToPx())) // Динамическое скругление
+            .transition(DrawableTransitionOptions.withCrossFade(FADE_DURATION_MS)) // Анимация
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(trackImageView)
     }
