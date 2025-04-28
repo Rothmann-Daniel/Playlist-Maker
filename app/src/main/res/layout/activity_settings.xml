@@ -11,7 +11,8 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/tool_bar"
         style="@style/ToolBarButton"
-        app:title="@string/button_settings"/>
+        app:title="@string/button_settings"
+        android:contentDescription="@string/button_settings"/>
 
     <!-- Переключатель темы -->
     <com.google.android.material.switchmaterial.SwitchMaterial
@@ -19,6 +20,7 @@
         android:layout_marginTop="@dimen/padding_16"
         style="@style/SettingsItemStyle"
         android:text="@string/dark_theme"
+        android:contentDescription="@string/dark_theme"
         app:thumbTint="@color/switch_thumb_color"
         app:trackTint="@color/switch_track_color" /> <!-- Цвет дорожки -->
 
@@ -27,21 +29,24 @@
         android:id="@+id/share"
         style="@style/SettingsItemStyle"
         android:drawableEnd="@drawable/share"
-        android:text="@string/share" />
+        android:text="@string/share"
+        android:contentDescription="@string/share"/>
 
     <!-- Кнопка "Поддержка" -->
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/support"
         style="@style/SettingsItemStyle"
         android:drawableEnd="@drawable/support"
-        android:text="@string/support" />
+        android:text="@string/support"
+        android:contentDescription="@string/support"/>
 
     <!-- Кнопка "Пользовательское соглашение" -->
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/user_agreement"
         style="@style/SettingsItemStyle"
         android:drawableEnd="@drawable/user_agreement"
-        android:text="@string/user_agreement" />
+        android:text="@string/user_agreement"
+        android:contentDescription="@string/user_agreement"/>
 
 
 </LinearLayout>

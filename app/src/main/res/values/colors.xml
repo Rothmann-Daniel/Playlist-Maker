@@ -19,6 +19,7 @@
     <color name="textColor">#000000</color>
     <color name="buttonColor">#FFFFFFFF</color>
     <color name="buttonTextColor">#FFFFFF</color>
+    <color name="buttonSettings">#AEAFB4</color>
 
 
     <color name="switch_thumb_active_color_light">#FFFFFF</color>
@@ -30,5 +31,9 @@
     <color name="edit_text_background">#F5F5F5</color>  <!-- Светло-серый фон -->
     <color name="edit_text_stroke">#E0E0E0</color>    <!-- Цвет границы -->
     <color name="hint_color">#AEAFB4</color>
+
+    <color name="dot_separator_color">#AEAFB4</color>
+    <color name="dot_separator_color_night">#FFFFFFFF</color>
+
 
 </resources>
