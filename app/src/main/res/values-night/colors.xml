@@ -30,5 +30,8 @@
     <color name="dot_separator_color_night">#FFFFFFFF</color>
     <color name="dot_separator_color">#FFFFFFFF</color>
 
+    <color name="no_connection_color">#FFFFFFFF</color>
+    <color name="no_connection_color_night">#FFFFFFFF</color>
+
 
 </resources>

@@ -34,6 +34,8 @@
 
     <color name="dot_separator_color">#AEAFB4</color>
     <color name="dot_separator_color_night">#FFFFFFFF</color>
+    <color name="no_connection_color">#FF000000</color>
+    <color name="no_connection_color_night">#FFFFFFFF</color>
 
 
 </resources>

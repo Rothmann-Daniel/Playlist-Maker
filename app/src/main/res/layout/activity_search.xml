@@ -22,17 +22,93 @@
 
         <EditText
             android:id="@+id/searchInput"
-            style="@style/SearchEditTextStyle"/>
+            style="@style/SearchEditTextStyle"
+            android:imeOptions="actionDone"
+            android:singleLine="true" />
 
         <ImageView
-            android:id="@+id/searchInputClear"
+            android:id="@+id/button_clear"
             style="@style/SearchCancelButton"/>
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerTrackView"
+        android:id="@+id/recyclerTrackList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+    <LinearLayout
+        android:id="@+id/notFound_placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:layout_marginTop="102dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/image_notFound"
+            style="@style/NotFoundIconStyle"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/text_notFound"
+            style="@style/NotFoundTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/error_placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginTop="102dp">
+
+        <ImageView
+            android:id="@+id/image_error"
+            style="@style/ImageErrorStyle"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/text_noConnection"
+            style="@style/NotFoundTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/text_not_connection" />
+
+        <TextView
+            android:id="@+id/text_try_to_Connect"
+            style="@style/NotFoundTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="@string/text_check_connect" />
+
+        <Button
+            android:id="@+id/button_update"
+            style="@style/ButtonUpdateStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp" />
+
+
+    </LinearLayout>
 
 </LinearLayout>

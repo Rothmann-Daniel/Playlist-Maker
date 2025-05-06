@@ -20,7 +20,7 @@
 
         <item name="buttonSettings">@color/buttonSettings</item>
         <item name="dotSeparatorColor">@color/dot_separator_color</item>
-
+        <item name="no_connection">@color/no_connection_color</item>
     </style>>
 
 </resources>

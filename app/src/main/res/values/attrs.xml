@@ -2,4 +2,5 @@
 <resources>
     <attr name="dotSeparatorColor" format="color|reference"/>
     <attr name="buttonSettings" format="color|reference"/>
+    <attr name="no_connection" format="color|reference"/>
 </resources>

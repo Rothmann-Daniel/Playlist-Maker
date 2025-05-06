@@ -50,5 +50,9 @@ dependencies {
     implementation(libs.material)
     implementation (libs.glide)
     annotationProcessor (libs.compiler)
-
+    implementation("com.google.code.gson:gson:2.10")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    // Logging interceptor (для удобства отладки)
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
 }

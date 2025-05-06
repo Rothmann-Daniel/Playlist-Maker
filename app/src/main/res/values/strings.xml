@@ -39,4 +39,10 @@
     <string name="separator_desc">Разделитель</string>
     <string name="more_info_desc">Подробнее о треке</string>
 
+    <!-- Placeholders -->
+    <string name="text_not_found">Ничего не нашлось</string>
+    <string name="text_not_connection">Проблемы со связью</string>
+    <string name="text_check_connect">Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="button_update">Обновить</string>
+
 </resources>
