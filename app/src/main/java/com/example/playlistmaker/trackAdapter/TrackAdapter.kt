@@ -9,20 +9,31 @@ import com.example.playlistmaker.TrackViewHolder
 import com.example.playlistmaker.model.Track
 
 
-class TrackAdapter() : RecyclerView.Adapter<TrackViewHolder>() {
 
+class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
     var tracks = ArrayList<Track>()
+    private var listener: OnTrackClickListener? = null
+
+    interface OnTrackClickListener {
+        fun onTrackClick(track: Track)
+    }
+
+    fun setOnTrackClickListener(listener: OnTrackClickListener) {
+        this.listener = listener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        val view: View =
-            LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.track_view, parent, false)
         return TrackViewHolder(view)
     }
 
-    override fun getItemCount(): Int = tracks.size
-
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(tracks[position])
+        holder.itemView.setOnClickListener {
+            listener?.onTrackClick(tracks[position])
+        }
     }
-}
 
+    override fun getItemCount(): Int = tracks.size
+}
