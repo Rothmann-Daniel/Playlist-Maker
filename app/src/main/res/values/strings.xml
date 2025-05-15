@@ -45,4 +45,7 @@
     <string name="text_check_connect">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="button_update">Обновить</string>
 
+    <string name="search_history">Вы искали</string>
+    <string name="clean_history"> Очистить историю</string>
+
 </resources>

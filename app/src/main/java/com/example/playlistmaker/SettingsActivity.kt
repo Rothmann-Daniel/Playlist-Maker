@@ -18,16 +18,8 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings) // Установка разметки
 
-        val themeSwitch = findViewById<SwitchMaterial>(R.id.switch_theme)
-        val sharedPrefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-
-        // Установка текущего состояния
-        themeSwitch.isChecked = isDarkThemeEnabled()
-
-        themeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            sharedPrefs.edit().putBoolean("dark_theme", isChecked).apply()
-            applyTheme(isChecked)
-        }
+        // Установка темы
+        setThemeSwitcher()
 
         //Обработчик нажатия на кнопку навигаци: Назад
         val navBack = findViewById<MaterialToolbar>(R.id.tool_bar)
@@ -55,29 +47,17 @@ class SettingsActivity : AppCompatActivity() {
 
     }
 
-    // Пересоздаем активити для применения темы
+    // <!-- Кнопка "Тема" / Theme -->
+    private fun setThemeSwitcher() {
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.switch_theme)
+        themeSwitcher.isChecked = (applicationContext as App).darkTheme
 
-    private fun applyTheme(isDarkTheme: Boolean) {
-        AppCompatDelegate.setDefaultNightMode(
-            if (isDarkTheme) AppCompatDelegate.MODE_NIGHT_YES
-            else AppCompatDelegate.MODE_NIGHT_NO
-        )
-        recreate()
-    }
-
-    private fun isDarkThemeEnabled(): Boolean {
-        return when (AppCompatDelegate.getDefaultNightMode()) {
-            AppCompatDelegate.MODE_NIGHT_YES -> true
-            AppCompatDelegate.MODE_NIGHT_NO -> false
-            else -> {
-                // Если режим темы установлен в "системный" проверяем системные настройки
-                resources.configuration.uiMode and
-                        Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-            }
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
         }
     }
 
-    // <!-- Кнопка "Поделиться" -->
+    // <!-- Кнопка "Поделиться" / Share -->
     private fun shareApp() {
         try {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
