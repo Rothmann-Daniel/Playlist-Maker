@@ -31,6 +31,8 @@
     <string name="text_not_connection">Not Connection</string>
     <string name="text_check_connect">Check Network</string>
     <string name="button_update">Update</string>
+    <string name="search_history">You were looking for...</string>
+    <string name="clean_history">Clean history</string>
 
 
 </resources>
