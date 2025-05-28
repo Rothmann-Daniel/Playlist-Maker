@@ -20,6 +20,8 @@
     <dimen name="cornerRadius_16">16dp</dimen>
     <dimen name="minWidth_48">48dp</dimen>
     <dimen name="minHeight_48">48dp</dimen>
+    <dimen name="corner_radius">8dp</dimen>
+
 
     <!-- Защита от сжатия -->
     <dimen name="track_image_size">45dp</dimen>

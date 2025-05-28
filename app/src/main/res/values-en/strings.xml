@@ -24,6 +24,7 @@
     <string name="artist_name">Artist name</string>
     <string name="unknown_track">Unknow Track</string>
     <string name="unknown_artist">Unknow Artist</string>
+    <string name="country">country</string>
     <string name="track_cover_desc">"Track cover "</string>
     <string name="separator_desc">Separator</string>
     <string name="more_info_desc">More info</string>
@@ -33,6 +34,13 @@
     <string name="button_update">Update</string>
     <string name="search_history">You were looking for...</string>
     <string name="clean_history">Clean history</string>
+    <string name="duration">track time</string>
+    <string name="collection_name">collection</string>
+    <string name="release_date">release</string>
+    <string name="primary_genre_name">genre name</string>
+    <string name="unknown_year">Unknown year</string>
+    <string name="unknown_genre">Unknown genre</string>
+    <string name="unknown_country">Unknown country</string>
 
 
 </resources>

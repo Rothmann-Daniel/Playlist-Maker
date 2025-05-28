@@ -33,5 +33,7 @@
     <color name="no_connection_color">#FFFFFFFF</color>
     <color name="no_connection_color_night">#FFFFFFFF</color>
 
+    <color name="textColor_AudioPlayer">#FFFFFFFF</color>
+
 
 </resources>

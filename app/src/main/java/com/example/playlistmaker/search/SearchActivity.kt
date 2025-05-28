@@ -1,6 +1,7 @@
 package com.example.playlistmaker.search
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,12 +15,14 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.AudioPlayer
 import com.example.playlistmaker.R
 import com.example.playlistmaker.model.Track
 import com.example.playlistmaker.model.TrackResponse
 import com.example.playlistmaker.network.iTunesAPI
 import com.example.playlistmaker.trackAdapter.TrackAdapter
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -106,7 +109,12 @@ class SearchActivity : AppCompatActivity() {
         adapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClickListener {
             override fun onTrackClick(track: Track) {
                 searchHistory.addTrack(track)
-                // Здесь будет переход к плееру
+                val intent = Intent(this@SearchActivity, AudioPlayer::class.java).apply {
+                    val gson = Gson()
+                    val trackJson = gson.toJson(track)
+                    putExtra("trackJson", trackJson)
+                }
+                startActivity(intent)
             }
         })
 
@@ -114,7 +122,12 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClickListener {
             override fun onTrackClick(track: Track) {
                 searchHistory.addTrack(track)
-                // Здесь будет переход к плееру
+                val intent = Intent(this@SearchActivity, AudioPlayer::class.java).apply {
+                    val gson = Gson()
+                    val trackJson = gson.toJson(track)
+                    putExtra("trackJson", trackJson)
+                }
+                startActivity(intent)
             }
         })
     }
