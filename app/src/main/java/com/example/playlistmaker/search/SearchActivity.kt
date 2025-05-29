@@ -64,6 +64,10 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val INPUT_TEXT = "SEARCH_TEXT"
         const val SAVED_TEXT = ""
+
+        // Новые константы для передачи данных
+        const val TRACK_EXTRA = "trackJson"
+        const val SHARED_PREFS_NAME = "playlist_maker_prefs"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,6 +109,7 @@ class SearchActivity : AppCompatActivity() {
 
         historyRecyclerView.adapter = historyAdapter
 
+
         // Обработчик кликов для основного списка треков
         adapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClickListener {
             override fun onTrackClick(track: Track) {
@@ -112,7 +117,7 @@ class SearchActivity : AppCompatActivity() {
                 val intent = Intent(this@SearchActivity, AudioPlayer::class.java).apply {
                     val gson = Gson()
                     val trackJson = gson.toJson(track)
-                    putExtra("trackJson", trackJson)
+                    putExtra(TRACK_EXTRA, trackJson)
                 }
                 startActivity(intent)
             }
@@ -125,7 +130,7 @@ class SearchActivity : AppCompatActivity() {
                 val intent = Intent(this@SearchActivity, AudioPlayer::class.java).apply {
                     val gson = Gson()
                     val trackJson = gson.toJson(track)
-                    putExtra("trackJson", trackJson)
+                    putExtra(TRACK_EXTRA, trackJson)
                 }
                 startActivity(intent)
             }
@@ -133,7 +138,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupSearchHistory() {
-        searchHistory = SearchHistory(getSharedPreferences("playlist_maker_prefs", MODE_PRIVATE))
+        searchHistory = SearchHistory(getSharedPreferences(SHARED_PREFS_NAME, MODE_PRIVATE))
         updateHistoryVisibility()
     }
 
