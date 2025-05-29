@@ -178,6 +178,8 @@
         <item name="android:textFontWeight">400</item>
         <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/textColor_AudioPlayer</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
 </resources>

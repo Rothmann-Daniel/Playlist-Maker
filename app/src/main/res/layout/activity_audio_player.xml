@@ -13,26 +13,40 @@
         tools:context=".AudioPlayer">
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/left_guideline"
+            android:id="@+id/left_guideline_24"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="24dp" />
+            app:layout_constraintGuide_begin="@dimen/padding_24" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/right_guideline"
+            android:id="@+id/right_guideline_24"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_end="24dp" />
+            app:layout_constraintGuide_end="@dimen/padding_24" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/left_guideline_16"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/padding_16" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/right_guideline_16"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/padding_16" />
 
         <ImageButton
             android:id="@+id/toolbar_audioplayer"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@null"
-            app:layout_constraintEnd_toEndOf="@id/left_guideline"
-            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintEnd_toEndOf="@id/left_guideline_24"
+            app:layout_constraintStart_toStartOf="@id/left_guideline_24"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/back" />
 
@@ -44,8 +58,8 @@
             android:scaleType="centerCrop"
             android:src="@drawable/placeholder"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toStartOf="@+id/right_guideline"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintEnd_toStartOf="@+id/right_guideline_24"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_24"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_audioplayer" />
 
         <TextView
@@ -58,7 +72,7 @@
             android:textColor="@color/textColor_AudioPlayer"
             android:textFontWeight="400"
             android:textSize="22sp"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_24"
             app:layout_constraintTop_toBottomOf="@+id/iv_Cover" />
 
         <TextView
@@ -70,7 +84,7 @@
             android:textColor="@color/textColor_AudioPlayer"
             android:textFontWeight="400"
             android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_24"
             app:layout_constraintTop_toBottomOf="@+id/tv_TrackName" />
 
         <androidx.constraintlayout.widget.Group
@@ -90,7 +104,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/ib_Play_Stop"
             app:layout_constraintEnd_toStartOf="@+id/ib_Play_Stop"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintStart_toStartOf="@id/left_guideline_24"
             app:layout_constraintTop_toBottomOf="@+id/tv_ArtistName" />
 
         <ImageButton
@@ -112,7 +126,7 @@
             android:background="@color/white"
             android:src="@drawable/favourite"
             app:layout_constraintBottom_toBottomOf="@+id/ib_Play_Stop"
-            app:layout_constraintEnd_toEndOf="@id/right_guideline"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline_24"
             app:layout_constraintStart_toEndOf="@+id/ib_Play_Stop"
             app:layout_constraintTop_toBottomOf="@+id/tv_ArtistName" />
 
@@ -143,7 +157,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="@string/duration"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_16"
             app:layout_constraintTop_toBottomOf="@+id/tv_TrackTime" />
 
         <TextView
@@ -153,7 +167,7 @@
             android:layout_height="wrap_content"
             android:text="5:35"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_Duration"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline" />
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16" />
 
         <TextView
             android:id="@+id/tv_СollectionName"
@@ -161,7 +175,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/collection_name"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_16"
             app:layout_constraintTop_toBottomOf="@+id/tv_Duration" />
 
         <TextView
@@ -171,7 +185,7 @@
             android:layout_height="wrap_content"
             android:text="Yesterday (Remastered 2009)"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_СollectionName"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline" />
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16" />
 
         <TextView
             android:id="@+id/tv_ReleaseDate"
@@ -179,7 +193,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/release_date"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_16"
             app:layout_constraintTop_toBottomOf="@+id/tv_СollectionName" />
 
         <TextView
@@ -189,7 +203,7 @@
             android:layout_height="wrap_content"
             android:text="1965"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_ReleaseDate"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline" />
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16" />
 
         <TextView
             android:id="@+id/tv_PrimaryGenreName"
@@ -197,7 +211,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/primary_genre_name"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_16"
             app:layout_constraintTop_toBottomOf="@+id/tv_ReleaseDate" />
 
         <TextView
@@ -207,7 +221,7 @@
             android:layout_height="wrap_content"
             android:text="Rock"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_PrimaryGenreName"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline" />
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16" />
 
         <TextView
             android:id="@+id/tv_Country"
@@ -215,7 +229,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/country"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_16"
             app:layout_constraintTop_toBottomOf="@+id/tv_PrimaryGenreName" />
 
         <TextView
@@ -225,7 +239,7 @@
             android:layout_height="wrap_content"
             android:text="Великобритания"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_Country"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline" />
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

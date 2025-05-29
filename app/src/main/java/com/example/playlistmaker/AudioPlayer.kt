@@ -50,12 +50,13 @@ class AudioPlayer : AppCompatActivity() {
 
         val enlargedImageUrl = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
 
-        val radius = 8 * this.getResources().displayMetrics.density + 0.5f
+        // Конвертируем 8dp в пиксели для Glide
+        val radiusInPx = (8f * resources.displayMetrics.density).toInt()
 
         Glide.with(this)
             .load(enlargedImageUrl)
             .centerCrop()
-            .transform(RoundedCorners(2))
+            .transform(RoundedCorners(radiusInPx))  // Теперь 8dp
             .placeholder(R.drawable.placeholder)
             .into(ivCover)
 
