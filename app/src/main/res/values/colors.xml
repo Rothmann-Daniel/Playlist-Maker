@@ -38,4 +38,7 @@
     <color name="no_connection_color_night">#FFFFFFFF</color>
 
 
+    <color name="textColor_AudioPlayer">#1A1B22</color>
+
+
 </resources>

@@ -14,12 +14,15 @@
     <dimen name="padding_13">13dp</dimen>
     <dimen name="padding_16">16dp</dimen>
     <dimen name="padding_20">20dp</dimen>
+    <dimen name="padding_24">24dp</dimen>
     <!-- other -->
     <dimen name="search_background_Radius_8">8dp</dimen>
     <dimen name="iconPadding_10">10dp</dimen>
     <dimen name="cornerRadius_16">16dp</dimen>
     <dimen name="minWidth_48">48dp</dimen>
     <dimen name="minHeight_48">48dp</dimen>
+    <dimen name="corner_radius">8dp</dimen>
+
 
     <!-- Защита от сжатия -->
     <dimen name="track_image_size">45dp</dimen>

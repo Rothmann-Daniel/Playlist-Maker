@@ -34,6 +34,13 @@
     <string name="unknown_track">Неизвестный трек</string>
     <string name="unknown_artist">Неизвестный исполнитель</string>
 
+    <!-- Album -->
+    <string name="duration">Длительность</string>
+    <string name="collection_name">Альбом</string>
+    <string name="release_date">Год</string>
+    <string name="primary_genre_name">Жанр</string>
+    <string name="country">Страна</string>
+
     <!-- Скринридеры -->
     <string name="track_cover_desc">Обложка трека</string>
     <string name="separator_desc">Разделитель</string>
@@ -47,5 +54,8 @@
 
     <string name="search_history">Вы искали</string>
     <string name="clean_history"> Очистить историю</string>
+    <string name="unknown_year">Год не найден</string>
+    <string name="unknown_genre">Жанр не найден</string>
+    <string name="unknown_country">Страна не найдена</string>
 
 </resources>
