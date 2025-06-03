@@ -58,9 +58,9 @@
             android:scaleType="centerCrop"
             android:src="@drawable/placeholder"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toStartOf="@+id/right_guideline_24"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline_24"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_audioplayer" />
+            app:layout_constraintEnd_toStartOf="@id/right_guideline_24"
+            app:layout_constraintStart_toStartOf="@id/left_guideline_24"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_audioplayer" />
 
         <TextView
             android:id="@+id/tv_TrackName"
@@ -72,8 +72,8 @@
             android:textColor="@color/textColor_AudioPlayer"
             android:textFontWeight="400"
             android:textSize="22sp"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline_24"
-            app:layout_constraintTop_toBottomOf="@+id/iv_Cover" />
+            app:layout_constraintStart_toStartOf="@id/left_guideline_24"
+            app:layout_constraintTop_toBottomOf="@id/iv_Cover" />
 
         <TextView
             android:id="@+id/tv_ArtistName"
@@ -84,8 +84,8 @@
             android:textColor="@color/textColor_AudioPlayer"
             android:textFontWeight="400"
             android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline_24"
-            app:layout_constraintTop_toBottomOf="@+id/tv_TrackName" />
+            app:layout_constraintStart_toStartOf="@id/left_guideline_24"
+            app:layout_constraintTop_toBottomOf="@id/tv_TrackName" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/buttonGroup"
@@ -98,37 +98,35 @@
             android:id="@+id/ib_Seen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="42dp"
             android:background="@color/white"
             android:src="@drawable/queue"
-            app:layout_constraintBottom_toBottomOf="@+id/ib_Play_Stop"
-            app:layout_constraintEnd_toStartOf="@+id/ib_Play_Stop"
+            app:layout_constraintBottom_toBottomOf="@id/ib_Play_Stop"
+            app:layout_constraintEnd_toStartOf="@id/ib_Play_Stop"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="@id/left_guideline_24"
-            app:layout_constraintTop_toBottomOf="@+id/tv_ArtistName" />
+            app:layout_constraintTop_toTopOf="@id/ib_Play_Stop" />
 
         <ImageButton
             android:id="@+id/ib_Play_Stop"
             android:layout_width="84dp"
             android:layout_height="84dp"
-            android:layout_marginTop="38dp"
             android:background="@color/white"
             android:src="@drawable/play"
-            app:layout_constraintEnd_toStartOf="@+id/ib_Favorite"
-            app:layout_constraintStart_toEndOf="@+id/ib_Seen"
-            app:layout_constraintTop_toBottomOf="@+id/tv_ArtistName" />
+            app:layout_constraintEnd_toStartOf="@id/ib_Favorite"
+            app:layout_constraintStart_toEndOf="@id/ib_Seen"
+            app:layout_constraintTop_toBottomOf="@id/tv_ArtistName"
+            android:layout_marginTop="24dp" />
 
         <ImageButton
             android:id="@+id/ib_Favorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="42dp"
             android:background="@color/white"
             android:src="@drawable/favourite"
-            app:layout_constraintBottom_toBottomOf="@+id/ib_Play_Stop"
+            app:layout_constraintBottom_toBottomOf="@id/ib_Play_Stop"
             app:layout_constraintEnd_toEndOf="@id/right_guideline_24"
-            app:layout_constraintStart_toEndOf="@+id/ib_Play_Stop"
-            app:layout_constraintTop_toBottomOf="@+id/tv_ArtistName" />
+            app:layout_constraintStart_toEndOf="@id/ib_Play_Stop"
+            app:layout_constraintTop_toTopOf="@id/ib_Play_Stop" />
 
         <TextView
             android:id="@+id/tv_TrackTime"
@@ -139,16 +137,16 @@
             android:textColor="@color/textColor_AudioPlayer"
             android:textFontWeight="500"
             android:textSize="14sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ib_Play_Stop" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ib_Play_Stop" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/textsBarrier"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:barrierDirection="end"
-            app:constraint_referenced_ids="tv_Duration, tv_СollectionName, tv_ReleaseDate, tv_PrimaryGenreName, tv_Country" />
+            app:constraint_referenced_ids="tv_Duration, tv_CollectionName, tv_ReleaseDate, tv_PrimaryGenreName, tv_Country" />
 
         <TextView
             android:id="@+id/tv_Duration"
@@ -157,8 +155,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="@string/duration"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline_16"
-            app:layout_constraintTop_toBottomOf="@+id/tv_TrackTime" />
+            app:layout_constraintStart_toStartOf="@id/left_guideline_16"
+            app:layout_constraintTop_toBottomOf="@id/tv_TrackTime" />
 
         <TextView
             android:id="@+id/tv_DurationValue"
@@ -167,25 +165,25 @@
             android:layout_height="wrap_content"
             android:text="5:35"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_Duration"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16" />
+            app:layout_constraintEnd_toEndOf="@id/right_guideline_16" />
 
         <TextView
-            android:id="@+id/tv_СollectionName"
+            android:id="@+id/tv_CollectionName"
             style="@style/AudioPlayerTrackDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/collection_name"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline_16"
-            app:layout_constraintTop_toBottomOf="@+id/tv_Duration" />
+            app:layout_constraintStart_toStartOf="@id/left_guideline_16"
+            app:layout_constraintTop_toBottomOf="@id/tv_Duration" />
 
         <TextView
-            android:id="@+id/tv_СollectionNameValue"
+            android:id="@+id/tv_CollectionNameValue"
             style="@style/AudioPlayerTrackValue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Yesterday (Remastered 2009)"
-            app:layout_constraintBaseline_toBaselineOf="@id/tv_СollectionName"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16" />
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_CollectionName"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline_16" />
 
         <TextView
             android:id="@+id/tv_ReleaseDate"
@@ -193,8 +191,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/release_date"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline_16"
-            app:layout_constraintTop_toBottomOf="@+id/tv_СollectionName" />
+            app:layout_constraintStart_toStartOf="@id/left_guideline_16"
+            app:layout_constraintTop_toBottomOf="@id/tv_CollectionName" />
 
         <TextView
             android:id="@+id/tv_ReleaseDateValue"
@@ -203,7 +201,7 @@
             android:layout_height="wrap_content"
             android:text="1965"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_ReleaseDate"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16" />
+            app:layout_constraintEnd_toEndOf="@id/right_guideline_16" />
 
         <TextView
             android:id="@+id/tv_PrimaryGenreName"
@@ -211,8 +209,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/primary_genre_name"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline_16"
-            app:layout_constraintTop_toBottomOf="@+id/tv_ReleaseDate" />
+            app:layout_constraintStart_toStartOf="@id/left_guideline_16"
+            app:layout_constraintTop_toBottomOf="@id/tv_ReleaseDate" />
 
         <TextView
             android:id="@+id/tv_PrimaryGenreNameValue"
@@ -221,7 +219,7 @@
             android:layout_height="wrap_content"
             android:text="Rock"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_PrimaryGenreName"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16" />
+            app:layout_constraintEnd_toEndOf="@id/right_guideline_16" />
 
         <TextView
             android:id="@+id/tv_Country"
@@ -229,8 +227,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/country"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline_16"
-            app:layout_constraintTop_toBottomOf="@+id/tv_PrimaryGenreName" />
+            app:layout_constraintStart_toStartOf="@id/left_guideline_16"
+            app:layout_constraintTop_toBottomOf="@id/tv_PrimaryGenreName" />
 
         <TextView
             android:id="@+id/tv_CountryValue"
@@ -239,7 +237,7 @@
             android:layout_height="wrap_content"
             android:text="Великобритания"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_Country"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline_16" />
+            app:layout_constraintEnd_toEndOf="@id/right_guideline_16" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

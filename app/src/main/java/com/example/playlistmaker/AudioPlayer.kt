@@ -43,7 +43,7 @@ class AudioPlayer : AppCompatActivity() {
         val tvTrackName = findViewById<TextView>(R.id.tv_TrackName)
         val tvArtistName = findViewById<TextView>(R.id.tv_ArtistName)
         val tvDurationValue = findViewById<TextView>(R.id.tv_DurationValue)
-        val tvCollectionNameValue = findViewById<TextView>(R.id.tv_СollectionNameValue)
+        val tvCollectionNameValue = findViewById<TextView>(R.id.tv_CollectionNameValue)
         val tvReleaseDateValue = findViewById<TextView>(R.id.tv_ReleaseDateValue)
         val tvPrimaryGenreNameValue = findViewById<TextView>(R.id.tv_PrimaryGenreNameValue)
         val tvCountryValue = findViewById<TextView>(R.id.tv_CountryValue)
