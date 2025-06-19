@@ -1,7 +1,7 @@
 package com.example.playlistmaker.model
 
 data class Track(
-    val trackId: Int, // Уникальный идентификатор трека
+    val trackId: Int,
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: Long,
