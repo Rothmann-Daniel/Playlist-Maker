@@ -39,6 +39,7 @@
 
 
     <color name="textColor_AudioPlayer">#1A1B22</color>
+    <color name="progress_bar">@color/blue</color>
 
 
 </resources>

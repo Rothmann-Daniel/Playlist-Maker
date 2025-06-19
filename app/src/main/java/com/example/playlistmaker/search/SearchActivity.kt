@@ -3,6 +3,8 @@ package com.example.playlistmaker.search
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -10,6 +12,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -50,6 +53,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var clearHistoryButton: Button
     private lateinit var historyTitle: TextView
+    private lateinit var progressBar: FrameLayout
 
     // Адаптеры и данные
     private val tracks = ArrayList<Track>()
@@ -61,14 +65,14 @@ class SearchActivity : AppCompatActivity() {
     private var searchText: String = SAVED_TEXT
     private var lastInput: String? = null
 
-    companion object {
-        const val INPUT_TEXT = "SEARCH_TEXT"
-        const val SAVED_TEXT = ""
+    // Debounce для поиска
+    private val searchDebounceHandler = Handler(Looper.getMainLooper())
+    private var searchRunnable: Runnable? = null
+    private val SEARCH_DEBOUNCE_DELAY = 2000L // 2 секунды задержки
 
-        // Новые константы для передачи данных
-        const val TRACK_EXTRA = "trackJson"
-        const val SHARED_PREFS_NAME = "playlist_maker_prefs"
-    }
+    // Debounce для кликов
+    private var isClickDebounced = false
+    private val CLICK_DEBOUNCE_DELAY = 1000L // 1 секунда задержки
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,18 +105,20 @@ class SearchActivity : AppCompatActivity() {
         historyRecyclerView = findViewById(R.id.historyRecyclerView)
         clearHistoryButton = findViewById(R.id.clearHistoryButton)
         historyTitle = findViewById(R.id.historyTitle)
+        progressBar = findViewById(R.id.progressBarContainer)
     }
 
     private fun setupAdapters() {
         adapter.tracks = tracks
         trackList.adapter = adapter
-
         historyRecyclerView.adapter = historyAdapter
 
-
-        // Обработчик кликов для основного списка треков
+        // Обработчик кликов для основного списка треков с debounce
         adapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClickListener {
             override fun onTrackClick(track: Track) {
+                if (isClickDebounced) return
+                isClickDebounced = true
+
                 searchHistory.addTrack(track)
                 val intent = Intent(this@SearchActivity, AudioPlayer::class.java).apply {
                     val gson = Gson()
@@ -120,12 +126,20 @@ class SearchActivity : AppCompatActivity() {
                     putExtra(TRACK_EXTRA, trackJson)
                 }
                 startActivity(intent)
+
+                // Сбрасываем флаг через заданное время
+                searchDebounceHandler.postDelayed({
+                    isClickDebounced = false
+                }, CLICK_DEBOUNCE_DELAY)
             }
         })
 
-        // Обработчик кликов для истории
+        // Обработчик кликов для истории с debounce
         historyAdapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClickListener {
             override fun onTrackClick(track: Track) {
+                if (isClickDebounced) return
+                isClickDebounced = true
+
                 searchHistory.addTrack(track)
                 val intent = Intent(this@SearchActivity, AudioPlayer::class.java).apply {
                     val gson = Gson()
@@ -133,6 +147,11 @@ class SearchActivity : AppCompatActivity() {
                     putExtra(TRACK_EXTRA, trackJson)
                 }
                 startActivity(intent)
+
+                // Сбрасываем флаг через заданное время
+                searchDebounceHandler.postDelayed({
+                    isClickDebounced = false
+                }, CLICK_DEBOUNCE_DELAY)
             }
         })
     }
@@ -148,7 +167,7 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        // Слушатель текста в поле поиска
+        // Слушатель текста в поле поиска с debounce
         searchInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -156,6 +175,24 @@ class SearchActivity : AppCompatActivity() {
                 clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
                 searchText = s?.toString() ?: ""
                 updateHistoryVisibility()
+
+                // Удаляем предыдущий отложенный поиск
+                searchRunnable?.let { searchDebounceHandler.removeCallbacks(it) }
+
+                // Если текст не пустой, запускаем новый отложенный поиск
+                if (!s.isNullOrEmpty()) {
+                    searchRunnable = Runnable {
+                        performSearch(s.toString())
+                    }
+                    searchDebounceHandler.postDelayed(searchRunnable!!, SEARCH_DEBOUNCE_DELAY)
+                } else {
+                    // Если текст пустой, очищаем результаты
+                    tracks.clear()
+                    adapter.notifyDataSetChanged()
+                    placeholderNoFound.visibility = View.GONE
+                    placeholderError.visibility = View.GONE
+                    progressBar.visibility = View.GONE
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -163,7 +200,6 @@ class SearchActivity : AppCompatActivity() {
 
         // Клик по полю поиска - показать клавиатуру
         searchInput.setOnClickListener {
-            // Показываем клавиатуру, но не меняем видимость истории
             showKeyBoard()
         }
 
@@ -174,12 +210,16 @@ class SearchActivity : AppCompatActivity() {
             tracks.clear()
             adapter.notifyDataSetChanged()
             placeholderNoFound.visibility = View.GONE
+            placeholderError.visibility = View.GONE
+            progressBar.visibility = View.GONE
             updateHistoryVisibility()
         }
 
         // Обработка нажатия Done на клавиатуре
         searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                // Отменяем отложенный поиск и выполняем немедленно
+                searchRunnable?.let { searchDebounceHandler.removeCallbacks(it) }
                 performSearch(searchInput.text.toString())
                 true
             } else {
@@ -202,7 +242,6 @@ class SearchActivity : AppCompatActivity() {
 
         // Отслеживание фокуса в поле поиска
         searchInput.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            // Обновляем видимость истории только при потере фокуса
             if (!hasFocus) {
                 updateHistoryVisibility(hasFocus)
             }
@@ -234,19 +273,22 @@ class SearchActivity : AppCompatActivity() {
         lastInput = query
         placeholderNoFound.visibility = View.GONE
         placeholderError.visibility = View.GONE
-        trackList.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
+        trackList.visibility = View.GONE
 
         trackService.search(query).enqueue(object : Callback<TrackResponse> {
             override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
+                progressBar.visibility = View.GONE
                 if (response.isSuccessful) {
                     val results = response.body()?.results ?: emptyList()
-                    handleSearchResults(ArrayList(results)) // Явное преобразование в ArrayList
+                    handleSearchResults(ArrayList(results))
                 } else {
                     handleSearchError()
                 }
             }
 
             override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                progressBar.visibility = View.GONE
                 handleSearchError()
             }
         })
@@ -275,17 +317,9 @@ class SearchActivity : AppCompatActivity() {
         trackList.visibility = View.GONE
     }
 
-
     private fun showKeyBoard() {
-        // 1. Устанавливаем фокус на поле ввода
         searchInput.requestFocus()
-
-        // 2. Получаем сервис управления клавиатурой
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
-        // 3. Показываем клавиатуру с проверкой:
-        // - что поле ввода имеет фокус
-        // - что view видимо и прикреплено к window
         if (searchInput.isFocused && searchInput.windowToken != null) {
             imm.showSoftInput(searchInput, InputMethodManager.SHOW_IMPLICIT)
         }
@@ -299,5 +333,21 @@ class SearchActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(INPUT_TEXT, searchText)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Очищаем все отложенные задачи при уничтожении активности
+        searchRunnable?.let { searchDebounceHandler.removeCallbacks(it) }
+    }
+
+
+    companion object {
+        const val INPUT_TEXT = "SEARCH_TEXT"
+        const val SAVED_TEXT = ""
+
+        // Константы для передачи данных
+        const val TRACK_EXTRA = "trackJson"
+        const val SHARED_PREFS_NAME = "playlist_maker_prefs"
     }
 }

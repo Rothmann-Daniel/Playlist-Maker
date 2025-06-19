@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.model.Track
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -29,7 +30,7 @@ class AudioPlayer : AppCompatActivity() {
 
 
         // Включаем кнопку "Назад" в Toolbar
-        val toolbar = findViewById<ImageButton>(R.id.toolbar_audioplayer)
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar_audioplayer)
         toolbar.setOnClickListener {
             finish()
         }
