@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -98,7 +99,12 @@ class AudioPlayer : AppCompatActivity() {
             when (playerState) {
                 STATE_PLAYING -> pauseAudio()
                 STATE_PREPARED, STATE_PAUSED -> startAudio()
-                else -> preparePlayer()
+                STATE_PREPARING -> return@setOnClickListener // Игнорируем нажатие, если уже готовится
+                else -> {
+                    playerState = STATE_PREPARING
+                    playButton.isEnabled = false // Блокируем кнопку
+                    preparePlayer()
+                }
             }
         }
     }
@@ -113,40 +119,42 @@ class AudioPlayer : AppCompatActivity() {
         }
     }
 
+    // Подготовка и воспроизведение трека с обработкой ошибок и восстановлением состояния
     private fun preparePlayer() {
         val track = getTrackFromIntent()
         track.previewUrl?.let { url ->
             try {
+                mediaPlayer?.release() // освобождаем ресурсы: предыдущий плеер
                 mediaPlayer = MediaPlayer().apply {
                     setDataSource(url)
                     prepareAsync()
 
                     setOnPreparedListener {
-                        playButton.isEnabled = true
                         playerState = STATE_PREPARED
-                    }
-
-                    setOnCompletionListener {
-                        completeAudioPlayback()
+                        playButton.isEnabled = true
+                        playButton.setImageResource(R.drawable.play)
+                        startAudio() // Автозапуск после подготовки
                     }
 
                     setOnErrorListener { _, what, extra ->
-                        Log.e("MediaPlayer", "Error occurred: what=$what, extra=$extra")
-                        playButton.isEnabled = false
+                        Log.e("MediaPlayer", "Error: what=$what, extra=$extra")
                         playerState = STATE_DEFAULT
-                        false // возвращаем false, чтобы не вызывать OnCompletionListener
+                        playButton.isEnabled = true
+                        playButton.setImageResource(R.drawable.play)
+                        false
                     }
                 }
             } catch (e: Exception) {
-                Log.e("AudioPlayer", "Error preparing media player", e)
-                playButton.isEnabled = false
+                Log.e("AudioPlayer", "Prepare failed", e)
                 playerState = STATE_DEFAULT
+                playButton.isEnabled = true
             }
         } ?: run {
             playButton.isEnabled = false
-            Log.e("MediaPlayer", "Preview URL is null")
+            Toast.makeText(this, "Аудио недоступно", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     private fun startAudio() {
         mediaPlayer?.start()
@@ -197,15 +205,21 @@ class AudioPlayer : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        stopAudio()
+        handler.removeCallbacks(updateTimeRunnable)
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     // Состояния плеера
     companion object {
+        // Состояния плеера
         private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
+        private const val STATE_PREPARING = 1
+        private const val STATE_PREPARED = 2
+        private const val STATE_PLAYING = 3
+        private const val STATE_PAUSED = 4
+
+        // Интервал обновления времени
         private const val UPDATE_INTERVAL_MS = 100L
     }
 }

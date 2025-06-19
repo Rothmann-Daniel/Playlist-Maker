@@ -5,7 +5,7 @@
     <color name="black">#FFFFFFFF</color>
 
 
-    <color name="background">#121212</color>
+    <color name="background">#1A1B22</color>
     <color name="textColor">#FF000000</color>
     <color name="buttonColor">#FFFFFFFF</color>
     <color name="buttonTextColor">#FFFFFFFF</color>
@@ -34,6 +34,7 @@
     <color name="no_connection_color_night">#FFFFFFFF</color>
 
     <color name="textColor_AudioPlayer">#FFFFFFFF</color>
+    <color name="btn_Play_Stop">#FFFFFFFF</color>
 
 
 </resources>
