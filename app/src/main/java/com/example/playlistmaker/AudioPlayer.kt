@@ -213,13 +213,14 @@ class AudioPlayer : AppCompatActivity() {
     // Состояния плеера
     companion object {
         // Состояния плеера
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARING = 1
-        private const val STATE_PREPARED = 2
-        private const val STATE_PLAYING = 3
-        private const val STATE_PAUSED = 4
+        private const val STATE_DEFAULT = 0 // Начальное состояние
+        private const val STATE_PREPARING = 1 // Идет подготовка плеера
+        private const val STATE_PREPARED = 2 // Плеер готов к воспроизведению
+        private const val STATE_PLAYING = 3 // Идет воспроизведение
+        private const val STATE_PAUSED = 4 // На паузе
 
         // Интервал обновления времени
         private const val UPDATE_INTERVAL_MS = 100L
     }
 }
+
