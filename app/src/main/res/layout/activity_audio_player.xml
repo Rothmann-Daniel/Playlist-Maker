@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/main"
@@ -40,15 +41,16 @@
             android:orientation="vertical"
             app:layout_constraintGuide_end="@dimen/padding_16" />
 
-        <ImageButton
+
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar_audioplayer"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:background="@null"
-            app:layout_constraintEnd_toEndOf="@id/left_guideline_24"
-            app:layout_constraintStart_toStartOf="@id/left_guideline_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/back" />
+            app:navigationIcon="@drawable/back" />
 
         <ImageView
             android:id="@+id/iv_Cover"

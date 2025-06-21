@@ -22,6 +22,7 @@
         <item name="dotSeparatorColor">@color/dot_separator_color</item>
         <item name="no_connection">@color/no_connection_color</item>
         <item name="textColorAudioPlayer">@color/textColor_AudioPlayer</item>
+        <item name="btn_Play_Stop">@color/btn_Play_Stop</item>
     </style>>
 
 </resources>

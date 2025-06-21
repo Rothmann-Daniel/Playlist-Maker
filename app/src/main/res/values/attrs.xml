@@ -4,4 +4,5 @@
     <attr name="buttonSettings" format="color|reference"/>
     <attr name="no_connection" format="color|reference"/>
     <attr name="textColorAudioPlayer" format="color|reference"/>
+    <attr name="btn_Play_Stop" format="color|reference"/>
 </resources>
