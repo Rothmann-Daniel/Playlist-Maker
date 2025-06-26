@@ -17,15 +17,21 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.ui.audio_player.AudioPlayer
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.data.dto.TrackDto
+import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.data.dto.TrackResponse
+import com.example.playlistmaker.data.dto.toTrack
+import com.example.playlistmaker.data.network.NetworkClient
+import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.network.iTunesAPI
 import com.example.playlistmaker.ui.track.TrackAdapter
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,13 +40,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
-    // Retrofit и API
-    private val trackBaseURL = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(trackBaseURL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val trackService = retrofit.create(iTunesAPI::class.java)
+//    // Retrofit и API
+//    private val trackBaseURL = "https://itunes.apple.com"
+//    private val retrofit = Retrofit.Builder()
+//        .baseUrl(trackBaseURL)
+//        .addConverterFactory(GsonConverterFactory.create())
+//        .build()
+//    private val trackService = retrofit.create(iTunesAPI::class.java)
+
+    private val networkClient: NetworkClient = RetrofitNetworkClient() // Инициализация клиента
 
     // UI элементы
     private lateinit var searchInput: EditText
@@ -276,28 +284,23 @@ class SearchActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         trackList.visibility = View.GONE
 
-        trackService.search(query).enqueue(object : Callback<TrackResponse> {
-            override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
-                progressBar.visibility = View.GONE
-                if (response.isSuccessful) {
-                    val results = response.body()?.results ?: emptyList()
-                    handleSearchResults(ArrayList(results))
-                } else {
-                    handleSearchError()
-                }
-            }
-
-            override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                progressBar.visibility = View.GONE
+        lifecycleScope.launch {
+            try {
+                val trackDtos = networkClient.searchTracks(query)
+                handleSearchResults(ArrayList(trackDtos))
+            } catch (e: Exception) {
                 handleSearchError()
+            } finally {
+                progressBar.visibility = View.GONE
             }
-        })
+        }
     }
 
-    private fun handleSearchResults(results: ArrayList<Track>) {
+    private fun handleSearchResults(results: ArrayList<TrackDto>) {
         tracks.clear()
         if (results.isNotEmpty()) {
-            tracks.addAll(results)
+            // Преобразуем TrackDto в Track перед добавлением
+            tracks.addAll(results.map { it.toTrack() })
             adapter.notifyDataSetChanged()
             placeholderNoFound.visibility = View.GONE
             placeholderError.visibility = View.GONE
