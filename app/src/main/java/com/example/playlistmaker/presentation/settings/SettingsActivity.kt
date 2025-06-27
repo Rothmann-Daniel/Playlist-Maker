@@ -4,62 +4,55 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.browser.customtabs.CustomTabsIntent
 import com.example.playlistmaker.R
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.switchmaterial.SwitchMaterial
-import com.google.android.material.textview.MaterialTextView
+import com.example.playlistmaker.data.repository.SettingsRepositoryImpl
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
+import com.example.playlistmaker.domain.usecase.GetThemeSettingsUseCase
+import com.example.playlistmaker.domain.usecase.UpdateThemeSettingsUseCase
+
+
 
 class SettingsActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivitySettingsBinding
+    private val viewModel: SettingsViewModel by viewModels {
+        SettingsViewModelFactory(
+            GetThemeSettingsUseCase(SettingsRepositoryImpl((application as App).sharedPrefs)),
+            UpdateThemeSettingsUseCase(SettingsRepositoryImpl((application as App).sharedPrefs))
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings) // Установка разметки
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // Установка темы
-        setThemeSwitcher()
-
-        //Обработчик нажатия на кнопку навигаци: Назад
-        val navBack = findViewById<MaterialToolbar>(R.id.tool_bar)
-        navBack.setNavigationOnClickListener {
-            finish()
-        }
-
-        // Обработчик кнопки "Поделиться"
-        val shareButton = findViewById<MaterialTextView>(R.id.share)
-        shareButton.setOnClickListener {
-            shareApp()
-        }
-
-        // Обработчик кнопки "Написать в поддержку"
-        val supportButton = findViewById<MaterialTextView>(R.id.support)
-        supportButton.setOnClickListener {
-            sendSupportEmail()
-        }
-
-        // Обработчик кнопки "Пользовательское соглашение"
-        val userAgreementButton = findViewById<MaterialTextView>(R.id.user_agreement)
-        userAgreementButton.setOnClickListener {
-            openUserAgreement()
-        }
-
+        setupViews()
     }
 
-    // <!-- Кнопка "Тема" / Theme -->
-    private fun setThemeSwitcher() {
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.switch_theme)
-        themeSwitcher.isChecked = (applicationContext as App).darkTheme
+    private fun setupViews() {
+        binding.toolBar.setNavigationOnClickListener { finish() }
 
-        // Проверка на изменение темы:
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
-            if (checked != (applicationContext as App).darkTheme) {
-                (applicationContext as App).switchTheme(checked)
-            }
+        // Настройка переключателя темы
+        binding.switchTheme.isChecked = viewModel.getThemeSettings()
+        binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.updateThemeSettings(isChecked)
+            AppCompatDelegate.setDefaultNightMode(
+                if (isChecked) AppCompatDelegate.MODE_NIGHT_YES
+                else AppCompatDelegate.MODE_NIGHT_NO
+            )
         }
+
+
+        binding.share.setOnClickListener { shareApp() }
+        binding.support.setOnClickListener { sendSupportEmail() }
+        binding.userAgreement.setOnClickListener { openUserAgreement() }
     }
 
-    // <!-- Кнопка "Поделиться" / Share -->
     private fun shareApp() {
         try {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -75,20 +68,13 @@ class SettingsActivity : AppCompatActivity() {
                 )
             )
         } catch (e: Exception) {
-            Toast.makeText(
-                this,
-                "${getString(R.string.share_error)} ${e.localizedMessage}",
-                Toast.LENGTH_SHORT
-            ).show()
+            showToast("${getString(R.string.share_error)} ${e.localizedMessage}")
         }
     }
 
-
-    // <!-- Кнопка "Написать в поддержку / Support" -->
-
     private fun sendSupportEmail() {
         val emailIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "message/rfc822" // для любых приложений, работающих с email
+            type = "message/rfc822"
             putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
             putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_email_subject))
             putExtra(Intent.EXTRA_TEXT, getString(R.string.support_email_body))
@@ -96,44 +82,37 @@ class SettingsActivity : AppCompatActivity() {
 
         when {
             packageManager.queryIntentActivities(emailIntent, 0).isEmpty() -> {
-                Toast.makeText(this, R.string.no_email_app, Toast.LENGTH_LONG).show()
+                showToast(getString(R.string.no_email_app))
             }
             else -> try {
                 startActivity(Intent.createChooser(emailIntent, getString(R.string.choose_email_app)))
             } catch (e: Exception) {
-                Toast.makeText(this, R.string.email_send_error, Toast.LENGTH_LONG).show()
+                showToast(getString(R.string.email_send_error))
             }
         }
     }
 
-    // <!-- Кнопка "Пользовательское соглашение / User agreement" -->
-
     private fun openUserAgreement() {
-        val context = this
         val url = getString(R.string.user_agreement_url)
 
         try {
-            // Пытаемся открыть через Custom Tabs
-            val customTabsIntent = CustomTabsIntent.Builder()
+            CustomTabsIntent.Builder()
                 .setShowTitle(true)
                 .build()
-
-            customTabsIntent.launchUrl(context, Uri.parse(url))
+                .launchUrl(this, Uri.parse(url))
         } catch (e: Exception) {
-            // Fallback: если Custom Tabs не сработал, используем обычный Intent
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             if (intent.resolveActivity(packageManager) != null) {
                 startActivity(intent)
             } else {
-                showNoBrowserError()
+                showToast(getString(R.string.no_browser_error))
             }
         }
     }
 
-    private fun showNoBrowserError() {
-        Toast.makeText(this, R.string.no_browser_error, Toast.LENGTH_LONG).show()
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
-
 }
 
 

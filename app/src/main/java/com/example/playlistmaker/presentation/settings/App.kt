@@ -5,46 +5,36 @@ import android.app.Application
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.data.repository.SettingsRepositoryImpl
+
 
 const val SHARED_PREFS = "shared_prefs"
-const val THEMES_KEY = "themes_key"
 
 class App : Application() {
     companion object {
-        lateinit var instance: App
-            private set
+        private var _instance: App? = null
+        val instance: App
+            get() = _instance ?: throw IllegalStateException("Application not initialized")
     }
 
-    var darkTheme = false
     lateinit var sharedPrefs: SharedPreferences
 
     override fun onCreate() {
         super.onCreate()
-        instance = this
-
+        _instance = this
         sharedPrefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-        if (!sharedPrefs.contains(THEMES_KEY)) {
+
+        // Инициализация темы
+        if (!sharedPrefs.contains(SettingsRepositoryImpl.THEMES_KEY)) {
             val isSystemDark = (resources.configuration.uiMode and
                     Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-            darkTheme = isSystemDark
-            sharedPrefs.edit().putBoolean(THEMES_KEY, darkTheme).apply()
-        } else {
-            darkTheme = sharedPrefs.getBoolean(THEMES_KEY, false)
+            sharedPrefs.edit().putBoolean(SettingsRepositoryImpl.THEMES_KEY, isSystemDark).apply()
         }
-        switchTheme(darkTheme)
-    }
 
-    fun switchTheme(darkThemeEnabled: Boolean) {
-        darkTheme = darkThemeEnabled
+        val darkTheme = sharedPrefs.getBoolean(SettingsRepositoryImpl.THEMES_KEY, false)
         AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
+            if (darkTheme) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
         )
-        sharedPrefs.edit()
-            .putBoolean(THEMES_KEY, darkTheme)
-            .apply()
     }
 }
