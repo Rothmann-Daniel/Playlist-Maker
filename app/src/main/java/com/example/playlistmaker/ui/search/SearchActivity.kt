@@ -29,16 +29,16 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import com.example.playlistmaker.domain.model.NetworkResult
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class SearchActivity : AppCompatActivity() {
 
+    // UseCases
     private val searchUseCase = InteractorCreator.searchTracksUseCase
     private val addToHistoryUseCase = InteractorCreator.addTrackToHistoryUseCase
     private val getHistoryUseCase = InteractorCreator.getSearchHistoryUseCase
     private val clearHistoryUseCase = InteractorCreator.clearSearchHistoryUseCase
 
+    // Views
     private lateinit var searchInput: EditText
     private lateinit var clearButton: ImageView
     private lateinit var placeholderNoFound: LinearLayout
@@ -51,10 +51,12 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyTitle: TextView
     private lateinit var progressBar: FrameLayout
 
+    // Data
     private val tracks = ArrayList<Track>()
     private val adapter = TrackAdapter(tracks) { onTrackClick(it) }
     private val historyAdapter = TrackAdapter(ArrayList()) { onTrackClick(it) }
 
+    // Debounce
     private val searchDebounceHandler = Handler(Looper.getMainLooper())
     private var searchRunnable: Runnable? = null
     private val SEARCH_DEBOUNCE_DELAY = 2000L

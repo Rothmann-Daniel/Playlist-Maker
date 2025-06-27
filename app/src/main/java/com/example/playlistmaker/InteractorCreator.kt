@@ -3,30 +3,28 @@ package com.example.playlistmaker
 
 import android.content.Context
 import com.example.playlistmaker.data.network.NetworkClient
+import com.example.playlistmaker.data.repository.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.data.repository.TrackRepositoryImpl
 import com.example.playlistmaker.domain.repository.TrackRepository
 import com.example.playlistmaker.domain.usecase.AddTrackToHistoryUseCase
 import com.example.playlistmaker.domain.usecase.ClearSearchHistoryUseCase
 import com.example.playlistmaker.domain.usecase.GetSearchHistoryUseCase
 import com.example.playlistmaker.domain.usecase.SearchTracksUseCase
-import com.example.playlistmaker.ui.search.SearchHistory
 import com.example.playlistmaker.ui.settings.App
 
 
+
 object InteractorCreator {
-    private val searchHistory by lazy {
-        SearchHistory(
+    private val searchHistoryRepository by lazy {
+        SearchHistoryRepositoryImpl(
             App.instance.getSharedPreferences("search_history_prefs", Context.MODE_PRIVATE)
         )
     }
 
-
-    private val networkClient by lazy {
-     NetworkClient.create()
-    }
+    private val networkClient by lazy { NetworkClient.create() }
 
     private val trackRepository: TrackRepository by lazy {
-        TrackRepositoryImpl(networkClient, searchHistory) // Передаем оба параметра
+        TrackRepositoryImpl(networkClient, searchHistoryRepository)
     }
 
     // UseCases

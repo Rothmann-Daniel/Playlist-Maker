@@ -5,6 +5,12 @@ import com.example.playlistmaker.domain.model.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
+@Deprecated(
+    message = "Использется SearchHistoryRepository вместо этого класса",
+    replaceWith = ReplaceWith("SearchHistoryRepository"),
+    level = DeprecationLevel.ERROR
+)
+
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
     private val gson = Gson()
     private val keyHistory = "search_history" // Ключ для хранения в SharedPreferences
