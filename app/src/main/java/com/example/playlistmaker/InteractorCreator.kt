@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 
+import android.content.Context
 import com.example.playlistmaker.data.network.NetworkClient
 import com.example.playlistmaker.data.repository.TrackRepositoryImpl
 import com.example.playlistmaker.domain.repository.TrackRepository
@@ -8,38 +9,29 @@ import com.example.playlistmaker.domain.usecase.AddTrackToHistoryUseCase
 import com.example.playlistmaker.domain.usecase.ClearSearchHistoryUseCase
 import com.example.playlistmaker.domain.usecase.GetSearchHistoryUseCase
 import com.example.playlistmaker.domain.usecase.SearchTracksUseCase
+import com.example.playlistmaker.ui.search.SearchHistory
+import com.example.playlistmaker.ui.settings.App
+
 
 object InteractorCreator {
-
-        private val networkClient by lazy {
-            NetworkClient.create()
-        }
-
-        // Создаем реализацию репозитория
-        private val trackRepository: TrackRepository by lazy {
-            TrackRepositoryImpl(networkClient)
-        }
-        // Публичные UseCases для Activity
-        val searchTracksUseCase by lazy {
-            SearchTracksUseCase(trackRepository)
-        }
-
-
-
-    // Создаем интеракторы (UseCases)
-    val searchTracks: SearchTracksUseCase by lazy {
-        SearchTracksUseCase(trackRepository)
+    private val searchHistory by lazy {
+        SearchHistory(
+            App.instance.getSharedPreferences("search_history_prefs", Context.MODE_PRIVATE)
+        )
     }
 
-    val addTrackToHistory: AddTrackToHistoryUseCase by lazy {
-        AddTrackToHistoryUseCase(trackRepository)
+
+    private val networkClient by lazy {
+     NetworkClient.create()
     }
 
-    val getSearchHistory: GetSearchHistoryUseCase by lazy {
-        GetSearchHistoryUseCase(trackRepository)
+    private val trackRepository: TrackRepository by lazy {
+        TrackRepositoryImpl(networkClient, searchHistory) // Передаем оба параметра
     }
 
-    val clearSearchHistory: ClearSearchHistoryUseCase by lazy {
-        ClearSearchHistoryUseCase(trackRepository)
-    }
+    // UseCases
+    val searchTracksUseCase by lazy { SearchTracksUseCase(trackRepository) }
+    val addTrackToHistoryUseCase by lazy { AddTrackToHistoryUseCase(trackRepository) }
+    val getSearchHistoryUseCase by lazy { GetSearchHistoryUseCase(trackRepository) }
+    val clearSearchHistoryUseCase by lazy { ClearSearchHistoryUseCase(trackRepository) }
 }

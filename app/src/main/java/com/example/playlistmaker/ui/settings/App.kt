@@ -10,23 +10,25 @@ const val SHARED_PREFS = "shared_prefs"
 const val THEMES_KEY = "themes_key"
 
 class App : Application() {
+    companion object {
+        lateinit var instance: App
+            private set
+    }
 
     var darkTheme = false
     lateinit var sharedPrefs: SharedPreferences
 
     override fun onCreate() {
         super.onCreate()
+        instance = this
+
         sharedPrefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-        // Проверяем, есть ли сохраненное значение темы
         if (!sharedPrefs.contains(THEMES_KEY)) {
-            // Если нет - определяем системную тему
             val isSystemDark = (resources.configuration.uiMode and
                     Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
             darkTheme = isSystemDark
-            // Сохраняем системную тему
             sharedPrefs.edit().putBoolean(THEMES_KEY, darkTheme).apply()
         } else {
-            // Если есть - берем сохраненное значение
             darkTheme = sharedPrefs.getBoolean(THEMES_KEY, false)
         }
         switchTheme(darkTheme)
