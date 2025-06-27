@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.track
+package com.example.playlistmaker.presentation.track
 
 import android.view.View
 import android.widget.ImageView

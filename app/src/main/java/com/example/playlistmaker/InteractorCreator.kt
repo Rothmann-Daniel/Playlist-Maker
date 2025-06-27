@@ -10,7 +10,7 @@ import com.example.playlistmaker.domain.usecase.AddTrackToHistoryUseCase
 import com.example.playlistmaker.domain.usecase.ClearSearchHistoryUseCase
 import com.example.playlistmaker.domain.usecase.GetSearchHistoryUseCase
 import com.example.playlistmaker.domain.usecase.SearchTracksUseCase
-import com.example.playlistmaker.ui.settings.App
+import com.example.playlistmaker.presentation.settings.App
 
 
 

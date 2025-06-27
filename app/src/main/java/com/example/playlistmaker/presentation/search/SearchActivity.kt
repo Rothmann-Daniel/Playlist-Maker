@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.search
+package com.example.playlistmaker.presentation.search
 
 import android.content.Context
 import android.content.Intent
@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -23,8 +24,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.InteractorCreator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.ui.audio_player.AudioPlayer
-import com.example.playlistmaker.ui.track.TrackAdapter
+import com.example.playlistmaker.presentation.audio_player.AudioPlayer
+import com.example.playlistmaker.presentation.track.TrackAdapter
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
@@ -63,6 +64,9 @@ class SearchActivity : AppCompatActivity() {
     private var isClickDebounced = false
     private val CLICK_DEBOUNCE_DELAY = 1000L
     private var lastInput: String? = null
+
+    // State
+    private var currentDebounceRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,18 +142,27 @@ class SearchActivity : AppCompatActivity() {
         if (isClickDebounced) return
         isClickDebounced = true
 
+        // Запускаем добавление в историю (без ожидания завершения)
         lifecycleScope.launch {
-            addToHistoryUseCase(track)
+            try {
+                addToHistoryUseCase(track)
+            } catch (e: Exception) {
+                Log.e("SearchActivity", "Failed to add track to history", e)
+            }
         }
 
-        val intent = Intent(this, AudioPlayer::class.java).apply {
-            putExtra(TRACK_EXTRA, Gson().toJson(track))
-        }
-        startActivity(intent)
+        // Открываем плеер без задержки
+        startActivity(
+            Intent(this, AudioPlayer::class.java).apply {
+                putExtra(TRACK_EXTRA, Companion.gson.toJson(track))
+            }
+        )
 
-        searchDebounceHandler.postDelayed({
-            isClickDebounced = false
-        }, CLICK_DEBOUNCE_DELAY)
+        // Сбрасываем debounce флаг с задержкой
+        val debounceRunnable = Runnable { isClickDebounced = false }
+        searchDebounceHandler.postDelayed(debounceRunnable, CLICK_DEBOUNCE_DELAY)
+        // Сохраняем Runnable для отмены в onDestroy
+        currentDebounceRunnable = debounceRunnable
     }
 
     private fun performSearch(query: String) {
@@ -257,11 +270,13 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        currentDebounceRunnable?.let { searchDebounceHandler.removeCallbacks(it) }
         searchDebounceHandler.removeCallbacksAndMessages(null)
     }
 
     companion object {
         const val TRACK_EXTRA = "trackJson"
         private const val INPUT_TEXT = "SEARCH_TEXT"
+        val gson = Gson()
     }
 }
