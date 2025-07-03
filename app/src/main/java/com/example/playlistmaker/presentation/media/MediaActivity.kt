@@ -1,13 +1,13 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.media
 
 import android.os.Bundle
-import android.view.RoundedCorner
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
 
 
 class MediaActivity : AppCompatActivity() {
