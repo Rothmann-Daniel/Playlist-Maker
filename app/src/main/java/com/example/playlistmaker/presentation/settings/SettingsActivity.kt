@@ -92,6 +92,7 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    // Открытие пользовательского соглашения
     private fun openUserAgreement() {
         val url = getString(R.string.user_agreement_url)
 
