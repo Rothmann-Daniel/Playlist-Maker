@@ -5,12 +5,13 @@ import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.domain.repository.TrackRepository
 
 class SearchTracksUseCase(
-    private val repository: TrackRepository
+    private val repository: TrackRepository // Зависимость - репозиторий абстракция для доступа к данным (сеть/БД)
 ) {
-    suspend operator fun invoke(query: String): NetworkResult<List<Track>> {
+    suspend operator fun invoke(query: String): NetworkResult<List<Track>> { //метод может быть приостановлен (корутины)
+        // Реализация
         return try {
             val tracks = repository.searchTracks(query)
-            NetworkResult.Success(tracks)
+            NetworkResult.Success(tracks) //sealed-класс для обработки успеха/ошибки
         } catch (e: Exception) {
             NetworkResult.Failure(e.message ?: "Unknown error")
         }

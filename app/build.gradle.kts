@@ -59,4 +59,7 @@ dependencies {
     // Logging interceptor (для удобства отладки)
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0")
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation("androidx.activity:activity-ktx:1.6.1")
 }
