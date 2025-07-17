@@ -10,6 +10,7 @@ interface AudioPlayerRepository {
     fun pause()
     fun stop()
     fun isPlaying(): Boolean
-    fun getCurrentPosition(): Int
+    fun getCurrentPosition(): Long
     fun release()
+    fun setOnCompletionListener(listener: () -> Unit)
 }

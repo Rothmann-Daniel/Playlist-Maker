@@ -17,7 +17,8 @@ class AudioPlayerViewModel(
     private val stopAudioUseCase: StopAudioUseCase,
     private val isAudioPlayingUseCase: IsAudioPlayingUseCase,
     private val getAudioPositionUseCase: GetAudioPositionUseCase,
-    private val releasePlayerUseCase: ReleasePlayerUseCase
+    private val releasePlayerUseCase: ReleasePlayerUseCase,
+    private val setCompletionListenerUseCase: SetCompletionListenerUseCase
 ) : ViewModel() {
 
     sealed class PlayerState {
@@ -38,10 +39,22 @@ class AudioPlayerViewModel(
 
     fun preparePlayer(url: String) {
         _playerState.value = PlayerState.Preparing
+
+        // Устанавливаем слушатель завершения воспроизведения
+        setCompletionListenerUseCase.execute {
+            viewModelScope.launch {
+                pause() // Останавливаем воспроизведение при завершении
+                _currentPosition.postValue(formatTime(MAX_PREVIEW_DURATION_MS))
+                _playerState.postValue(PlayerState.Prepared)
+            }
+        }
+
+        // Запускаем подготовку аудио
         prepareAudioUseCase.execute(
             url = url,
             onPrepared = {
                 _playerState.postValue(PlayerState.Prepared)
+                _currentPosition.postValue("00:00") // Сбрасываем позицию при подготовке
             },
             onError = { error ->
                 _playerState.postValue(PlayerState.Error(error))
@@ -98,12 +111,7 @@ class AudioPlayerViewModel(
         progressObserver = null
     }
 
-    fun formatTime(millis: Int): String {
-        val seconds = millis / 1000
-        val minutes = seconds / 60
-        val remainingSeconds = seconds % 60
-        return String.format(Locale.getDefault(), "%02d:%02d", minutes, remainingSeconds)
-    }
+
 
     override fun onCleared() {
         super.onCleared()
@@ -119,6 +127,7 @@ class AudioPlayerViewModel(
     }
 
     companion object {
-        private const val UPDATE_INTERVAL_MS = 200L
+        private const val UPDATE_INTERVAL_MS = 100L
+        private const val MAX_PREVIEW_DURATION_MS = 30000L // 30 секунд
     }
 }

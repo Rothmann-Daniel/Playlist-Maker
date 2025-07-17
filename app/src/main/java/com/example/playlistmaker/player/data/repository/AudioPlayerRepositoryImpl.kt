@@ -45,10 +45,16 @@ class AudioPlayerRepositoryImpl : AudioPlayerRepository {
 
     override fun isPlaying(): Boolean = mediaPlayer?.isPlaying ?: false
 
-    override fun getCurrentPosition(): Int = mediaPlayer?.currentPosition ?: 0
+    override fun getCurrentPosition(): Long = mediaPlayer?.currentPosition?.toLong() ?: 0L
 
     override fun release() {
         mediaPlayer?.release()
         mediaPlayer = null
+    }
+
+    override fun setOnCompletionListener(listener: () -> Unit) {
+        mediaPlayer?.setOnCompletionListener {
+            listener()
+        }
     }
 }

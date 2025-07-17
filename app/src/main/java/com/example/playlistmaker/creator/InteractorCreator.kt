@@ -2,7 +2,6 @@ package com.example.playlistmaker.creator
 
 
 import android.content.Context
-import android.media.MediaPlayer
 import com.example.playlistmaker.player.data.repository.AudioPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 import com.example.playlistmaker.player.domain.usecase.*
@@ -46,4 +45,7 @@ object InteractorCreator {
     val isAudioPlayingUseCase by lazy { IsAudioPlayingUseCase(audioPlayerRepository) }
     val getAudioPositionUseCase by lazy { GetAudioPositionUseCase(audioPlayerRepository) }
     val releasePlayerUseCase by lazy { ReleasePlayerUseCase(audioPlayerRepository) }
+    val setCompletionListenerUseCase by lazy {
+        SetCompletionListenerUseCase(audioPlayerRepository)
+    }
 }

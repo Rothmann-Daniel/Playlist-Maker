@@ -23,7 +23,8 @@ class AudioPlayerActivity : AppCompatActivity() {
             InteractorCreator.stopAudioUseCase,
             InteractorCreator.isAudioPlayingUseCase,
             InteractorCreator.getAudioPositionUseCase,
-            InteractorCreator.releasePlayerUseCase
+            InteractorCreator.releasePlayerUseCase,
+            InteractorCreator.setCompletionListenerUseCase
         )
     }
 
@@ -81,7 +82,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     private fun setTrackInfo(track: Track) {
         binding.tvTrackName.text = track.trackName
         binding.tvArtistName.text = track.artistName
-        binding.tvDurationValue.text = track.trackTimeMillis?.let { viewModel.formatTime(it) } ?: "--:--"
+        binding.tvDurationValue.text = track.trackTimeMillis?.let { viewModel.formatTime(it) }  ?: "--:--"
         binding.tvCollectionNameValue.text = track.collectionName ?: getString(R.string.unknown_collection)
         binding.tvReleaseDateValue.text = track.releaseDate?.take(4) ?: getString(R.string.unknown_year)
         binding.tvPrimaryGenreNameValue.text = track.primaryGenreName ?: getString(R.string.unknown_genre)

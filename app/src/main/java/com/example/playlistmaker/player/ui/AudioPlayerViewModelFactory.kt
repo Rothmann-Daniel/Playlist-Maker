@@ -11,7 +11,8 @@ class AudioPlayerViewModelFactory(
     private val stopAudioUseCase: StopAudioUseCase,
     private val isAudioPlayingUseCase: IsAudioPlayingUseCase,
     private val getAudioPositionUseCase: GetAudioPositionUseCase,
-    private val releasePlayerUseCase: ReleasePlayerUseCase
+    private val releasePlayerUseCase: ReleasePlayerUseCase,
+    private val setCompletionListenerUseCase: SetCompletionListenerUseCase
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
@@ -23,7 +24,8 @@ class AudioPlayerViewModelFactory(
             stopAudioUseCase,
             isAudioPlayingUseCase,
             getAudioPositionUseCase,
-            releasePlayerUseCase
+            releasePlayerUseCase,
+            setCompletionListenerUseCase
         ) as T
     }
 }
