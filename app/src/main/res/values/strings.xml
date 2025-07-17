@@ -57,5 +57,6 @@
     <string name="unknown_year">Год не найден</string>
     <string name="unknown_genre">Жанр не найден</string>
     <string name="unknown_country">Страна не найдена</string>
+    <string name="unknown_collection">Альбом не найден</string>
 
 </resources>

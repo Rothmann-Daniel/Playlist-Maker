@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PlaylistMaker">
         <activity
-            android:name=".player.ui.AudioPlayer"
+            android:name=".player.ui.AudioPlayerActivity"
             android:exported="false" />
         <activity
             android:name=".main.ui.MainActivity"

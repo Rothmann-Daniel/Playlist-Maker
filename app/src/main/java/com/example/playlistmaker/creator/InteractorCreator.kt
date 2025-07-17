@@ -2,19 +2,19 @@ package com.example.playlistmaker.creator
 
 
 import android.content.Context
+import android.media.MediaPlayer
+import com.example.playlistmaker.player.data.repository.AudioPlayerRepositoryImpl
+import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
+import com.example.playlistmaker.player.domain.usecase.*
 import com.example.playlistmaker.search.data.network.NetworkClient
 import com.example.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.search.data.repository.TrackRepositoryImpl
 import com.example.playlistmaker.search.domain.repository.TrackRepository
-import com.example.playlistmaker.search.domain.usecase.AddTrackToHistoryUseCase
-import com.example.playlistmaker.search.domain.usecase.ClearSearchHistoryUseCase
-import com.example.playlistmaker.search.domain.usecase.GetSearchHistoryUseCase
-import com.example.playlistmaker.search.domain.usecase.SearchTracksUseCase
+import com.example.playlistmaker.search.domain.usecase.*
 import com.example.playlistmaker.util.App
 
-
-
 object InteractorCreator {
+    // Search-related dependencies
     private val searchHistoryRepository by lazy {
         SearchHistoryRepositoryImpl(
             App.instance.getSharedPreferences("search_history_prefs", Context.MODE_PRIVATE)
@@ -27,9 +27,23 @@ object InteractorCreator {
         TrackRepositoryImpl(networkClient, searchHistoryRepository)
     }
 
-    // UseCases
+    // Player-related dependencies
+    private val audioPlayerRepository: AudioPlayerRepository by lazy {
+        AudioPlayerRepositoryImpl()
+    }
+
+    // Search UseCases
     val searchTracksUseCase by lazy { SearchTracksUseCase(trackRepository) }
     val addTrackToHistoryUseCase by lazy { AddTrackToHistoryUseCase(trackRepository) }
     val getSearchHistoryUseCase by lazy { GetSearchHistoryUseCase(trackRepository) }
     val clearSearchHistoryUseCase by lazy { ClearSearchHistoryUseCase(trackRepository) }
+
+    // Player UseCases
+    val prepareAudioUseCase by lazy { PrepareAudioUseCase(audioPlayerRepository) }
+    val startAudioUseCase by lazy { StartAudioUseCase(audioPlayerRepository) }
+    val pauseAudioUseCase by lazy { PauseAudioUseCase(audioPlayerRepository) }
+    val stopAudioUseCase by lazy { StopAudioUseCase(audioPlayerRepository) }
+    val isAudioPlayingUseCase by lazy { IsAudioPlayingUseCase(audioPlayerRepository) }
+    val getAudioPositionUseCase by lazy { GetAudioPositionUseCase(audioPlayerRepository) }
+    val releasePlayerUseCase by lazy { ReleasePlayerUseCase(audioPlayerRepository) }
 }

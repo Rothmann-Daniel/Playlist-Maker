@@ -24,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.creator.InteractorCreator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.player.ui.AudioPlayer
+import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
@@ -153,7 +153,7 @@ class SearchActivity : AppCompatActivity() {
 
         // Открываем плеер без задержки
         startActivity(
-            Intent(this, AudioPlayer::class.java).apply {
+            Intent(this, AudioPlayerActivity::class.java).apply {
                 putExtra(TRACK_EXTRA, gson.toJson(track))
             }
         )
