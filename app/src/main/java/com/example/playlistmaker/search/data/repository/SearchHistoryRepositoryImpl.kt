@@ -18,14 +18,16 @@ class SearchHistoryRepositoryImpl(
 
     override fun addTrack(track: Track) {
         val history = getHistory().toMutableList()
+        // Удаляем трек, если он уже есть в истории
         history.removeAll { it.trackId == track.trackId }
+        // Добавляем в начало списка
         history.add(0, track)
+        // Обрезаем список, если он слишком большой
         if (history.size > MAX_HISTORY_SIZE) {
-            history.removeAt(history.lastIndex)
+            history.subList(MAX_HISTORY_SIZE, history.size).clear()
         }
         saveHistory(history)
     }
-
     override fun getHistory(): List<Track> {
         val json = sharedPreferences.getString(KEY_HISTORY, null)
         return if (json != null) {

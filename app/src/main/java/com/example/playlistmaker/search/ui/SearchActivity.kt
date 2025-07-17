@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -18,28 +17,22 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.creator.InteractorCreator
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
+import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.search.ui.track.TrackAdapter
+
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
-import kotlinx.coroutines.launch
-import com.example.playlistmaker.search.domain.model.NetworkResult
-import com.example.playlistmaker.search.ui.track.TrackAdapter
 
 class SearchActivity : AppCompatActivity() {
 
-    // UseCases
-    private val searchUseCase = InteractorCreator.searchTracksUseCase
-    private val addToHistoryUseCase = InteractorCreator.addTrackToHistoryUseCase
-    private val getHistoryUseCase = InteractorCreator.getSearchHistoryUseCase
-    private val clearHistoryUseCase = InteractorCreator.clearSearchHistoryUseCase
+    private val viewModel by viewModels<SearchViewModel> { ViewModelFactory(this) }
 
-    // Views
     private lateinit var searchInput: EditText
     private lateinit var clearButton: ImageView
     private lateinit var placeholderNoFound: LinearLayout
@@ -52,21 +45,12 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyTitle: TextView
     private lateinit var progressBar: FrameLayout
 
-    // Data
-    private val tracks = ArrayList<Track>()
-    private val adapter = TrackAdapter(tracks) { onTrackClick(it) }
-    private val historyAdapter = TrackAdapter(ArrayList()) { onTrackClick(it) }
+    private val tracksAdapter = TrackAdapter(emptyList()) { onTrackClick(it) }
+    private val historyAdapter = TrackAdapter(emptyList()) { onTrackClick(it) }
 
-    // Debounce
-    private val searchDebounceHandler = Handler(Looper.getMainLooper())
-    private var searchRunnable: Runnable? = null
-    private val SEARCH_DEBOUNCE_DELAY = 2000L
     private var isClickDebounced = false
+    private val clickDebounceHandler = Handler(Looper.getMainLooper())
     private val CLICK_DEBOUNCE_DELAY = 1000L
-    private var lastInput: String? = null
-
-    // State
-    private var currentDebounceRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,8 +58,8 @@ class SearchActivity : AppCompatActivity() {
 
         initViews()
         setupListeners()
+        observeViewModel()
         restoreState(savedInstanceState)
-        updateHistoryVisibility()
 
         searchInput.post {
             searchInput.requestFocus()
@@ -96,7 +80,7 @@ class SearchActivity : AppCompatActivity() {
         historyTitle = findViewById(R.id.historyTitle)
         progressBar = findViewById(R.id.progressBarContainer)
 
-        trackList.adapter = adapter
+        trackList.adapter = tracksAdapter
         historyRecyclerView.adapter = historyAdapter
     }
 
@@ -110,15 +94,10 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-                updateHistoryVisibility()
-
-                searchRunnable?.let { searchDebounceHandler.removeCallbacks(it) }
+                viewModel.updateHistoryVisibility(!s.isNullOrEmpty())
 
                 if (!s.isNullOrEmpty()) {
-                    searchRunnable = Runnable { performSearch(s.toString()) }
-                    searchDebounceHandler.postDelayed(searchRunnable!!, SEARCH_DEBOUNCE_DELAY)
-                } else {
-                    clearSearchResults()
+                    viewModel.searchDebounced(s.toString())
                 }
             }
 
@@ -126,98 +105,58 @@ class SearchActivity : AppCompatActivity() {
         })
 
         clearButton.setOnClickListener { clearSearch() }
-        updateButton.setOnClickListener { lastInput?.let { performSearch(it) } }
-        clearHistoryButton.setOnClickListener { clearHistory() }
+        updateButton.setOnClickListener { viewModel.retryLastSearch() }
+        clearHistoryButton.setOnClickListener { viewModel.clearHistory() }
 
         searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchRunnable?.let { searchDebounceHandler.removeCallbacks(it) }
-                performSearch(searchInput.text.toString())
+                viewModel.searchImmediately(searchInput.text.toString())
                 true
             } else false
         }
+    }
+
+    private fun observeViewModel() {
+        viewModel.state.observe(this) { state ->
+            when (state) {
+                is SearchViewModel.SearchState.Loading -> showLoading()
+                is SearchViewModel.SearchState.Content -> {
+                    if (state.tracks.isEmpty()) {
+                        showEmptyState() // Показываем пустое состояние вместо заглушки
+                    } else {
+                        showTracks(state.tracks)
+                    }
+                }
+                is SearchViewModel.SearchState.Error -> showError(state.message)
+                is SearchViewModel.SearchState.History -> showHistory(state.tracks)
+            }
+        }
+    }
+
+    private fun showEmptyState() {
+        placeholderNoFound.visibility = View.GONE // Скрываем заглушку
+        placeholderError.visibility = View.GONE
+        progressBar.visibility = View.GONE
+        trackList.visibility = View.VISIBLE
+        historyPlaceholder.visibility = View.GONE
+        tracksAdapter.updateTracks(emptyList()) // Показываем пустой список
     }
 
     private fun onTrackClick(track: Track) {
         if (isClickDebounced) return
         isClickDebounced = true
 
-        // Запускаем добавление в историю (без ожидания завершения)
-        lifecycleScope.launch {
-            try {
-                addToHistoryUseCase(track)
-            } catch (e: Exception) {
-                Log.e("SearchActivity", "Failed to add track to history", e)
-            }
-        }
-
-        // Открываем плеер без задержки
+        // Запускаем плеер сразу, без ожидания сохранения в историю
         startActivity(
             Intent(this, AudioPlayerActivity::class.java).apply {
-                putExtra(TRACK_EXTRA, gson.toJson(track))
+                putExtra(TRACK_EXTRA, Gson().toJson(track))
             }
         )
 
-        // Сбрасываем debounce флаг с задержкой
-        val debounceRunnable = Runnable { isClickDebounced = false }
-        searchDebounceHandler.postDelayed(debounceRunnable, CLICK_DEBOUNCE_DELAY)
-        // Сохраняем Runnable для отмены в onDestroy
-        currentDebounceRunnable = debounceRunnable
-    }
+        // Сохраняем в историю асинхронно (без блокировки UI)
+        viewModel.addTrackToHistory(track)
 
-    private fun performSearch(query: String) {
-        lastInput = query
-        showLoading()
-
-        lifecycleScope.launch {
-            when (val result = searchUseCase(query)) {
-                is NetworkResult.Success<List<Track>> -> {
-                    tracks.clear()
-                    tracks.addAll(result.data)
-                    adapter.notifyDataSetChanged()
-                    showTracks()
-                }
-                is NetworkResult.Failure -> {
-                    showError(result.error)
-                }
-            }
-        }
-    }
-
-    private fun updateHistoryVisibility() {
-        lifecycleScope.launch {
-            val history = getHistoryUseCase()
-            runOnUiThread {
-                val showHistory = searchInput.text.isEmpty() && history.isNotEmpty()
-                historyPlaceholder.visibility = if (showHistory) View.VISIBLE else View.GONE
-                trackList.visibility = if (showHistory) View.GONE else View.VISIBLE
-
-                if (showHistory) {
-                    historyAdapter.updateTracks(history)
-                }
-            }
-        }
-    }
-
-    private fun clearHistory() {
-        lifecycleScope.launch {
-            clearHistoryUseCase()
-            updateHistoryVisibility()
-        }
-    }
-
-    private fun clearSearch() {
-        searchInput.text.clear()
-        hideKeyBoard()
-        clearSearchResults()
-    }
-
-    private fun clearSearchResults() {
-        tracks.clear()
-        adapter.notifyDataSetChanged()
-        placeholderNoFound.visibility = View.GONE
-        placeholderError.visibility = View.GONE
-        progressBar.visibility = View.GONE
+        clickDebounceHandler.postDelayed({ isClickDebounced = false }, CLICK_DEBOUNCE_DELAY)
     }
 
     private fun showLoading() {
@@ -225,25 +164,40 @@ class SearchActivity : AppCompatActivity() {
         placeholderError.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
         trackList.visibility = View.GONE
+        historyPlaceholder.visibility = View.GONE
     }
 
-    private fun showTracks() {
-        adapter.notifyDataSetChanged()
+    private fun showTracks(tracks: List<Track>) {
+        tracksAdapter.updateTracks(tracks)
         placeholderNoFound.visibility = if (tracks.isEmpty()) View.VISIBLE else View.GONE
         placeholderError.visibility = View.GONE
         progressBar.visibility = View.GONE
         trackList.visibility = View.VISIBLE
+        historyPlaceholder.visibility = View.GONE
     }
 
     private fun showError(errorMessage: String) {
-        runOnUiThread {
-            tracks.clear()
-            adapter.notifyDataSetChanged()
-            placeholderNoFound.visibility = View.GONE
-            placeholderError.visibility = View.VISIBLE
-            progressBar.visibility = View.GONE
-            Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_SHORT).show()
-        }
+        placeholderNoFound.visibility = View.GONE
+        placeholderError.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
+        trackList.visibility = View.GONE
+        historyPlaceholder.visibility = View.GONE
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showHistory(tracks: List<Track>) {
+        historyAdapter.updateTracks(tracks)
+        placeholderNoFound.visibility = View.GONE
+        placeholderError.visibility = View.GONE
+        progressBar.visibility = View.GONE
+        trackList.visibility = View.GONE
+        historyPlaceholder.visibility = View.VISIBLE
+    }
+
+    private fun clearSearch() {
+        searchInput.text.clear()
+        hideKeyBoard()
+        viewModel.updateHistoryVisibility(false)
     }
 
     private fun showKeyBoard() {
@@ -268,15 +222,20 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(INPUT_TEXT, searchInput.text.toString())
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (searchInput.text.isEmpty()) {
+            viewModel.updateHistoryVisibility(false)
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        currentDebounceRunnable?.let { searchDebounceHandler.removeCallbacks(it) }
-        searchDebounceHandler.removeCallbacksAndMessages(null)
+        clickDebounceHandler.removeCallbacksAndMessages(null)
     }
 
     companion object {
         const val TRACK_EXTRA = "trackJson"
         private const val INPUT_TEXT = "SEARCH_TEXT"
-        val gson = Gson()
     }
 }

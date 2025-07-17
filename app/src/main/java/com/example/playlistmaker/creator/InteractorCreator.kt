@@ -6,8 +6,8 @@ import com.example.playlistmaker.player.data.repository.AudioPlayerRepositoryImp
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 import com.example.playlistmaker.player.domain.usecase.*
 import com.example.playlistmaker.search.data.network.NetworkClient
-import com.example.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.search.data.repository.TrackRepositoryImpl
+import com.example.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.search.domain.repository.TrackRepository
 import com.example.playlistmaker.search.domain.usecase.*
 import com.example.playlistmaker.util.App
