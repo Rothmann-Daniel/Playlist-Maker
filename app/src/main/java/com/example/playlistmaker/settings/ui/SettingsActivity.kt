@@ -9,18 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.browser.customtabs.CustomTabsIntent
 import com.example.playlistmaker.R
-import com.example.playlistmaker.settings.data.repository.SettingsRepositoryImpl
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
-import com.example.playlistmaker.settings.domain.usecase.GetThemeSettingsUseCase
-import com.example.playlistmaker.settings.domain.usecase.UpdateThemeSettingsUseCase
-import com.example.playlistmaker.util.App
+import com.example.playlistmaker.settings.domain.models.SettingsEvent
 
 
 class SettingsActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivitySettingsBinding
     private val viewModel: SettingsViewModel by viewModels { SettingsViewModelFactory() }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,21 +30,30 @@ class SettingsActivity : AppCompatActivity() {
             )
         }
 
+        viewModel.events.observe(this) { event ->
+            event?.let { handleEvent(it) }
+        }
+
         setupViews()
     }
 
     private fun setupViews() {
         binding.toolBar.setNavigationOnClickListener { finish() }
-
-        // Настройка переключателя темы
         binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
             viewModel.updateThemeSettings(isChecked)
         }
 
+        binding.share.setOnClickListener { viewModel.onShareAppClicked() }
+        binding.support.setOnClickListener { viewModel.onSupportClicked() }
+        binding.userAgreement.setOnClickListener { viewModel.onUserAgreementClicked() }
+    }
 
-        binding.share.setOnClickListener { shareApp() }
-        binding.support.setOnClickListener { sendSupportEmail() }
-        binding.userAgreement.setOnClickListener { openUserAgreement() }
+    private fun handleEvent(event: SettingsEvent) {
+        when (event) {
+            is SettingsEvent.ShareApp -> shareApp()
+            is SettingsEvent.ContactSupport -> sendSupportEmail()
+            is SettingsEvent.OpenUserAgreement -> openUserAgreement()
+        }
     }
 
     private fun shareApp() {
@@ -59,13 +63,7 @@ class SettingsActivity : AppCompatActivity() {
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message))
                 flags = Intent.FLAG_ACTIVITY_NEW_DOCUMENT
             }
-
-            startActivity(
-                Intent.createChooser(
-                    shareIntent,
-                    getString(R.string.share_title)
-                )
-            )
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_title)))
         } catch (e: Exception) {
             showToast("${getString(R.string.share_error)} ${e.localizedMessage}")
         }
@@ -91,10 +89,8 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    // Открытие пользовательского соглашения
     private fun openUserAgreement() {
         val url = getString(R.string.user_agreement_url)
-
         try {
             CustomTabsIntent.Builder()
                 .setShowTitle(true)
@@ -114,6 +110,3 @@ class SettingsActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }
-
-
-
