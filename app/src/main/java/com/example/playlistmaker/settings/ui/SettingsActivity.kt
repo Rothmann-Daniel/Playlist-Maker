@@ -15,10 +15,10 @@ class SettingsActivity : AppCompatActivity() {
     private val viewModel: SettingsViewModel by viewModels {
         SettingsViewModelFactory(
             InteractorCreator.getThemeSettingsUseCase,
-            InteractorCreator.updateThemeSettingsUseCase
+            InteractorCreator.updateThemeSettingsUseCase,
+            InteractorCreator.navigateUseCase
         )
     }
-    private val navigator = SettingsNavigatorImpl()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,13 +41,16 @@ class SettingsActivity : AppCompatActivity() {
         viewModel.navigationEvent.observe(this) { event ->
             when (event) {
                 is SettingsViewModel.NavigationEvent.ShareApp ->
-                    navigator.shareApp(this, event.message)
-
+                    InteractorCreator.navigateUseCase.shareApp(this, event.message)
                 is SettingsViewModel.NavigationEvent.ContactSupport ->
-                    navigator.contactSupport(this, event.email, event.subject, event.body)
-
+                    InteractorCreator.navigateUseCase.contactSupport(
+                        this,
+                        event.email,
+                        event.subject,
+                        event.body
+                    )
                 is SettingsViewModel.NavigationEvent.OpenUserAgreement ->
-                    navigator.openUserAgreement(this, event.url)
+                    InteractorCreator.navigateUseCase.openUserAgreement(this, event.url)
             }
         }
     }

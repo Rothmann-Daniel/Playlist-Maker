@@ -10,8 +10,10 @@ import com.example.playlistmaker.search.data.repository.TrackRepositoryImpl
 import com.example.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.search.domain.repository.TrackRepository
 import com.example.playlistmaker.search.domain.usecase.*
+import com.example.playlistmaker.settings.data.repository.SettingsNavigatorImpl
 import com.example.playlistmaker.settings.data.repository.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.domain.usecase.GetThemeSettingsUseCase
+import com.example.playlistmaker.settings.domain.usecase.NavigateUseCase
 import com.example.playlistmaker.settings.domain.usecase.UpdateThemeSettingsUseCase
 import com.example.playlistmaker.util.App
 
@@ -58,5 +60,8 @@ object InteractorCreator {
     }
     val updateThemeSettingsUseCase by lazy {
         UpdateThemeSettingsUseCase(SettingsRepositoryImpl(App.instance.sharedPrefs))
+    }
+    val navigateUseCase by lazy {
+        NavigateUseCase(SettingsNavigatorImpl())
     }
 }
