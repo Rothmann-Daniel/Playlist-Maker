@@ -11,7 +11,8 @@ import com.example.playlistmaker.settings.domain.usecase.UpdateThemeSettingsUseC
 
 class SettingsViewModel(
     private val getThemeSettingsUseCase: GetThemeSettingsUseCase,
-    private val updateThemeSettingsUseCase: UpdateThemeSettingsUseCase
+    private val updateThemeSettingsUseCase: UpdateThemeSettingsUseCase,
+    private val navigateUseCase: NavigateUseCase
 ) : ViewModel() {
 
     private val _themeState = MutableLiveData<Boolean>()
@@ -21,9 +22,27 @@ class SettingsViewModel(
     val navigationEvent: LiveData<NavigationEvent> = _navigationEvent
 
     sealed class NavigationEvent {
-        data class ShareApp(val message: String) : NavigationEvent()
-        data class ContactSupport(val email: String, val subject: String, val body: String) : NavigationEvent()
-        data class OpenUserAgreement(val url: String) : NavigationEvent()
+        data class ShareApp(
+            val message: String,
+            val shareTitle: String,
+            val noAppMessage: String,
+            val errorMessage: String
+        ) : NavigationEvent()
+
+        data class ContactSupport(
+            val email: String,
+            val subject: String,
+            val body: String,
+            val chooseEmailAppText: String,
+            val noEmailAppMessage: String,
+            val errorMessage: String
+        ) : NavigationEvent()
+
+        data class OpenUserAgreement(
+            val url: String,
+            val noBrowserMessage: String,
+            val errorMessage: String
+        ) : NavigationEvent()
     }
 
     init {
@@ -39,15 +58,47 @@ class SettingsViewModel(
         _themeState.value = darkThemeEnabled
     }
 
-    fun onShareAppClicked(message: String) {
-        _navigationEvent.value = NavigationEvent.ShareApp(message)
+    fun onShareAppClicked(
+        message: String,
+        shareTitle: String,
+        noAppMessage: String,
+        errorMessage: String
+    ) {
+        _navigationEvent.value = NavigationEvent.ShareApp(
+            message = message,
+            shareTitle = shareTitle,
+            noAppMessage = noAppMessage,
+            errorMessage = errorMessage
+        )
     }
 
-    fun onSupportClicked(email: String, subject: String, body: String) {
-        _navigationEvent.value = NavigationEvent.ContactSupport(email, subject, body)
+    fun onSupportClicked(
+        email: String,
+        subject: String,
+        body: String,
+        chooseEmailAppText: String,
+        noEmailAppMessage: String,
+        errorMessage: String
+    ) {
+        _navigationEvent.value = NavigationEvent.ContactSupport(
+            email = email,
+            subject = subject,
+            body = body,
+            chooseEmailAppText = chooseEmailAppText,
+            noEmailAppMessage = noEmailAppMessage,
+            errorMessage = errorMessage
+        )
     }
 
-    fun onUserAgreementClicked(url: String) {
-        _navigationEvent.value = NavigationEvent.OpenUserAgreement(url)
+    fun onUserAgreementClicked(
+        url: String,
+        noBrowserMessage: String,
+        errorMessage: String
+    ) {
+        _navigationEvent.value = NavigationEvent.OpenUserAgreement(
+            url = url,
+            noBrowserMessage = noBrowserMessage,
+            errorMessage = errorMessage
+        )
     }
 }
