@@ -4,12 +4,22 @@ package com.example.playlistmaker.creator
 import android.content.Context
 import com.example.playlistmaker.player.data.repository.AudioPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
-import com.example.playlistmaker.player.domain.usecase.*
+import com.example.playlistmaker.player.domain.usecase.GetAudioPositionUseCase
+import com.example.playlistmaker.player.domain.usecase.IsAudioPlayingUseCase
+import com.example.playlistmaker.player.domain.usecase.PauseAudioUseCase
+import com.example.playlistmaker.player.domain.usecase.PrepareAudioUseCase
+import com.example.playlistmaker.player.domain.usecase.ReleasePlayerUseCase
+import com.example.playlistmaker.player.domain.usecase.SetCompletionListenerUseCase
+import com.example.playlistmaker.player.domain.usecase.StartAudioUseCase
+import com.example.playlistmaker.player.domain.usecase.StopAudioUseCase
 import com.example.playlistmaker.search.data.network.NetworkClient
-import com.example.playlistmaker.search.data.repository.TrackRepositoryImpl
 import com.example.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
+import com.example.playlistmaker.search.data.repository.TrackRepositoryImpl
 import com.example.playlistmaker.search.domain.repository.TrackRepository
-import com.example.playlistmaker.search.domain.usecase.*
+import com.example.playlistmaker.search.domain.usecase.AddTrackToHistoryUseCase
+import com.example.playlistmaker.search.domain.usecase.ClearSearchHistoryUseCase
+import com.example.playlistmaker.search.domain.usecase.GetSearchHistoryUseCase
+import com.example.playlistmaker.search.domain.usecase.SearchTracksUseCase
 import com.example.playlistmaker.settings.data.repository.SettingsNavigatorImpl
 import com.example.playlistmaker.settings.data.repository.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.domain.usecase.GetThemeSettingsUseCase
@@ -58,10 +68,14 @@ object InteractorCreator {
     val getThemeSettingsUseCase by lazy {
         GetThemeSettingsUseCase(SettingsRepositoryImpl(App.instance.sharedPrefs))
     }
+
     val updateThemeSettingsUseCase by lazy {
         UpdateThemeSettingsUseCase(SettingsRepositoryImpl(App.instance.sharedPrefs))
     }
+
     val navigateUseCase by lazy {
-        NavigateUseCase(SettingsNavigatorImpl())
+        NavigateUseCase(
+            SettingsNavigatorImpl(App.instance)
+        )
     }
 }
