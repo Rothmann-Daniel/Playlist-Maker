@@ -52,12 +52,11 @@ object InteractorCreator {
         SetCompletionListenerUseCase(audioPlayerRepository)
     }
 
-    // Settings-related dependencies
-    private val settingsRepository by lazy {
-        SettingsRepositoryImpl(App.instance.sharedPrefs)
-    }
-
     // Settings UseCases
-    val getThemeSettingsUseCase by lazy { GetThemeSettingsUseCase(settingsRepository) }
-    val updateThemeSettingsUseCase by lazy { UpdateThemeSettingsUseCase(settingsRepository) }
+    val getThemeSettingsUseCase by lazy {
+        GetThemeSettingsUseCase(SettingsRepositoryImpl(App.instance.sharedPrefs))
+    }
+    val updateThemeSettingsUseCase by lazy {
+        UpdateThemeSettingsUseCase(SettingsRepositoryImpl(App.instance.sharedPrefs))
+    }
 }

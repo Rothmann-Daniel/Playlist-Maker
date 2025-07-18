@@ -1,27 +1,35 @@
 package com.example.playlistmaker.settings.ui
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.browser.customtabs.CustomTabsIntent
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.InteractorCreator
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
-import com.example.playlistmaker.settings.domain.models.SettingsEvent
+import com.example.playlistmaker.settings.data.repository.SettingsNavigatorImpl
 
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
-    private val viewModel: SettingsViewModel by viewModels { SettingsViewModelFactory() }
+    private val viewModel: SettingsViewModel by viewModels {
+        SettingsViewModelFactory(
+            InteractorCreator.getThemeSettingsUseCase,
+            InteractorCreator.updateThemeSettingsUseCase
+        )
+    }
+    private val navigator = SettingsNavigatorImpl()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        observeViewModel()
+        setupViews()
+    }
+
+    private fun observeViewModel() {
         viewModel.themeState.observe(this) { isDarkTheme ->
             binding.switchTheme.isChecked = isDarkTheme
             AppCompatDelegate.setDefaultNightMode(
@@ -30,83 +38,41 @@ class SettingsActivity : AppCompatActivity() {
             )
         }
 
-        viewModel.events.observe(this) { event ->
-            event?.let { handleEvent(it) }
-        }
+        viewModel.navigationEvent.observe(this) { event ->
+            when (event) {
+                is SettingsViewModel.NavigationEvent.ShareApp ->
+                    navigator.shareApp(this, event.message)
 
-        setupViews()
+                is SettingsViewModel.NavigationEvent.ContactSupport ->
+                    navigator.contactSupport(this, event.email, event.subject, event.body)
+
+                is SettingsViewModel.NavigationEvent.OpenUserAgreement ->
+                    navigator.openUserAgreement(this, event.url)
+            }
+        }
     }
 
     private fun setupViews() {
         binding.toolBar.setNavigationOnClickListener { finish() }
+
         binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
             viewModel.updateThemeSettings(isChecked)
         }
 
-        binding.share.setOnClickListener { viewModel.onShareAppClicked() }
-        binding.support.setOnClickListener { viewModel.onSupportClicked() }
-        binding.userAgreement.setOnClickListener { viewModel.onUserAgreementClicked() }
-    }
-
-    private fun handleEvent(event: SettingsEvent) {
-        when (event) {
-            is SettingsEvent.ShareApp -> shareApp()
-            is SettingsEvent.ContactSupport -> sendSupportEmail()
-            is SettingsEvent.OpenUserAgreement -> openUserAgreement()
-        }
-    }
-
-    private fun shareApp() {
-        try {
-            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message))
-                flags = Intent.FLAG_ACTIVITY_NEW_DOCUMENT
-            }
-            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_title)))
-        } catch (e: Exception) {
-            showToast("${getString(R.string.share_error)} ${e.localizedMessage}")
-        }
-    }
-
-    private fun sendSupportEmail() {
-        val emailIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "message/rfc822"
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
-            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_email_subject))
-            putExtra(Intent.EXTRA_TEXT, getString(R.string.support_email_body))
+        binding.share.setOnClickListener {
+            viewModel.onShareAppClicked(getString(R.string.share_message))
         }
 
-        when {
-            packageManager.queryIntentActivities(emailIntent, 0).isEmpty() -> {
-                showToast(getString(R.string.no_email_app))
-            }
-            else -> try {
-                startActivity(Intent.createChooser(emailIntent, getString(R.string.choose_email_app)))
-            } catch (e: Exception) {
-                showToast(getString(R.string.email_send_error))
-            }
+        binding.support.setOnClickListener {
+            viewModel.onSupportClicked(
+                getString(R.string.support_email),
+                getString(R.string.support_email_subject),
+                getString(R.string.support_email_body)
+            )
         }
-    }
 
-    private fun openUserAgreement() {
-        val url = getString(R.string.user_agreement_url)
-        try {
-            CustomTabsIntent.Builder()
-                .setShowTitle(true)
-                .build()
-                .launchUrl(this, Uri.parse(url))
-        } catch (e: Exception) {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            if (intent.resolveActivity(packageManager) != null) {
-                startActivity(intent)
-            } else {
-                showToast(getString(R.string.no_browser_error))
-            }
+        binding.userAgreement.setOnClickListener {
+            viewModel.onUserAgreementClicked(getString(R.string.user_agreement_url))
         }
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }
