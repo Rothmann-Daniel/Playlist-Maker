@@ -15,8 +15,7 @@ class SettingsActivity : AppCompatActivity() {
     private val viewModel: SettingsViewModel by viewModels {
         SettingsViewModelFactory(
             InteractorCreator.getThemeSettingsUseCase,
-            InteractorCreator.updateThemeSettingsUseCase,
-            InteractorCreator.navigateUseCase
+            InteractorCreator.updateThemeSettingsUseCase
         )
     }
 

@@ -1,6 +1,5 @@
 package com.example.playlistmaker.settings.ui
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,8 +11,7 @@ import com.example.playlistmaker.settings.domain.usecase.UpdateThemeSettingsUseC
 
 class SettingsViewModel(
     private val getThemeSettingsUseCase: GetThemeSettingsUseCase,
-    private val updateThemeSettingsUseCase: UpdateThemeSettingsUseCase,
-    private val navigateUseCase: NavigateUseCase
+    private val updateThemeSettingsUseCase: UpdateThemeSettingsUseCase
 ) : ViewModel() {
 
     private val _themeState = MutableLiveData<Boolean>()
