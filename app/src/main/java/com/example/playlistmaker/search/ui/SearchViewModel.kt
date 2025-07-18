@@ -27,6 +27,7 @@ class SearchViewModel(
         data class Content(val tracks: List<Track>) : SearchState
         data class Error(val message: String) : SearchState
         data class History(val tracks: List<Track>) : SearchState
+        data object EmptyResult : SearchState
     }
 
     private val _state = MutableLiveData<SearchState>()
@@ -36,8 +37,6 @@ class SearchViewModel(
     private var lastSearchQuery: String? = null
 
     init {
-        // Инициализация начального состояния
-        _state.value = SearchState.Content(emptyList())
         loadHistory()
     }
 
@@ -48,10 +47,10 @@ class SearchViewModel(
                 if (history.isNotEmpty()) {
                     _state.postValue(SearchState.History(history))
                 } else {
-                    _state.postValue(SearchState.Content(emptyList())) // Показываем пустой список вместо заглушки
+                    _state.postValue(SearchState.Content(emptyList()))
                 }
             } catch (e: Exception) {
-                _state.postValue(SearchState.Content(emptyList())) // При ошибке тоже показываем пустой список
+                _state.postValue(SearchState.Content(emptyList()))
             }
         }
     }
@@ -77,7 +76,11 @@ class SearchViewModel(
             try {
                 when (val result = searchTracksUseCase(query)) {
                     is NetworkResult.Success -> {
-                        _state.postValue(SearchState.Content(result.data))
+                        if (result.data.isEmpty()) {
+                            _state.postValue(SearchState.EmptyResult)
+                        } else {
+                            _state.postValue(SearchState.Content(result.data))
+                        }
                     }
                     is NetworkResult.Failure -> {
                         _state.postValue(SearchState.Error(result.error))
@@ -99,7 +102,6 @@ class SearchViewModel(
         viewModelScope.launch {
             try {
                 addToHistoryUseCase(track)
-                // Не обновляем историю сразу - это предотвратит мигание
             } catch (e: Exception) {
                 Log.e("SearchViewModel", "Error adding to history", e)
             }

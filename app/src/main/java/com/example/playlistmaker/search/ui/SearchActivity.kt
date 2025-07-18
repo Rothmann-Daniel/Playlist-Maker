@@ -19,7 +19,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
@@ -120,43 +119,12 @@ class SearchActivity : AppCompatActivity() {
         viewModel.state.observe(this) { state ->
             when (state) {
                 is SearchViewModel.SearchState.Loading -> showLoading()
-                is SearchViewModel.SearchState.Content -> {
-                    if (state.tracks.isEmpty()) {
-                        showEmptyState() // Показываем пустое состояние вместо заглушки
-                    } else {
-                        showTracks(state.tracks)
-                    }
-                }
+                is SearchViewModel.SearchState.EmptyResult -> showEmptyResult()
+                is SearchViewModel.SearchState.Content -> showTracks(state.tracks)
                 is SearchViewModel.SearchState.Error -> showError(state.message)
                 is SearchViewModel.SearchState.History -> showHistory(state.tracks)
             }
         }
-    }
-
-    private fun showEmptyState() {
-        placeholderNoFound.visibility = View.GONE // Скрываем заглушку
-        placeholderError.visibility = View.GONE
-        progressBar.visibility = View.GONE
-        trackList.visibility = View.VISIBLE
-        historyPlaceholder.visibility = View.GONE
-        tracksAdapter.updateTracks(emptyList()) // Показываем пустой список
-    }
-
-    private fun onTrackClick(track: Track) {
-        if (isClickDebounced) return
-        isClickDebounced = true
-
-        // Запускаем плеер сразу, без ожидания сохранения в историю
-        startActivity(
-            Intent(this, AudioPlayerActivity::class.java).apply {
-                putExtra(TRACK_EXTRA, Gson().toJson(track))
-            }
-        )
-
-        // Сохраняем в историю асинхронно (без блокировки UI)
-        viewModel.addTrackToHistory(track)
-
-        clickDebounceHandler.postDelayed({ isClickDebounced = false }, CLICK_DEBOUNCE_DELAY)
     }
 
     private fun showLoading() {
@@ -169,10 +137,18 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showTracks(tracks: List<Track>) {
         tracksAdapter.updateTracks(tracks)
-        placeholderNoFound.visibility = if (tracks.isEmpty()) View.VISIBLE else View.GONE
+        placeholderNoFound.visibility = View.GONE
         placeholderError.visibility = View.GONE
         progressBar.visibility = View.GONE
         trackList.visibility = View.VISIBLE
+        historyPlaceholder.visibility = View.GONE
+    }
+
+    private fun showEmptyResult() {
+        placeholderNoFound.visibility = View.VISIBLE
+        placeholderError.visibility = View.GONE
+        progressBar.visibility = View.GONE
+        trackList.visibility = View.GONE
         historyPlaceholder.visibility = View.GONE
     }
 
@@ -192,6 +168,21 @@ class SearchActivity : AppCompatActivity() {
         progressBar.visibility = View.GONE
         trackList.visibility = View.GONE
         historyPlaceholder.visibility = View.VISIBLE
+    }
+
+    private fun onTrackClick(track: Track) {
+        if (isClickDebounced) return
+        isClickDebounced = true
+
+        startActivity(
+            Intent(this, AudioPlayerActivity::class.java).apply {
+                putExtra(TRACK_EXTRA, Gson().toJson(track))
+            }
+        )
+
+        viewModel.addTrackToHistory(track)
+
+        clickDebounceHandler.postDelayed({ isClickDebounced = false }, CLICK_DEBOUNCE_DELAY)
     }
 
     private fun clearSearch() {
