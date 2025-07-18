@@ -19,17 +19,21 @@ import com.example.playlistmaker.util.App
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
-    private val viewModel: SettingsViewModel by viewModels {
-        SettingsViewModelFactory(
-            GetThemeSettingsUseCase(SettingsRepositoryImpl((application as App).sharedPrefs)),
-            UpdateThemeSettingsUseCase(SettingsRepositoryImpl((application as App).sharedPrefs))
-        )
-    }
+    private val viewModel: SettingsViewModel by viewModels { SettingsViewModelFactory() }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        viewModel.themeState.observe(this) { isDarkTheme ->
+            binding.switchTheme.isChecked = isDarkTheme
+            AppCompatDelegate.setDefaultNightMode(
+                if (isDarkTheme) AppCompatDelegate.MODE_NIGHT_YES
+                else AppCompatDelegate.MODE_NIGHT_NO
+            )
+        }
 
         setupViews()
     }
@@ -38,13 +42,8 @@ class SettingsActivity : AppCompatActivity() {
         binding.toolBar.setNavigationOnClickListener { finish() }
 
         // Настройка переключателя темы
-        binding.switchTheme.isChecked = viewModel.getThemeSettings()
         binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
             viewModel.updateThemeSettings(isChecked)
-            AppCompatDelegate.setDefaultNightMode(
-                if (isChecked) AppCompatDelegate.MODE_NIGHT_YES
-                else AppCompatDelegate.MODE_NIGHT_NO
-            )
         }
 
 

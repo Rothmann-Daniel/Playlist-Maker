@@ -2,16 +2,15 @@ package com.example.playlistmaker.settings.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.settings.domain.usecase.GetThemeSettingsUseCase
-import com.example.playlistmaker.settings.domain.usecase.UpdateThemeSettingsUseCase
+import com.example.playlistmaker.creator.InteractorCreator
 
-class SettingsViewModelFactory(
-    private val getThemeSettingsUseCase: GetThemeSettingsUseCase,
-    private val updateThemeSettingsUseCase: UpdateThemeSettingsUseCase
-) : ViewModelProvider.Factory {
+class SettingsViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
-            return SettingsViewModel(getThemeSettingsUseCase, updateThemeSettingsUseCase) as T
+            return SettingsViewModel(
+                InteractorCreator.getThemeSettingsUseCase,
+                InteractorCreator.updateThemeSettingsUseCase
+            ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

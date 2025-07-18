@@ -10,6 +10,9 @@ import com.example.playlistmaker.search.data.repository.TrackRepositoryImpl
 import com.example.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.search.domain.repository.TrackRepository
 import com.example.playlistmaker.search.domain.usecase.*
+import com.example.playlistmaker.settings.data.repository.SettingsRepositoryImpl
+import com.example.playlistmaker.settings.domain.usecase.GetThemeSettingsUseCase
+import com.example.playlistmaker.settings.domain.usecase.UpdateThemeSettingsUseCase
 import com.example.playlistmaker.util.App
 
 object InteractorCreator {
@@ -26,16 +29,16 @@ object InteractorCreator {
         TrackRepositoryImpl(networkClient, searchHistoryRepository)
     }
 
-    // Player-related dependencies
-    private val audioPlayerRepository: AudioPlayerRepository by lazy {
-        AudioPlayerRepositoryImpl()
-    }
-
     // Search UseCases
     val searchTracksUseCase by lazy { SearchTracksUseCase(trackRepository) }
     val addTrackToHistoryUseCase by lazy { AddTrackToHistoryUseCase(trackRepository) }
     val getSearchHistoryUseCase by lazy { GetSearchHistoryUseCase(trackRepository) }
     val clearSearchHistoryUseCase by lazy { ClearSearchHistoryUseCase(trackRepository) }
+
+    // Player-related dependencies
+    private val audioPlayerRepository: AudioPlayerRepository by lazy {
+        AudioPlayerRepositoryImpl()
+    }
 
     // Player UseCases
     val prepareAudioUseCase by lazy { PrepareAudioUseCase(audioPlayerRepository) }
@@ -48,4 +51,13 @@ object InteractorCreator {
     val setCompletionListenerUseCase by lazy {
         SetCompletionListenerUseCase(audioPlayerRepository)
     }
+
+    // Settings-related dependencies
+    private val settingsRepository by lazy {
+        SettingsRepositoryImpl(App.instance.sharedPrefs)
+    }
+
+    // Settings UseCases
+    val getThemeSettingsUseCase by lazy { GetThemeSettingsUseCase(settingsRepository) }
+    val updateThemeSettingsUseCase by lazy { UpdateThemeSettingsUseCase(settingsRepository) }
 }
