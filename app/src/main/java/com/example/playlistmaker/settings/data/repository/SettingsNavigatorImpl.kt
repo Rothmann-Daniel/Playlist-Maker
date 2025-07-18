@@ -3,20 +3,19 @@ package com.example.playlistmaker.settings.data.repository
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
-import com.example.playlistmaker.R
 import com.example.playlistmaker.settings.domain.repository.SettingsNavigator
 
 class SettingsNavigatorImpl : SettingsNavigator {
+
     override fun shareApp(
         context: Context,
         message: String,
         shareTitle: String,
         noAppMessage: String,
         errorMessage: String
-    ) {
-        try {
+    ): SettingsNavigator.NavigationResult {
+        return try {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, message)
@@ -25,11 +24,12 @@ class SettingsNavigatorImpl : SettingsNavigator {
 
             if (shareIntent.resolveActivity(context.packageManager) != null) {
                 context.startActivity(Intent.createChooser(shareIntent, shareTitle))
+                SettingsNavigator.NavigationResult.Success
             } else {
-                showToast(context, noAppMessage)
+                SettingsNavigator.NavigationResult.NoAppFound(noAppMessage)
             }
         } catch (e: Exception) {
-            showToast(context, "$errorMessage ${e.localizedMessage}")
+            SettingsNavigator.NavigationResult.Error("$errorMessage ${e.localizedMessage}")
         }
     }
 
@@ -41,9 +41,9 @@ class SettingsNavigatorImpl : SettingsNavigator {
         chooseEmailAppText: String,
         noEmailAppMessage: String,
         errorMessage: String
-    ) {
-        try {
-            val intent = Intent(Intent.ACTION_SENDTO).apply {
+    ): SettingsNavigator.NavigationResult {
+        return try {
+            val mailtoIntent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
                 putExtra(Intent.EXTRA_SUBJECT, subject)
@@ -51,8 +51,9 @@ class SettingsNavigatorImpl : SettingsNavigator {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
 
-            if (intent.resolveActivity(context.packageManager) != null) {
-                context.startActivity(intent)
+            if (mailtoIntent.resolveActivity(context.packageManager) != null) {
+                context.startActivity(mailtoIntent)
+                SettingsNavigator.NavigationResult.Success
             } else {
                 val fallbackIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
@@ -64,12 +65,13 @@ class SettingsNavigatorImpl : SettingsNavigator {
 
                 if (fallbackIntent.resolveActivity(context.packageManager) != null) {
                     context.startActivity(Intent.createChooser(fallbackIntent, chooseEmailAppText))
+                    SettingsNavigator.NavigationResult.Success
                 } else {
-                    showToast(context, noEmailAppMessage)
+                    SettingsNavigator.NavigationResult.NoAppFound(noEmailAppMessage)
                 }
             }
         } catch (e: Exception) {
-            showToast(context, "$errorMessage: ${e.localizedMessage}")
+            SettingsNavigator.NavigationResult.Error("$errorMessage: ${e.localizedMessage}")
         }
     }
 
@@ -78,8 +80,8 @@ class SettingsNavigatorImpl : SettingsNavigator {
         url: String,
         noBrowserMessage: String,
         errorMessage: String
-    ) {
-        try {
+    ): SettingsNavigator.NavigationResult {
+        return try {
             val uri = Uri.parse(url)
             val customTabsIntent = CustomTabsIntent.Builder()
                 .setShowTitle(true)
@@ -89,22 +91,20 @@ class SettingsNavigatorImpl : SettingsNavigator {
 
             try {
                 customTabsIntent.launchUrl(context, uri)
+                SettingsNavigator.NavigationResult.Success
             } catch (e: Exception) {
                 val browserIntent = Intent(Intent.ACTION_VIEW, uri)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
                 if (browserIntent.resolveActivity(context.packageManager) != null) {
                     context.startActivity(browserIntent)
+                    SettingsNavigator.NavigationResult.Success
                 } else {
-                    showToast(context, noBrowserMessage)
+                    SettingsNavigator.NavigationResult.NoAppFound(noBrowserMessage)
                 }
             }
         } catch (e: Exception) {
-            showToast(context, errorMessage)
+            SettingsNavigator.NavigationResult.Error(errorMessage)
         }
-    }
-
-    private fun showToast(context: Context, message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 }

@@ -4,14 +4,21 @@ import android.content.Context
 import com.example.playlistmaker.settings.domain.repository.SettingsNavigator
 
 class NavigateUseCase(private val settingsNavigator: SettingsNavigator) {
+
     fun shareApp(
         context: Context,
         message: String,
         shareTitle: String,
         noAppMessage: String,
         errorMessage: String
-    ) {
-        settingsNavigator.shareApp(context, message, shareTitle, noAppMessage, errorMessage)
+    ): SettingsNavigator.NavigationResult {
+        return settingsNavigator.shareApp(
+            context = context,
+            message = message,
+            shareTitle = shareTitle,
+            noAppMessage = noAppMessage,
+            errorMessage = errorMessage
+        )
     }
 
     fun contactSupport(
@@ -22,15 +29,15 @@ class NavigateUseCase(private val settingsNavigator: SettingsNavigator) {
         chooseEmailAppText: String,
         noEmailAppMessage: String,
         errorMessage: String
-    ) {
-        settingsNavigator.contactSupport(
-            context,
-            email,
-            subject,
-            body,
-            chooseEmailAppText,
-            noEmailAppMessage,
-            errorMessage
+    ): SettingsNavigator.NavigationResult {
+        return settingsNavigator.contactSupport(
+            context = context,
+            email = email,
+            subject = subject,
+            body = body,
+            chooseEmailAppText = chooseEmailAppText,
+            noEmailAppMessage = noEmailAppMessage,
+            errorMessage = errorMessage
         )
     }
 
@@ -39,7 +46,12 @@ class NavigateUseCase(private val settingsNavigator: SettingsNavigator) {
         url: String,
         noBrowserMessage: String,
         errorMessage: String
-    ) {
-        settingsNavigator.openUserAgreement(context, url, noBrowserMessage, errorMessage)
+    ): SettingsNavigator.NavigationResult {
+        return settingsNavigator.openUserAgreement(
+            context = context,
+            url = url,
+            noBrowserMessage = noBrowserMessage,
+            errorMessage = errorMessage
+        )
     }
 }

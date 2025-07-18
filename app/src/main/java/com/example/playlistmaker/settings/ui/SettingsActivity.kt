@@ -7,9 +7,12 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.InteractorCreator
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
+import com.example.playlistmaker.settings.domain.repository.SettingsNavigator
+import com.google.android.material.snackbar.Snackbar
 
 
 class SettingsActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivitySettingsBinding
     private val viewModel: SettingsViewModel by viewModels {
         SettingsViewModelFactory(
@@ -51,6 +54,7 @@ class SettingsActivity : AppCompatActivity() {
     private fun setupClickListeners() {
         binding.share.setOnClickListener {
             viewModel.onShareAppClicked(
+                context = this,
                 message = getString(R.string.share_message),
                 shareTitle = getString(R.string.share_title),
                 noAppMessage = getString(R.string.no_app_to_share),
@@ -60,6 +64,7 @@ class SettingsActivity : AppCompatActivity() {
 
         binding.support.setOnClickListener {
             viewModel.onSupportClicked(
+                context = this,
                 email = getString(R.string.support_email),
                 subject = getString(R.string.support_email_subject),
                 body = getString(R.string.support_email_body),
@@ -71,6 +76,7 @@ class SettingsActivity : AppCompatActivity() {
 
         binding.userAgreement.setOnClickListener {
             viewModel.onUserAgreementClicked(
+                context = this,
                 url = getString(R.string.user_agreement_url),
                 noBrowserMessage = getString(R.string.no_browser_error),
                 errorMessage = getString(R.string.browser_error)
@@ -79,37 +85,26 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.navigationEvent.observe(this) { event ->
-            when (event) {
-                is SettingsViewModel.NavigationEvent.ShareApp -> {
-                    InteractorCreator.navigateUseCase.shareApp(
-                        context = this,
-                        message = event.message,
-                        shareTitle = event.shareTitle,
-                        noAppMessage = event.noAppMessage,
-                        errorMessage = event.errorMessage
-                    )
+        viewModel.navigationResult.observe(this) { result ->
+            when (result) {
+                is SettingsNavigator.NavigationResult.Error -> {
+                    showMessage(result.message)
                 }
-                is SettingsViewModel.NavigationEvent.ContactSupport -> {
-                    InteractorCreator.navigateUseCase.contactSupport(
-                        context = this,
-                        email = event.email,
-                        subject = event.subject,
-                        body = event.body,
-                        chooseEmailAppText = event.chooseEmailAppText,
-                        noEmailAppMessage = event.noEmailAppMessage,
-                        errorMessage = event.errorMessage
-                    )
+                is SettingsNavigator.NavigationResult.NoAppFound -> {
+                    showMessage(result.message)
                 }
-                is SettingsViewModel.NavigationEvent.OpenUserAgreement -> {
-                    InteractorCreator.navigateUseCase.openUserAgreement(
-                        context = this,
-                        url = event.url,
-                        noBrowserMessage = event.noBrowserMessage,
-                        errorMessage = event.errorMessage
-                    )
+                SettingsNavigator.NavigationResult.Success -> {
+                    // Успешная навигация не требует действий
                 }
             }
         }
+
+        viewModel.toastMessage.observe(this) { message ->
+            showMessage(message)
+        }
+    }
+
+    private fun showMessage(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
     }
 }
