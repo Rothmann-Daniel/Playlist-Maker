@@ -41,6 +41,7 @@
     <string name="unknown_year">Unknown year</string>
     <string name="unknown_genre">Unknown genre</string>
     <string name="unknown_country">Unknown country</string>
+    <string name="unknown_collection">Unknow collection</string>
 
 
 </resources>
