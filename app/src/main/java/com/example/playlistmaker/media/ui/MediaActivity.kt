@@ -30,7 +30,6 @@ class MediaActivity : AppCompatActivity() {
             .placeholder(R.drawable.splash)
             .transform(RoundedCorners(100))
             .into(image)
-        //Glide.with(applicationContext).load(imageUrl).into(image)
     }
 
 }
