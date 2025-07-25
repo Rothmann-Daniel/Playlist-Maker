@@ -9,12 +9,14 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.search.domain.model.Track
 import com.google.gson.Gson
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAudioPlayerBinding
     private val viewModel: AudioPlayerViewModel by viewModel() // Используем Koin ViewModel
+    private val gson: Gson by inject() // Добавляем получение Gson из Koin
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +52,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     private fun getTrackFromIntent(): Track {
         val trackJson = intent.getStringExtra("trackJson")
             ?: throw IllegalArgumentException("Track data is missing")
-        return Gson().fromJson(trackJson, Track::class.java)
+        return gson.fromJson(trackJson, Track::class.java) // Используем внедренный Gson
     }
 
     private fun loadTrackCover(track: Track) {

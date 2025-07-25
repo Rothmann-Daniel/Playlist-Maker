@@ -17,7 +17,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
@@ -26,11 +25,13 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.track.TrackAdapter
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
     private val viewModel: SearchViewModel by viewModel()
+    private val gson: Gson by inject() // Добавляем получение Gson из Koin
 
     private lateinit var searchInput: EditText
     private lateinit var clearButton: ImageView
@@ -176,7 +177,7 @@ class SearchActivity : AppCompatActivity() {
 
         startActivity(
             Intent(this, AudioPlayerActivity::class.java).apply {
-                putExtra(TRACK_EXTRA, Gson().toJson(track))
+                putExtra(TRACK_EXTRA, gson.toJson(track)) // Используем внедренный Gson
             }
         )
 
