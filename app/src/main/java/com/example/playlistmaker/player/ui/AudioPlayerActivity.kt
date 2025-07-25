@@ -26,7 +26,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         setupObservers()
     }
 
-    // Остальные методы без изменений
     private fun initToolbar() {
         binding.toolbarAudioplayer.setNavigationOnClickListener { finish() }
     }
