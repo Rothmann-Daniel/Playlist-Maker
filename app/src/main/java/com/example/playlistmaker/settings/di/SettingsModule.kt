@@ -17,12 +17,7 @@ import org.koin.dsl.module
 val settingsModule = module {
     // Репозиторий
     single<SettingsRepository> {
-        SettingsRepositoryImpl(
-            androidContext().getSharedPreferences(
-                "settings_prefs",
-                Context.MODE_PRIVATE
-            )
-        )
+        SettingsRepositoryImpl(get()) // Используем общие SharedPreferences
     }
 
     // Навигатор (исправленная строка)

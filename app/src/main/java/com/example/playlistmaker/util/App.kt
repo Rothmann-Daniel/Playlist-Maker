@@ -3,7 +3,7 @@ package com.example.playlistmaker.util
 
 import android.app.Application
 import android.content.Context
-import android.content.res.Configuration
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.player.di.playerModule
 import com.example.playlistmaker.search.di.networkModule
@@ -22,6 +22,9 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        // Инициализация темы ДО Koin и других компонентов
+        initTheme()
+
         startKoin {
             androidContext(this@App)
             modules(
@@ -34,19 +37,19 @@ class App : Application() {
                     single(named("search_history_prefs")) {
                         getSharedPreferences("search_history", Context.MODE_PRIVATE)
                     }
+                    single<SharedPreferences> {
+                        getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+                    }
                 }
             )
         }
+    }
 
-        // Инициализация темы
+    private fun initTheme() {
         val sharedPrefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-        if (!sharedPrefs.contains(SettingsRepositoryImpl.THEMES_KEY)) {
-            val isSystemDark = (resources.configuration.uiMode and
-                    Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-            sharedPrefs.edit().putBoolean(SettingsRepositoryImpl.THEMES_KEY, isSystemDark).apply()
-        }
+        val darkThemeEnabled = sharedPrefs.getBoolean(SettingsRepositoryImpl.THEMES_KEY, false)
         AppCompatDelegate.setDefaultNightMode(
-            if (sharedPrefs.getBoolean(SettingsRepositoryImpl.THEMES_KEY, false)) {
+            if (darkThemeEnabled) {
                 AppCompatDelegate.MODE_NIGHT_YES
             } else {
                 AppCompatDelegate.MODE_NIGHT_NO
