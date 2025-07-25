@@ -24,13 +24,13 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.track.TrackAdapter
-
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
-    private val viewModel by viewModels<SearchViewModel> { ViewModelFactory(this) }
+    private val viewModel: SearchViewModel by viewModel()
 
     private lateinit var searchInput: EditText
     private lateinit var clearButton: ImageView

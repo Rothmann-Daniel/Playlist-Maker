@@ -18,5 +18,6 @@ class SettingsRepositoryImpl(private val sharedPreferences: SharedPreferences) :
 
     companion object {
         const val THEMES_KEY = "themes_key"
+
     }
 }
