@@ -4,6 +4,7 @@ package com.example.playlistmaker.util
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.player.di.playerModule
 import com.example.playlistmaker.search.di.networkModule
@@ -47,6 +48,17 @@ class App : Application() {
 
     private fun initTheme() {
         val sharedPrefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+
+        // Если настройка темы отсутствует, определяем системную тему и сохраняем
+        if (!sharedPrefs.contains(SettingsRepositoryImpl.THEMES_KEY)) {
+            val isSystemDark = (resources.configuration.uiMode and
+                    Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+            sharedPrefs.edit()
+                .putBoolean(SettingsRepositoryImpl.THEMES_KEY, isSystemDark)
+                .apply()
+        }
+
+        // Устанавливаем тему (сохранённую или системную)
         val darkThemeEnabled = sharedPrefs.getBoolean(SettingsRepositoryImpl.THEMES_KEY, false)
         AppCompatDelegate.setDefaultNightMode(
             if (darkThemeEnabled) {
