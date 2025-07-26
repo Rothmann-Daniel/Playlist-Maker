@@ -2,31 +2,21 @@ package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.InteractorCreator
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.search.domain.model.Track
 import com.google.gson.Gson
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAudioPlayerBinding
-    private val viewModel: AudioPlayerViewModel by viewModels {
-        AudioPlayerViewModelFactory(
-            InteractorCreator.prepareAudioUseCase,
-            InteractorCreator.startAudioUseCase,
-            InteractorCreator.pauseAudioUseCase,
-            InteractorCreator.stopAudioUseCase,
-            InteractorCreator.isAudioPlayingUseCase,
-            InteractorCreator.getAudioPositionUseCase,
-            InteractorCreator.releasePlayerUseCase,
-            InteractorCreator.setCompletionListenerUseCase
-        )
-    }
+    private val viewModel: AudioPlayerViewModel by viewModel() // Используем Koin ViewModel
+    private val gson: Gson by inject() // Добавляем получение Gson из Koin
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +28,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         setupObservers()
     }
 
-
     private fun initToolbar() {
         binding.toolbarAudioplayer.setNavigationOnClickListener { finish() }
     }
@@ -48,7 +37,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         loadTrackCover(track)
         setTrackInfo(track)
 
-        // Убеждаемся, что previewUrl не null перед использованием
         track.previewUrl?.let { url ->
             viewModel.preparePlayer(url)
         } ?: run {
@@ -64,7 +52,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     private fun getTrackFromIntent(): Track {
         val trackJson = intent.getStringExtra("trackJson")
             ?: throw IllegalArgumentException("Track data is missing")
-        return Gson().fromJson(trackJson, Track::class.java)
+        return gson.fromJson(trackJson, Track::class.java) // Используем внедренный Gson
     }
 
     private fun loadTrackCover(track: Track) {
@@ -82,7 +70,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     private fun setTrackInfo(track: Track) {
         binding.tvTrackName.text = track.trackName
         binding.tvArtistName.text = track.artistName
-        binding.tvDurationValue.text = track.trackTimeMillis?.let { viewModel.formatTime(it) }  ?: "--:--"
+        binding.tvDurationValue.text = track.trackTimeMillis?.let { viewModel.formatTime(it) } ?: "--:--"
         binding.tvCollectionNameValue.text = track.collectionName ?: getString(R.string.unknown_collection)
         binding.tvReleaseDateValue.text = track.releaseDate?.take(4) ?: getString(R.string.unknown_year)
         binding.tvPrimaryGenreNameValue.text = track.primaryGenreName ?: getString(R.string.unknown_genre)

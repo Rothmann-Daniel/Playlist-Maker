@@ -62,4 +62,7 @@ dependencies {
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.activity:activity-ktx:1.6.1")
+    // Koin
+    implementation("io.insert-koin:koin-android:3.4.0")
+
 }

@@ -8,7 +8,7 @@ import com.google.gson.reflect.TypeToken
 
 class SearchHistoryRepositoryImpl(
     private val sharedPreferences: SharedPreferences,
-    private val gson: Gson = Gson()
+    private val gson: Gson // получаем из DI
 ) : SearchHistoryRepository {
 
     private companion object {

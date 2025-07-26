@@ -2,9 +2,12 @@ package com.example.playlistmaker.player.data.repository
 
 import android.media.MediaPlayer
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
+import com.example.playlistmaker.player.domain.repository.MediaPlayerProvider
 import java.io.IOException
 
-class AudioPlayerRepositoryImpl : AudioPlayerRepository {
+class AudioPlayerRepositoryImpl(
+    private val mediaPlayerProvider: MediaPlayerProvider
+) : AudioPlayerRepository {
 
     private var mediaPlayer: MediaPlayer? = null
 
@@ -15,7 +18,7 @@ class AudioPlayerRepositoryImpl : AudioPlayerRepository {
     ) {
         try {
             mediaPlayer?.release()
-            mediaPlayer = MediaPlayer().apply {
+            mediaPlayer = mediaPlayerProvider.createMediaPlayer().apply {
                 setDataSource(url)
                 setOnPreparedListener { onPrepared() }
                 setOnErrorListener { _, what, extra ->
@@ -30,6 +33,7 @@ class AudioPlayerRepositoryImpl : AudioPlayerRepository {
             onError("MediaPlayer error: ${e.message}")
         }
     }
+
 
     override fun start() {
         mediaPlayer?.start()

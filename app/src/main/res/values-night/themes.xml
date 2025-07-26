@@ -21,5 +21,6 @@
         <item name="no_connection">@color/no_connection_color_night</item>
         <item name="textColorAudioPlayer">@color/textColor_AudioPlayer</item>
         <item name="btn_Play_Stop">@color/btn_Play_Stop</item>
+        <item name="hint_color_search">@color/hint_color</item>
     </style>
 </resources>
