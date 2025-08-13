@@ -1,13 +1,12 @@
 package com.example.playlistmaker.media.ui
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityMediaBinding
 import com.google.android.material.tabs.TabLayoutMediator
-import org.koin.android.ext.android.inject
-import org.koin.core.parameter.parametersOf
 
 
 class MediaActivity : AppCompatActivity() {
@@ -18,8 +17,9 @@ class MediaActivity : AppCompatActivity() {
 
     private lateinit var tabMediator: TabLayoutMediator
 
-    //  создание адаптера через Koin
-    private val adapter: MediaViewPagerAdapter by inject { parametersOf(supportFragmentManager, lifecycle) }
+    //Создаем адаптер напрямую
+    private val adapter by lazy { MediaViewPagerAdapter(this) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,10 +27,20 @@ class MediaActivity : AppCompatActivity() {
         _binding = ActivityMediaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //Обработчик нажатия на кнопку навигаци: Назад
+        //Обработка кнопки "Назад" в Toolbar
         binding.toolBarMedia.setNavigationOnClickListener {
             finish()
         }
+
+        //Обработчик нажатия на системную кнопку навигаци: Назад
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
+        //Настройка ViewPager и TabLayout
 
         binding.viewPager.adapter = adapter
 
@@ -43,6 +53,8 @@ class MediaActivity : AppCompatActivity() {
         tabMediator.attach()
     }
 
+
+    //Очистка при уничтожении
     override fun onDestroy() {
         super.onDestroy()
         tabMediator.detach()

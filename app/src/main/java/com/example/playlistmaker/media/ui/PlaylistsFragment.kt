@@ -1,24 +1,19 @@
 package com.example.playlistmaker.media.ui
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = PlaylistsFragment()
-    }
 
     private var _binding: FragmentPlaylistsBinding?=null
     private val binding get() = _binding!!
 
-    private val viewModel: PlaylistsViewModel by viewModels()
+    private val viewModel: PlaylistsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,16 +32,6 @@ class PlaylistsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Подписываемся на изменения в ViewModel
-        binding.addPlayList.setOnClickListener {
-            viewModel.createPlayList()
-        }
-
-        viewModel.toastMessage.observe(viewLifecycleOwner) { message ->
-            message?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                viewModel.resetToastMessage()  // Сбрасываем сообщение
-            }
-        }
 
     }
 
@@ -54,5 +39,9 @@ class PlaylistsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        fun newInstance() = PlaylistsFragment()
     }
 }

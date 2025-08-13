@@ -1,23 +1,19 @@
 package com.example.playlistmaker.media.ui
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.playlistmaker.databinding.FragmentFavoriteTracksBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoriteTracksFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = FavoriteTracksFragment()
-    }
 
     private var _binding: FragmentFavoriteTracksBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: FavoriteTracksViewModel by viewModels()
+    private val viewModel: FavoriteTracksViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,5 +41,10 @@ class FavoriteTracksFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+
+    companion object {
+        fun newInstance() = FavoriteTracksFragment()
     }
 }
