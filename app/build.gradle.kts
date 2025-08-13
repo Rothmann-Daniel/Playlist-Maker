@@ -56,26 +56,24 @@ dependencies {
     implementation (libs.glide)
     annotationProcessor (libs.compiler)
     // Gson
-    implementation("com.google.code.gson:gson:2.10")
+    implementation(libs.gson)
     // Retrofit
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation (libs.retrofit)
+    implementation (libs.retrofit2.converter.gson)
     // Logging interceptor (для удобства отладки)
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0")
+    implementation (libs.logging.interceptor)
+    implementation (libs.androidx.lifecycle.runtime.ktx)
     // ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
-    implementation("androidx.activity:activity-ktx:1.6.1")
+    implementation(libs.androidx.lifecycle.viewmodel.ktx.v251)
+    implementation(libs.androidx.activity.ktx)
     // Koin
-    implementation("io.insert-koin:koin-android:3.4.0")
+    implementation(libs.koin.android)
     //Fragment
-    implementation ("androidx.fragment:fragment-ktx:1.5.5")
-    implementation("androidx.fragment:fragment-ktx:1.6.2")
-    implementation("androidx.viewpager2:viewpager2:1.0.0")
-    // UI
-    implementation("com.google.android.material:material:1.8.0")
-    implementation("com.google.android.material:material:1.9.0")
+    implementation (libs.androidx.fragment.ktx.v155)
+    implementation(libs.androidx.fragment.ktx.v162)
+    implementation(libs.androidx.viewpager2)
+
     // Navigation
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.5.3")
-    implementation ("androidx.navigation:navigation-ui-ktx:2.5.3")
+    implementation (libs.androidx.navigation.fragment.ktx)
+    implementation (libs.androidx.navigation.ui.ktx)
 }
