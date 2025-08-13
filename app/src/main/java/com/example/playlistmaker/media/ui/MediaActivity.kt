@@ -1,35 +1,51 @@
 package com.example.playlistmaker.media.ui
 
 import android.os.Bundle
-import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.appbar.MaterialToolbar
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.ActivityMediaBinding
+import com.google.android.material.tabs.TabLayoutMediator
+import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 
 
 class MediaActivity : AppCompatActivity() {
+
+    private var _binding: ActivityMediaBinding? = null
+
+    private val binding get() = _binding!!
+
+    private lateinit var tabMediator: TabLayoutMediator
+
+    //  создание адаптера через Koin
+    private val adapter: MediaViewPagerAdapter by inject { parametersOf(supportFragmentManager, lifecycle) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_media)
+        _binding = ActivityMediaBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         //Обработчик нажатия на кнопку навигаци: Назад
-        val navBack = findViewById<MaterialToolbar>(R.id.tool_bar_media)
-        navBack.setNavigationOnClickListener {
+        binding.toolBarMedia.setNavigationOnClickListener {
             finish()
         }
 
-        val imageUrl = "https://img.freepik.com/premium-vector/draw-cat-brown-box-so-funny-word-have-nice-day_45130-561.jpg?w=740"
+        binding.viewPager.adapter = adapter
 
-        val image = findViewById<ImageView>(R.id.imageTestInternet)
-        Glide.with(this)
-            .load(imageUrl)
-            .placeholder(R.drawable.splash)
-            .transform(RoundedCorners(100))
-            .into(image)
+        tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            when (position) {
+                0 -> tab.text = getString(R.string.favorite_tracks)
+                1 -> tab.text = getString(R.string.play_lists)
+            }
+        }
+        tabMediator.attach()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        tabMediator.detach()
     }
 
 }

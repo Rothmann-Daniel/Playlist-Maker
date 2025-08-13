@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.media.di.mediaModule
 import com.example.playlistmaker.player.di.playerModule
 import com.example.playlistmaker.search.di.networkModule
 import com.example.playlistmaker.search.di.searchModule
@@ -32,6 +33,7 @@ class App : Application() {
                 networkModule,
                 searchModule,
                 settingsModule,
+                mediaModule,
                 playerModule,
                 module {
                     single { Gson() }
@@ -69,4 +71,3 @@ class App : Application() {
         )
     }
 }
-// init dev_sprint18

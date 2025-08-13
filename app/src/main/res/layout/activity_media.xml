@@ -1,39 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    tools:context=".media.ui.MediaActivity">
 
-  <!-- MaterialToolbar (заголовок + back) -->
-  <com.google.android.material.appbar.MaterialToolbar
-      android:id="@+id/tool_bar_media"
-      style="@style/ToolBarButton"
-      app:title="@string/button_media"/>
+    <!-- MaterialToolbar (заголовок + back) -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/tool_bar_media"
+        style="@style/ToolBarButton"
+        app:title="@string/button_media" />
 
-  <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="Media Screen"
-      android:textSize="@dimen/text_Primary_24"
-      android:padding="@dimen/padding_16"
-      android:textStyle="bold" />
+    <!-- Tabs -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Tabs"
+        app:tabIndicatorColor="@color/dark_and_white"/>
 
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:orientation="vertical"
-      android:gravity="center_horizontal"
-      android:background="@color/white"
-      android:padding="16dp">
-
-    <ImageView
-        android:id="@+id/imageTestInternet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-  </LinearLayout>
-
+    <!-- ViewPager -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

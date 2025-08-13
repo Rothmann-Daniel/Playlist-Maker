@@ -47,13 +47,17 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.material)
     implementation (libs.glide)
     annotationProcessor (libs.compiler)
+    // Gson
     implementation("com.google.code.gson:gson:2.10")
+    // Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     // Logging interceptor (для удобства отладки)
@@ -64,5 +68,14 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.6.1")
     // Koin
     implementation("io.insert-koin:koin-android:3.4.0")
-
+    //Fragment
+    implementation ("androidx.fragment:fragment-ktx:1.5.5")
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    // UI
+    implementation("com.google.android.material:material:1.8.0")
+    implementation("com.google.android.material:material:1.9.0")
+    // Navigation
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.5.3")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.5.3")
 }

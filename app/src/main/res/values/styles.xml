@@ -185,4 +185,39 @@
         <item name="android:ellipsize">end</item>
     </style>
 
+    <style name="MediaFavoriteFragment">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="AddPlayList">
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_marginTop">@dimen/padding_24</item>
+        <item name="android:backgroundTint">@color/btn_Play_Stop</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">14sp</item>
+        <item name="cornerRadius">54dp</item>
+    </style>
+
+
+    <style name="Tabs.TextAppearance" parent="TextAppearance.AppCompat.Button">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/dark_and_white</item>
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="Tabs" parent="Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/Tabs.TextAppearance</item>
+        <item name="tabTextColor">@color/dark_and_white</item>
+        <item name="tabSelectedTextColor">@color/dark_and_white</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
 </resources>

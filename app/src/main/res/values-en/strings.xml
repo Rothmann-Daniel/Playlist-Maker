@@ -42,6 +42,14 @@
     <string name="unknown_genre">Unknown genre</string>
     <string name="unknown_country">Unknown country</string>
     <string name="unknown_collection">Unknow collection</string>
+    <string name="browser_error">Browser error!</string>
+    <string name="no_app_to_share">No app to share</string>
+    <string name="no_email_app_installed">No email app installed</string>
+    <string name="empty_media">Empty Media</string>
+    <string name="newPlayList">Add new Playlist</string>
+    <string name="not_created_playlists">You haven\'t created any playlists</string>
+    <string name="favorite_tracks">Favorite tracks</string>
+    <string name="play_lists">Playlist\'s</string>
 
 
 </resources>
