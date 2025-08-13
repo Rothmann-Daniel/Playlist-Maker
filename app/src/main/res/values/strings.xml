@@ -52,14 +52,25 @@
     <string name="text_check_connect">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="button_update">Обновить</string>
 
+    <!-- History and emptySearch -->
     <string name="search_history">Вы искали</string>
     <string name="clean_history"> Очистить историю</string>
     <string name="unknown_year">Год не найден</string>
     <string name="unknown_genre">Жанр не найден</string>
     <string name="unknown_country">Страна не найдена</string>
     <string name="unknown_collection">Альбом не найден</string>
+
+    <!-- Error messages -->
     <string name="browser_error">Ошибка браузера</string>
     <string name="no_app_to_share">Нет приложения для этой функции</string>
     <string name="no_email_app_installed">Нет приложений для отправки электронных писем</string>
+
+    <!-- Media -->
+    <string name="empty_media">Ваша медиатека пуста</string>
+    <string name="newPlayList">Новый плейлист</string>
+    <string name="not_created_playlists">Вы не создали\nни одного плейлиста</string>
+    <string name="favorite_tracks">Избранные треки</string>
+    <string name="play_lists">Плейлисты</string>
+
 
 </resources>
