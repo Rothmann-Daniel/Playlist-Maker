@@ -8,4 +8,5 @@
     <attr name="hint_color_search" format="color|reference"/>
     <attr name="selected_color" format="color|reference"/>
     <attr name="unselected_color" format="color|reference"/>
+    <attr name="bottom_nav_background_color" format="color|reference"/>
 </resources>
