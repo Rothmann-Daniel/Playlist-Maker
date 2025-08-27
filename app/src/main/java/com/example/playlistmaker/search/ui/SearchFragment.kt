@@ -86,7 +86,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun setupListeners() {
-        // Убираем setupToolbar() - это не нужно для основных экранов
 
         searchInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -175,16 +174,19 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         if (isClickDebounced) return
         isClickDebounced = true
 
+        // Переходим к аудиоплееру
         val bundle = Bundle().apply {
             putString("trackJson", gson.toJson(track))
         }
         findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment, bundle)
 
-        viewModel.addTrackToHistory(track)
+        // Добавляем в историю только если это не трек из самой истории
+        if (viewModel.state.value !is SearchViewModel.SearchState.History) {
+            viewModel.addTrackToHistory(track)
+        }
 
         clickDebounceHandler.postDelayed({ isClickDebounced = false }, CLICK_DEBOUNCE_DELAY)
     }
-
     private fun clearSearch() {
         searchInput.text.clear()
         hideKeyBoard()

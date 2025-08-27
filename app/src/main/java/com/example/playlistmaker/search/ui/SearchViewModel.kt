@@ -123,6 +123,7 @@ class SearchViewModel(
         lastSearchQuery?.let { performSearch(it) }
     }
 
+
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }

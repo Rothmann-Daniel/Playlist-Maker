@@ -6,4 +6,6 @@
     <attr name="textColorAudioPlayer" format="color|reference"/>
     <attr name="btn_Play_Stop" format="color|reference"/>
     <attr name="hint_color_search" format="color|reference"/>
+    <attr name="selected_color" format="color|reference"/>
+    <attr name="unselected_color" format="color|reference"/>
 </resources>

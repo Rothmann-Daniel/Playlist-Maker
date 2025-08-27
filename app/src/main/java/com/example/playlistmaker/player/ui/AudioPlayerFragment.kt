@@ -45,7 +45,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
             viewModel.preparePlayer(url)
         } ?: run {
             Toast.makeText(requireContext(), "Preview not available", Toast.LENGTH_SHORT).show()
-            findNavController().navigateUp() // Исправлено
+            findNavController().navigateUp()
         }
 
         binding.ibPlayStop.setOnClickListener {

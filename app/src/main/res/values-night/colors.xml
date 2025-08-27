@@ -37,5 +37,7 @@
     <color name="textColor_AudioPlayer">#FFFFFFFF</color>
     <color name="btn_Play_Stop">#FFFFFFFF</color>
 
+    <color name="selected_color">#3772E7</color>
+    <color name="unselected_color">#FFFFFFFF</color>
 
 </resources>
