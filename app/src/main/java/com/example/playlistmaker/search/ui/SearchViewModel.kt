@@ -102,6 +102,10 @@ class SearchViewModel(
         viewModelScope.launch {
             try {
                 addToHistoryUseCase(track)
+                // Обновляем историю после добавления, если мы находимся в состоянии истории
+                if (_state.value is SearchState.History) {
+                    loadHistory()
+                }
             } catch (e: Exception) {
                 Log.e("SearchViewModel", "Error adding to history", e)
             }
@@ -122,7 +126,6 @@ class SearchViewModel(
     fun retryLastSearch() {
         lastSearchQuery?.let { performSearch(it) }
     }
-
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L

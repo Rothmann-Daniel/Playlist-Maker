@@ -174,19 +174,18 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         if (isClickDebounced) return
         isClickDebounced = true
 
+        // Всегда добавляем трек в историю перед переходом
+        viewModel.addTrackToHistory(track)
+
         // Переходим к аудиоплееру
         val bundle = Bundle().apply {
             putString("trackJson", gson.toJson(track))
         }
         findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment, bundle)
 
-        // Добавляем в историю только если это не трек из самой истории
-        if (viewModel.state.value !is SearchViewModel.SearchState.History) {
-            viewModel.addTrackToHistory(track)
-        }
-
         clickDebounceHandler.postDelayed({ isClickDebounced = false }, CLICK_DEBOUNCE_DELAY)
     }
+
     private fun clearSearch() {
         searchInput.text.clear()
         hideKeyBoard()
@@ -217,6 +216,9 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     override fun onResume() {
         super.onResume()
+        // Сбрасываем debounce при возврате к фрагменту
+        isClickDebounced = false
+
         if (searchInput.text.isEmpty()) {
             viewModel.updateHistoryVisibility(false)
         }
