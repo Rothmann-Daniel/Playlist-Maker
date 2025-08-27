@@ -7,12 +7,18 @@
     android:orientation="vertical"
     tools:context=".settings.ui.SettingsFragment">
 
-    <!-- MaterialToolbar (заголовок + back) -->
-    <com.google.android.material.appbar.MaterialToolbar
+    <!-- Title -->
+    <TextView
         android:id="@+id/tool_bar"
-        style="@style/ToolBarButton"
-        app:title="@string/button_settings"
-        android:contentDescription="@string/button_settings"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_12"
+        android:layout_marginTop="@dimen/padding_16"
+        android:layout_marginBottom="@dimen/padding_16"
+        android:fontFamily="@font/ys_display_medium"
+        android:textSize="@dimen/title_22"
+        android:textColor="@color/dark_and_white"
+        android:text="@string/button_settings" />
 
     <!-- Переключатель темы -->
     <com.google.android.material.switchmaterial.SwitchMaterial

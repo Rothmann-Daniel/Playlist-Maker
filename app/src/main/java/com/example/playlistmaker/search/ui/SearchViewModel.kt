@@ -127,6 +127,15 @@ class SearchViewModel(
         lastSearchQuery?.let { performSearch(it) }
     }
 
+    fun refreshHistoryIfNeeded() {
+        // Обновляем историю только если мы в состоянии истории или пустого контента
+        when (val currentState = _state.value) {
+            is SearchState.History -> loadHistory()
+            is SearchState.Content -> if (currentState.tracks.isEmpty()) loadHistory()
+            else -> {} // Не обновляем во время загрузки или при ошибке
+        }
+    }
+
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }

@@ -50,6 +50,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private val historyAdapter = TrackAdapter(emptyList()) { onTrackClick(it) }
 
     private var isClickDebounced = false
+    private var lastClickTime = 0L
     private val clickDebounceHandler = Handler(Looper.getMainLooper())
     private val CLICK_DEBOUNCE_DELAY = 1000L
 
@@ -171,17 +172,27 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun onTrackClick(track: Track) {
-        if (isClickDebounced) return
+        val currentTime = System.currentTimeMillis()
+        // Проверяем debounce
+        if (isClickDebounced && (currentTime - lastClickTime) < CLICK_DEBOUNCE_DELAY) {
+            return
+        }
         isClickDebounced = true
+        lastClickTime = currentTime
 
-        // Всегда добавляем трек в историю перед переходом
-        viewModel.addTrackToHistory(track)
+        viewModel.addTrackToHistory(track) // Добавляем до навигации
 
         // Переходим к аудиоплееру
         val bundle = Bundle().apply {
             putString("trackJson", gson.toJson(track))
         }
-        findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment, bundle)
+
+        try {
+            findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment, bundle)
+        } catch (e: Exception) {
+            isClickDebounced = false // Разблокируем кнопку при ошибке
+            Toast.makeText(requireContext(), "Не удалось открыть трек", Toast.LENGTH_SHORT).show()
+        }
 
         clickDebounceHandler.postDelayed({ isClickDebounced = false }, CLICK_DEBOUNCE_DELAY)
     }
@@ -216,11 +227,16 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     override fun onResume() {
         super.onResume()
-        // Сбрасываем debounce при возврате к фрагменту
-        isClickDebounced = false
+        // Умный сброс debounce - только если прошло достаточно времени
+        val currentTime = System.currentTimeMillis()
+        if (isClickDebounced && (currentTime - lastClickTime) > CLICK_DEBOUNCE_DELAY) {
+            clickDebounceHandler.removeCallbacksAndMessages(null)
+            isClickDebounced = false
+        }
 
-        if (searchInput.text.isEmpty()) {
-            viewModel.updateHistoryVisibility(false)
+        // Обновляем историю только если поле поиска пустое и мы не в состоянии загрузки
+        if (searchInput.text.isEmpty() && viewModel.state.value !is SearchViewModel.SearchState.Loading) {
+            viewModel.refreshHistoryIfNeeded()
         }
     }
 

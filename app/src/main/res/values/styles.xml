@@ -34,7 +34,6 @@
     <style name="SettingsItemStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingStart">@dimen/padding_16</item>
         <item name="android:paddingEnd">@dimen/padding_12</item>
         <item name="android:paddingVertical">@dimen/padding_20</item>
         <item name="android:textColor">@color/black</item>
