@@ -1,7 +1,6 @@
 package com.example.playlistmaker.search.ui
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,21 +16,23 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.player.ui.AudioPlayerActivity
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.track.TrackAdapter
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment(R.layout.fragment_search) {
 
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: SearchViewModel by viewModel()
-    private val gson: Gson by inject() // Добавляем получение Gson из Koin
+    private val gson: Gson by inject()
 
     private lateinit var searchInput: EditText
     private lateinit var clearButton: ImageView
@@ -52,9 +53,9 @@ class SearchActivity : AppCompatActivity() {
     private val clickDebounceHandler = Handler(Looper.getMainLooper())
     private val CLICK_DEBOUNCE_DELAY = 1000L
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentSearchBinding.bind(view)
 
         initViews()
         setupListeners()
@@ -68,26 +69,24 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        searchInput = findViewById(R.id.searchInput)
-        clearButton = findViewById(R.id.button_clear)
-        updateButton = findViewById(R.id.button_update)
-        placeholderNoFound = findViewById(R.id.notFound_placeholder)
-        placeholderError = findViewById(R.id.error_placeholder)
-        trackList = findViewById(R.id.recyclerTrackList)
-        historyPlaceholder = findViewById(R.id.history_placeholder)
-        historyRecyclerView = findViewById(R.id.historyRecyclerView)
-        clearHistoryButton = findViewById(R.id.clearHistoryButton)
-        historyTitle = findViewById(R.id.historyTitle)
-        progressBar = findViewById(R.id.progressBarContainer)
+        searchInput = binding.searchInput
+        clearButton = binding.buttonClear
+        updateButton = binding.buttonUpdate
+        placeholderNoFound = binding.notFoundPlaceholder
+        placeholderError = binding.errorPlaceholder
+        trackList = binding.recyclerTrackList
+        historyPlaceholder = binding.historyPlaceholder
+        historyRecyclerView = binding.historyRecyclerView
+        clearHistoryButton = binding.clearHistoryButton
+        historyTitle = binding.historyTitle
+        progressBar = binding.progressBarContainer
 
         trackList.adapter = tracksAdapter
         historyRecyclerView.adapter = historyAdapter
     }
 
     private fun setupListeners() {
-        findViewById<MaterialToolbar>(R.id.tool_bar_search).setNavigationOnClickListener {
-            finish()
-        }
+        // Убираем setupToolbar() - это не нужно для основных экранов
 
         searchInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -111,13 +110,14 @@ class SearchActivity : AppCompatActivity() {
         searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 viewModel.searchImmediately(searchInput.text.toString())
+                hideKeyBoard()
                 true
             } else false
         }
     }
 
     private fun observeViewModel() {
-        viewModel.state.observe(this) { state ->
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is SearchViewModel.SearchState.Loading -> showLoading()
                 is SearchViewModel.SearchState.EmptyResult -> showEmptyResult()
@@ -159,7 +159,7 @@ class SearchActivity : AppCompatActivity() {
         progressBar.visibility = View.GONE
         trackList.visibility = View.GONE
         historyPlaceholder.visibility = View.GONE
-        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 
     private fun showHistory(tracks: List<Track>) {
@@ -175,11 +175,10 @@ class SearchActivity : AppCompatActivity() {
         if (isClickDebounced) return
         isClickDebounced = true
 
-        startActivity(
-            Intent(this, AudioPlayerActivity::class.java).apply {
-                putExtra(TRACK_EXTRA, gson.toJson(track)) // Используем внедренный Gson
-            }
-        )
+        val bundle = Bundle().apply {
+            putString("trackJson", gson.toJson(track))
+        }
+        findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment, bundle)
 
         viewModel.addTrackToHistory(track)
 
@@ -194,12 +193,12 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showKeyBoard() {
         searchInput.requestFocus()
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(searchInput, InputMethodManager.SHOW_IMPLICIT)
     }
 
     private fun hideKeyBoard() {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(searchInput.windowToken, 0)
     }
 
@@ -221,13 +220,13 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         clickDebounceHandler.removeCallbacksAndMessages(null)
+        _binding = null
     }
 
     companion object {
-        const val TRACK_EXTRA = "trackJson"
         private const val INPUT_TEXT = "SEARCH_TEXT"
     }
 }

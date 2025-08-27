@@ -1,27 +1,29 @@
 package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
 import com.example.playlistmaker.search.domain.model.Track
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class AudioPlayerActivity : AppCompatActivity() {
+class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
 
-    private lateinit var binding: ActivityAudioPlayerBinding
-    private val viewModel: AudioPlayerViewModel by viewModel() // Используем Koin ViewModel
-    private val gson: Gson by inject() // Добавляем получение Gson из Koin
+    private var _binding: FragmentAudioPlayerBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: AudioPlayerViewModel by viewModel()
+    private val gson: Gson by inject()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentAudioPlayerBinding.bind(view)
 
         initToolbar()
         initViews()
@@ -29,19 +31,21 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun initToolbar() {
-        binding.toolbarAudioplayer.setNavigationOnClickListener { finish() }
+        binding.toolbarAudioplayer.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
     }
 
     private fun initViews() {
-        val track = getTrackFromIntent()
+        val track = getTrackFromArguments()
         loadTrackCover(track)
         setTrackInfo(track)
 
         track.previewUrl?.let { url ->
             viewModel.preparePlayer(url)
         } ?: run {
-            Toast.makeText(this, "Preview not available", Toast.LENGTH_SHORT).show()
-            finish()
+            Toast.makeText(requireContext(), "Preview not available", Toast.LENGTH_SHORT).show()
+            findNavController().navigateUp() // Исправлено
         }
 
         binding.ibPlayStop.setOnClickListener {
@@ -49,17 +53,17 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun getTrackFromIntent(): Track {
-        val trackJson = intent.getStringExtra("trackJson")
+    private fun getTrackFromArguments(): Track {
+        val trackJson = arguments?.getString(TRACK_ARGUMENT)
             ?: throw IllegalArgumentException("Track data is missing")
-        return gson.fromJson(trackJson, Track::class.java) // Используем внедренный Gson
+        return gson.fromJson(trackJson, Track::class.java)
     }
 
     private fun loadTrackCover(track: Track) {
         val enlargedImageUrl = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
         val radiusInPx = (8f * resources.displayMetrics.density).toInt()
 
-        Glide.with(this)
+        Glide.with(requireContext())
             .load(enlargedImageUrl)
             .centerCrop()
             .transform(RoundedCorners(radiusInPx))
@@ -78,7 +82,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        viewModel.playerState.observe(this) { state ->
+        viewModel.playerState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is AudioPlayerViewModel.PlayerState.Preparing -> {
                     binding.ibPlayStop.isEnabled = false
@@ -98,12 +102,12 @@ class AudioPlayerActivity : AppCompatActivity() {
                 }
                 is AudioPlayerViewModel.PlayerState.Error -> {
                     binding.ibPlayStop.isEnabled = false
-                    Toast.makeText(this@AudioPlayerActivity, state.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        viewModel.currentPosition.observe(this) { position ->
+        viewModel.currentPosition.observe(viewLifecycleOwner) { position ->
             binding.tvTrackTime.text = position
         }
     }
@@ -115,10 +119,23 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (isFinishing) {
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (isRemoving) {
             viewModel.stop()
+        }
+        _binding = null
+    }
+
+    companion object {
+        const val TRACK_ARGUMENT = "trackJson"
+
+        fun newInstance(trackJson: String): AudioPlayerFragment {
+            return AudioPlayerFragment().apply {
+                arguments = Bundle().apply {
+                    putString(TRACK_ARGUMENT, trackJson)
+                }
+            }
         }
     }
 }
