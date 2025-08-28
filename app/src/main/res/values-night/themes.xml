@@ -35,5 +35,5 @@
         <item name="unselected_color">@color/unselected_color</item>
         <item name="bottom_nav_background_color">@color/bottom_nav_background_color</item>
     </style>
-    //step 6
+
 </resources>
