@@ -102,6 +102,10 @@ class SearchViewModel(
         viewModelScope.launch {
             try {
                 addToHistoryUseCase(track)
+                // Обновляем историю после добавления, если мы находимся в состоянии истории
+                if (_state.value is SearchState.History) {
+                    loadHistory()
+                }
             } catch (e: Exception) {
                 Log.e("SearchViewModel", "Error adding to history", e)
             }
@@ -121,6 +125,15 @@ class SearchViewModel(
 
     fun retryLastSearch() {
         lastSearchQuery?.let { performSearch(it) }
+    }
+
+    fun refreshHistoryIfNeeded() {
+        // Обновляем историю только если мы в состоянии истории или пустого контента
+        when (val currentState = _state.value) {
+            is SearchState.History -> loadHistory()
+            is SearchState.Content -> if (currentState.tracks.isEmpty()) loadHistory()
+            else -> {} // Не обновляем во время загрузки или при ошибке
+        }
     }
 
     companion object {

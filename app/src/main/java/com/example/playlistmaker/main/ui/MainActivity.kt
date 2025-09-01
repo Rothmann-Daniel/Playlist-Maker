@@ -1,40 +1,45 @@
 package com.example.playlistmaker.main.ui
 
-import android.content.Intent
-import android.os.Bundle
-import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
-import com.example.playlistmaker.R
-import com.example.playlistmaker.media.ui.MediaActivity
-import com.example.playlistmaker.search.ui.SearchActivity
 
-import com.example.playlistmaker.settings.ui.SettingsActivity
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // Переход на экран поиска
-        findViewById<Button>(R.id.search_button).setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Переход на экран медиатеки
-        findViewById<Button>(R.id.media_button).setOnClickListener {
-            val intent = Intent(this, MediaActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Переход на экран настроек
-        findViewById<Button>(R.id.settings_button).setOnClickListener {
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
-        }
+        setupNavigation()
     }
 
-}
+    private fun setupNavigation() {
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
+        // Настройка BottomNavigationView
+        binding.bottomNavigation.setupWithNavController(navController)
+
+        // Скрываем BottomNavigationView на экране плеера
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.audioPlayerFragment -> {
+                    binding.bottomNavigation.visibility = android.view.View.GONE
+                }
+                else -> {
+                    binding.bottomNavigation.visibility = android.view.View.VISIBLE
+                }
+            }
+        }
+    }
+}

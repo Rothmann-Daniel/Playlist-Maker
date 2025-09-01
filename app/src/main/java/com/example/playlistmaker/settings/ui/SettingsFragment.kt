@@ -2,45 +2,49 @@ package com.example.playlistmaker.settings.ui
 
 import com.example.playlistmaker.settings.data.repository.SettingsNavigatorImpl
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivitySettingsBinding
+import com.example.playlistmaker.databinding.FragmentSettingsBinding
 import com.example.playlistmaker.settings.domain.repository.NavigationEvent
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : Fragment() {
 
-    private lateinit var binding: ActivitySettingsBinding
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: SettingsViewModel by viewModel()
-    private val navigator by lazy { SettingsNavigatorImpl(this) }
+    private lateinit var navigator: SettingsNavigatorImpl
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        setupToolbar()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        navigator = SettingsNavigatorImpl(requireActivity())
+
         setupThemeSwitch()
         setupClickListeners()
         observeViewModel()
     }
 
-    private fun setupToolbar() {
-        binding.toolBar.setNavigationOnClickListener { finish() }
-    }
 
     private fun setupThemeSwitch() {
-        viewModel.themeState.observe(this) { isDarkTheme ->
+        viewModel.themeState.observe(viewLifecycleOwner) { isDarkTheme ->
             binding.switchTheme.isChecked = isDarkTheme
         }
 
         binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
             viewModel.updateThemeSettings(isChecked)
-            AppCompatDelegate.setDefaultNightMode(
-                if (isChecked) AppCompatDelegate.MODE_NIGHT_YES
-                else AppCompatDelegate.MODE_NIGHT_NO
-            )
         }
     }
 
@@ -63,12 +67,17 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.navigationEvent.observe(this) { event ->
+        viewModel.navigationEvent.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is NavigationEvent.ShareApp -> navigator.navigate(event)
                 is NavigationEvent.ContactSupport -> navigator.navigate(event)
                 is NavigationEvent.OpenUserAgreement -> navigator.navigate(event)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

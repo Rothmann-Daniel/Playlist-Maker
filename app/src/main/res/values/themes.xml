@@ -11,19 +11,31 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/background</item>
-
-        <!-- Customize your theme here. -->
-    </style>
-
-    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
-
-
         <item name="buttonSettings">@color/buttonSettings</item>
         <item name="dotSeparatorColor">@color/dot_separator_color</item>
         <item name="no_connection">@color/no_connection_color</item>
         <item name="textColorAudioPlayer">@color/textColor_AudioPlayer</item>
         <item name="btn_Play_Stop">@color/btn_Play_Stop</item>
         <item name="hint_color_search">@color/hint_color</item>
+        <item name="selected_color">@color/selected_color</item>
+        <item name="unselected_color">@color/unselected_color</item>
+        <item name="bottom_nav_background_color">@color/bottom_nav_background_color</item>
+
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="buttonSettings">@color/buttonSettings</item>
+        <item name="dotSeparatorColor">@color/dot_separator_color</item>
+        <item name="no_connection">@color/no_connection_color</item>
+        <item name="textColorAudioPlayer">@color/textColor_AudioPlayer</item>
+        <item name="btn_Play_Stop">@color/btn_Play_Stop</item>
+        <item name="hint_color_search">@color/hint_color</item>
+        <item name="selected_color">@color/selected_color</item>
+        <item name="unselected_color">@color/unselected_color</item>
+        <item name="bottom_nav_background_color">@color/bottom_nav_background_color</item>
     </style>>
 
 </resources>
