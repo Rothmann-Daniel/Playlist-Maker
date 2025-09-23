@@ -4,7 +4,6 @@ import android.media.MediaPlayer
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 import com.example.playlistmaker.player.domain.repository.MediaPlayerProvider
 import com.example.playlistmaker.player.domain.model.AudioPlayerState
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.suspendCancellableCoroutine

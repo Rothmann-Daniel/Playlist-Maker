@@ -2,6 +2,7 @@ package com.example.playlistmaker.player.domain.usecase
 
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 import com.example.playlistmaker.player.domain.model.AudioPlayerState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
 class AudioPlayerInteractor(
@@ -27,6 +28,7 @@ class AudioPlayerInteractor(
     suspend fun release() = repository.release()
 
     // Функция для отслеживания прогресса только во время воспроизведения
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun getPlaybackProgress(): Flow<Long> = repository.getPlayerStateFlow()
         .flatMapLatest { state ->
             when (state) {
