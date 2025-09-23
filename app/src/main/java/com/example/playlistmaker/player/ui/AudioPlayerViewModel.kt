@@ -98,10 +98,10 @@ class AudioPlayerViewModel(
 
     private fun startProgressTracking() {
         stopProgressTracking()
-        progressObserver = viewModelScope.launch {
+        progressObserver = viewModelScope.launch { //  ЗАПУСК КОРУТИНЫ
             while (isAudioPlayingUseCase.execute()) {
                 _currentPosition.postValue(formatTime(getAudioPositionUseCase.execute()))
-                delay(UPDATE_INTERVAL_MS)
+                delay(UPDATE_INTERVAL_MS)  //  ПАУЗА БЕЗ БЛОКИРОВКИ ПОТОКА
             }
         }
     }
@@ -127,7 +127,7 @@ class AudioPlayerViewModel(
     }
 
     companion object {
-        private const val UPDATE_INTERVAL_MS = 100L
+        private const val UPDATE_INTERVAL_MS = 300L // в соответствии с ТЗ
         private const val MAX_PREVIEW_DURATION_MS = 30000L // 30 секунд
     }
 }

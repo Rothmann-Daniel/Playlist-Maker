@@ -56,9 +56,9 @@ class SearchViewModel(
     }
 
     fun searchDebounced(query: String) {
-        searchJob?.cancel()
+        searchJob?.cancel()  //  Отмена предыдущей корутины
         searchJob = viewModelScope.launch {
-            delay(SEARCH_DEBOUNCE_DELAY)
+            delay(SEARCH_DEBOUNCE_DELAY) //  Использование suspend-функции delay()
             performSearch(query)
         }
     }
