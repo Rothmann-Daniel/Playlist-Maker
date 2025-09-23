@@ -4,6 +4,7 @@ import android.media.MediaPlayer
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 import com.example.playlistmaker.player.domain.repository.MediaPlayerProvider
 import com.example.playlistmaker.player.domain.model.AudioPlayerState
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -27,6 +28,13 @@ class AudioPlayerRepositoryImpl(
             mediaPlayer = mediaPlayerProvider.createMediaPlayer()
 
             val prepared = suspendCancellableCoroutine<Boolean> { cont ->
+                // Обработка отмены корутины
+                cont.invokeOnCancellation {
+                    mediaPlayer?.release()
+                    mediaPlayer = null
+                    _playerState.value = AudioPlayerState.Idle
+                }
+
                 mediaPlayer?.apply {
                     setDataSource(url)
                     setOnPreparedListener {
@@ -54,11 +62,19 @@ class AudioPlayerRepositoryImpl(
             }
 
         } catch (e: IOException) {
-            val errorState = AudioPlayerState.Error("Failed to set data source: ${e.message}")
+            val errorState = AudioPlayerState.Error("Network error: ${e.message}")
             _playerState.value = errorState
             emit(errorState)
         } catch (e: IllegalStateException) {
-            val errorState = AudioPlayerState.Error("MediaPlayer error: ${e.message}")
+            val errorState = AudioPlayerState.Error("Player state error: ${e.message}")
+            _playerState.value = errorState
+            emit(errorState)
+        } catch (e: SecurityException) {
+            val errorState = AudioPlayerState.Error("Permission error: ${e.message}")
+            _playerState.value = errorState
+            emit(errorState)
+        } catch (e: Exception) {
+            val errorState = AudioPlayerState.Error("Unexpected error: ${e.message}")
             _playerState.value = errorState
             emit(errorState)
         }
@@ -84,7 +100,11 @@ class AudioPlayerRepositoryImpl(
     override suspend fun isPlaying(): Boolean = mediaPlayer?.isPlaying == true
 
     override fun getCurrentPosition(): Flow<Long> = flow {
-        while (_playerState.value == AudioPlayerState.Playing && mediaPlayer?.isPlaying == true) {
+        while (true) {
+            // Проверяем состояние перед каждой итерацией
+            if (_playerState.value != AudioPlayerState.Playing || mediaPlayer?.isPlaying != true) {
+                break
+            }
             val currentPos = mediaPlayer?.currentPosition?.toLong() ?: 0L
             lastKnownPosition = currentPos
             emit(currentPos)

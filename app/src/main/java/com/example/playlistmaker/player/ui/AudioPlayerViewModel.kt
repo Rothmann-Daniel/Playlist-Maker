@@ -1,5 +1,6 @@
 package com.example.playlistmaker.player.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -53,7 +54,8 @@ class AudioPlayerViewModel(
                 _currentPosition.postValue(formatTime(position))
             }
             .catch { error ->
-                // Логируем ошибку, но не прерываем работу
+                // Логируем ошибку
+                Log.e("AudioPlayer", "Playback progress error", error)
                 _currentPosition.postValue("00:00")
             }
             .launchIn(viewModelScope)
@@ -80,19 +82,34 @@ class AudioPlayerViewModel(
     }
 
     // Debounce для кликов по кнопке play/pause (используем корутины)
+//    fun togglePlayPause() {
+//        clickDebounceJob?.cancel()
+//        clickDebounceJob = viewModelScope.launch {
+//            delay(CLICK_DEBOUNCE_DELAY_MS) // Простая реализация debounce с отменой Job
+//
+//            when {
+//                audioPlayerInteractor.isAudioPlaying() -> {
+//                    pause()
+//                }
+//                _playerState.value == PlayerState.Prepared ||
+//                        _playerState.value == PlayerState.Paused -> {
+//                    play()
+//                }
+//            }
+//        }
+//    }
+
     fun togglePlayPause() {
         clickDebounceJob?.cancel()
         clickDebounceJob = viewModelScope.launch {
             delay(CLICK_DEBOUNCE_DELAY_MS) // Простая реализация debounce с отменой Job
 
-            when {
-                audioPlayerInteractor.isAudioPlaying() -> {
-                    pause()
-                }
-                _playerState.value == PlayerState.Prepared ||
-                        _playerState.value == PlayerState.Paused -> {
-                    play()
-                }
+            // Использую актуальное состояние из LiveData, а не запрос к интерактору (избегаю сценарий race condition)
+            when (playerState.value) {
+                is PlayerState.Playing -> pause()
+                is PlayerState.Paused -> play()
+                is PlayerState.Prepared -> play()
+                else -> { /* Игнорируем */ }
             }
         }
     }
