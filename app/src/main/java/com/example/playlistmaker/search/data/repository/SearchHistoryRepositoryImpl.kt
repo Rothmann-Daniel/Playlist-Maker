@@ -5,10 +5,13 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.repository.SearchHistoryRepository
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 
 class SearchHistoryRepositoryImpl(
     private val sharedPreferences: SharedPreferences,
-    private val gson: Gson // получаем из DI
+    private val gson: Gson
 ) : SearchHistoryRepository {
 
     private companion object {
@@ -16,28 +19,28 @@ class SearchHistoryRepositoryImpl(
         const val MAX_HISTORY_SIZE = 10
     }
 
-    override fun addTrack(track: Track) {
-        val history = getHistory().toMutableList()
-        // Удаляем трек, если он уже есть в истории
+    override suspend fun addTrack(track: Track) {
+        val history = getHistory().first().toMutableList()
         history.removeAll { it.trackId == track.trackId }
-        // Добавляем в начало списка
         history.add(0, track)
-        // Обрезаем список, если он слишком большой
         if (history.size > MAX_HISTORY_SIZE) {
             history.subList(MAX_HISTORY_SIZE, history.size).clear()
         }
         saveHistory(history)
     }
-    override fun getHistory(): List<Track> {
+
+    override fun getHistory(): Flow<List<Track>> = flow {
         val json = sharedPreferences.getString(KEY_HISTORY, null)
-        return if (json != null) {
-            gson.fromJson(json, object : TypeToken<List<Track>>() {}.type) ?: emptyList()
+        val history = if (json != null) {
+            val type = object : TypeToken<List<Track>>() {}.type
+            gson.fromJson<List<Track>>(json, type) ?: emptyList()
         } else {
             emptyList()
         }
+        emit(history)
     }
 
-    override fun clearHistory() {
+    override suspend fun clearHistory() {
         sharedPreferences.edit().remove(KEY_HISTORY).apply()
     }
 

@@ -5,26 +5,29 @@ import com.example.playlistmaker.search.domain.repository.TrackRepository
 import com.example.playlistmaker.search.data.network.NetworkClient
 import com.example.playlistmaker.search.data.dto.toTrack
 import com.example.playlistmaker.search.domain.repository.SearchHistoryRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 
 class TrackRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val searchHistoryRepository: SearchHistoryRepository // Используем интерфейс репозитория
+    private val searchHistoryRepository: SearchHistoryRepository
 ) : TrackRepository {
 
-    override suspend fun searchTracks(query: String): List<Track> {
-        return networkClient.searchTracks(query).map { it.toTrack() }
+    override fun searchTracks(query: String): Flow<List<Track>> = flow {
+        val tracks = networkClient.searchTracks(query).map { it.toTrack() }
+        emit(tracks)
     }
 
     override suspend fun addTrackToHistory(track: Track) {
-        searchHistoryRepository.addTrack(track) // Заменяем на вызов метода репозитория
+        searchHistoryRepository.addTrack(track)
     }
 
-    override suspend fun getSearchHistory(): List<Track> {
-        return searchHistoryRepository.getHistory() // Заменяем на вызов метода репозитория
+    override fun getSearchHistory(): Flow<List<Track>> {
+        return searchHistoryRepository.getHistory()
     }
 
     override suspend fun clearSearchHistory() {
-        searchHistoryRepository.clearHistory() // Заменяем на вызов метода репозитория
+        searchHistoryRepository.clearHistory()
     }
 }

@@ -1,12 +1,13 @@
 package com.example.playlistmaker.search.domain.usecase
 
-import com.example.playlistmaker.search.domain.repository.TrackRepository
 import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.search.domain.repository.TrackRepository
+import kotlinx.coroutines.flow.Flow
 
 class GetSearchHistoryUseCase(
     private val repository: TrackRepository
 ) {
-    suspend operator fun invoke(): List<Track> {
+    operator fun invoke(): Flow<List<Track>> {
         return repository.getSearchHistory()
     }
 }

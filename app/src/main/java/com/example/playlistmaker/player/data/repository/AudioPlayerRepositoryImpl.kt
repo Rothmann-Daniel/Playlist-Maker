@@ -39,7 +39,7 @@ class AudioPlayerRepositoryImpl(
                     setOnPreparedListener {
                         cont.resume(true)
                     }
-                    setOnErrorListener { _, what, extra ->
+                    setOnErrorListener { _, _, _ ->
                         cont.resume(false)
                         true
                     }

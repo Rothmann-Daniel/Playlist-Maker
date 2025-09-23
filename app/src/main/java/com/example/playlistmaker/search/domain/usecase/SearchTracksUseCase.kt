@@ -1,19 +1,23 @@
 package com.example.playlistmaker.search.domain.usecase
 
+
 import com.example.playlistmaker.search.domain.model.NetworkResult
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.repository.TrackRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class SearchTracksUseCase(
-    private val repository: TrackRepository // Зависимость - репозиторий абстракция для доступа к данным (сеть/БД)
+    private val repository: TrackRepository
 ) {
-    suspend operator fun invoke(query: String): NetworkResult<List<Track>> { //метод может быть приостановлен (корутины)
-        // Реализация
-        return try {
-            val tracks = repository.searchTracks(query)
-            NetworkResult.Success(tracks) //sealed-класс для обработки успеха/ошибки
+    operator fun invoke(query: String): Flow<NetworkResult<List<Track>>> = flow {
+        emit(NetworkResult.Loading)
+        try {
+            repository.searchTracks(query).collect { tracks ->
+                emit(NetworkResult.Success(tracks))
+            }
         } catch (e: Exception) {
-            NetworkResult.Failure(e.message ?: "Unknown error")
+            emit(NetworkResult.Failure(e.message ?: "Unknown error"))
         }
     }
 }

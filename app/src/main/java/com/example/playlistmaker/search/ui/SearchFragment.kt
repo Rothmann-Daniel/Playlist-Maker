@@ -2,8 +2,6 @@ package com.example.playlistmaker.search.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -49,11 +47,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private val tracksAdapter = TrackAdapter(emptyList()) { onTrackClick(it) }
     private val historyAdapter = TrackAdapter(emptyList()) { onTrackClick(it) }
 
-    private var isClickDebounced = false
-    private var lastClickTime = 0L
-    private val clickDebounceHandler = Handler(Looper.getMainLooper())
-    private val CLICK_DEBOUNCE_DELAY = 1000L
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentSearchBinding.bind(view)
@@ -87,7 +80,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun setupListeners() {
-
         searchInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -172,29 +164,19 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun onTrackClick(track: Track) {
-        val currentTime = System.currentTimeMillis()
-        // Проверяем debounce
-        if (isClickDebounced && (currentTime - lastClickTime) < CLICK_DEBOUNCE_DELAY) {
-            return
-        }
-        isClickDebounced = true
-        lastClickTime = currentTime
+        viewModel.onTrackClick(track)
+        navigateToPlayer(track)
+    }
 
-        viewModel.addTrackToHistory(track) // Добавляем до навигации
-
-        // Переходим к аудиоплееру
+    private fun navigateToPlayer(track: Track) {
         val bundle = Bundle().apply {
             putString("trackJson", gson.toJson(track))
         }
-
         try {
             findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment, bundle)
         } catch (e: Exception) {
-            isClickDebounced = false // Разблокируем кнопку при ошибке
             Toast.makeText(requireContext(), "Не удалось открыть трек", Toast.LENGTH_SHORT).show()
         }
-
-        clickDebounceHandler.postDelayed({ isClickDebounced = false }, CLICK_DEBOUNCE_DELAY)
     }
 
     private fun clearSearch() {
@@ -227,22 +209,13 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     override fun onResume() {
         super.onResume()
-        // Умный сброс debounce - только если прошло достаточно времени
-        val currentTime = System.currentTimeMillis()
-        if (isClickDebounced && (currentTime - lastClickTime) > CLICK_DEBOUNCE_DELAY) {
-            clickDebounceHandler.removeCallbacksAndMessages(null)
-            isClickDebounced = false
-        }
-
-        // Обновляем историю только если поле поиска пустое и мы не в состоянии загрузки
-        if (searchInput.text.isEmpty() && viewModel.state.value !is SearchViewModel.SearchState.Loading) {
-            viewModel.refreshHistoryIfNeeded()
+        if (searchInput.text.isEmpty()) {
+            viewModel.updateHistoryVisibility(false)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        clickDebounceHandler.removeCallbacksAndMessages(null)
         _binding = null
     }
 

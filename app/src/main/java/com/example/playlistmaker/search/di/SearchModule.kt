@@ -15,7 +15,6 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val searchModule = module {
-    // Репозиторий
     single<TrackRepository> {
         TrackRepositoryImpl(
             networkClient = get(),
@@ -30,13 +29,11 @@ val searchModule = module {
         )
     }
 
-    // UseCases
     factory { SearchTracksUseCase(get()) }
     factory { AddTrackToHistoryUseCase(get()) }
     factory { GetSearchHistoryUseCase(get()) }
     factory { ClearSearchHistoryUseCase(get()) }
 
-    // ViewModel
     viewModel {
         SearchViewModel(
             searchTracksUseCase = get(),
