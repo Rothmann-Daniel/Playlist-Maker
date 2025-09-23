@@ -4,23 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.player.domain.usecase.*
+import com.example.playlistmaker.player.domain.usecase.AudioPlayerInteractor
+import com.example.playlistmaker.player.domain.model.AudioPlayerState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.*
 
 class AudioPlayerViewModel(
-    private val prepareAudioUseCase: PrepareAudioUseCase,
-    private val startAudioUseCase: StartAudioUseCase,
-    private val pauseAudioUseCase: PauseAudioUseCase,
-    private val stopAudioUseCase: StopAudioUseCase,
-    private val isAudioPlayingUseCase: IsAudioPlayingUseCase,
-    private val getAudioPositionUseCase: GetAudioPositionUseCase,
-    private val releasePlayerUseCase: ReleasePlayerUseCase,
-    private val setCompletionListenerUseCase: SetCompletionListenerUseCase
+    private val audioPlayerInteractor: AudioPlayerInteractor
 ) : ViewModel() {
 
+    // Конвертируем AudioPlayerState в UI состояния
     sealed class PlayerState {
         object Preparing : PlayerState()
         object Prepared : PlayerState()
@@ -35,88 +33,111 @@ class AudioPlayerViewModel(
     private val _currentPosition = MutableLiveData<String>("00:00")
     val currentPosition: LiveData<String> = _currentPosition
 
-    private var progressObserver: Job? = null
+    // Job для debounce кликов
+    private var clickDebounceJob: Job? = null
 
     fun preparePlayer(url: String) {
-        _playerState.value = PlayerState.Preparing
-
-        // Устанавливаем слушатель завершения воспроизведения
-        setCompletionListenerUseCase.execute {
-            viewModelScope.launch {
-                pause() // Останавливаем воспроизведение при завершении
-                _currentPosition.postValue(formatTime(MAX_PREVIEW_DURATION_MS))
-                _playerState.postValue(PlayerState.Prepared)
+        // Используем viewModelScope для запуска корутин и работы с Flow
+        audioPlayerInteractor.prepareAudio(url)
+            .onEach { state ->
+                _playerState.postValue(mapToUiState(state))
             }
-        }
-
-        // Запускаем подготовку аудио
-        prepareAudioUseCase.execute(
-            url = url,
-            onPrepared = {
-                _playerState.postValue(PlayerState.Prepared)
-                _currentPosition.postValue("00:00") // Сбрасываем позицию при подготовке
-            },
-            onError = { error ->
-                _playerState.postValue(PlayerState.Error(error))
+            .catch { error ->
+                _playerState.postValue(PlayerState.Error(error.message ?: "Unknown error"))
             }
-        )
+            .launchIn(viewModelScope)
+
+        // Подписываемся на прогресс воспроизведения
+        audioPlayerInteractor.getPlaybackProgress()
+            .onEach { position ->
+                _currentPosition.postValue(formatTime(position))
+            }
+            .catch { error ->
+                // Логируем ошибку, но не прерываем работу
+                _currentPosition.postValue("00:00")
+            }
+            .launchIn(viewModelScope)
+
+        // Подписываемся на изменения состояния плеера
+        audioPlayerInteractor.getPlayerState()
+            .onEach { state ->
+                _playerState.postValue(mapToUiState(state))
+                when (state) {
+                    is AudioPlayerState.Completed -> {
+                        // При завершении трека устанавливаем 00:00
+                        _currentPosition.postValue("00:00")
+                    }
+                    is AudioPlayerState.Paused,
+                    is AudioPlayerState.Prepared -> {
+                        // При паузе или подготовке не сбрасываем позицию
+                    }
+                    else -> {
+                        // Для других состояний ничего дополнительно не делаем
+                    }
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
+    // Debounce для кликов по кнопке play/pause (используем корутины)
     fun togglePlayPause() {
-        when {
-            isAudioPlayingUseCase.execute() -> {
-                pause()
-            }
-            _playerState.value == PlayerState.Prepared ||
-                    _playerState.value == PlayerState.Paused -> {
-                play()
-            }
-            _playerState.value == PlayerState.Preparing -> {
-                // Можно показать Toast или изменить UI, чтобы показать, что плеер еще готовится
+        clickDebounceJob?.cancel()
+        clickDebounceJob = viewModelScope.launch {
+            delay(CLICK_DEBOUNCE_DELAY_MS) // Простая реализация debounce с отменой Job
+
+            when {
+                audioPlayerInteractor.isAudioPlaying() -> {
+                    pause()
+                }
+                _playerState.value == PlayerState.Prepared ||
+                        _playerState.value == PlayerState.Paused -> {
+                    play()
+                }
             }
         }
     }
 
     private fun play() {
-        startAudioUseCase.execute()
-        _playerState.value = PlayerState.Playing
-        startProgressTracking()
-    }
-
-    fun pause() {
-        pauseAudioUseCase.execute()
-        _playerState.value = PlayerState.Paused
-        stopProgressTracking()
-    }
-
-    fun stop() {
-        stopAudioUseCase.execute()
-        _playerState.value = PlayerState.Paused
-        stopProgressTracking()
-        _currentPosition.value = "00:00"
-    }
-
-    private fun startProgressTracking() {
-        stopProgressTracking()
-        progressObserver = viewModelScope.launch { //  ЗАПУСК КОРУТИНЫ
-            while (isAudioPlayingUseCase.execute()) {
-                _currentPosition.postValue(formatTime(getAudioPositionUseCase.execute()))
-                delay(UPDATE_INTERVAL_MS)  //  ПАУЗА БЕЗ БЛОКИРОВКИ ПОТОКА
-            }
+        viewModelScope.launch {
+            audioPlayerInteractor.startAudio()
+            _playerState.postValue(PlayerState.Playing)
         }
     }
 
-    private fun stopProgressTracking() {
-        progressObserver?.cancel()
-        progressObserver = null
+    fun pause() {
+        viewModelScope.launch {
+            audioPlayerInteractor.pauseAudio()
+            _playerState.postValue(PlayerState.Paused)
+        }
+    }
+
+    fun stop() {
+        viewModelScope.launch {
+            audioPlayerInteractor.stopAudio()
+            _playerState.postValue(PlayerState.Paused)
+            _currentPosition.postValue("00:00")
+        }
     }
 
 
 
+    private fun mapToUiState(state: AudioPlayerState): PlayerState {
+        return when (state) {
+            is AudioPlayerState.Preparing -> PlayerState.Preparing
+            is AudioPlayerState.Prepared -> PlayerState.Prepared
+            is AudioPlayerState.Playing -> PlayerState.Playing
+            is AudioPlayerState.Paused -> PlayerState.Paused
+            is AudioPlayerState.Error -> PlayerState.Error(state.message)
+            else -> PlayerState.Paused
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
-        releasePlayerUseCase.execute()
-        stopProgressTracking()
+        viewModelScope.launch {
+            audioPlayerInteractor.release()
+        }
+        clickDebounceJob?.cancel()
     }
 
     fun formatTime(millis: Long): String {
@@ -127,7 +148,6 @@ class AudioPlayerViewModel(
     }
 
     companion object {
-        private const val UPDATE_INTERVAL_MS = 300L // в соответствии с ТЗ
-        private const val MAX_PREVIEW_DURATION_MS = 30000L // 30 секунд
+        private const val CLICK_DEBOUNCE_DELAY_MS = 300L // Debounce для кликов
     }
 }

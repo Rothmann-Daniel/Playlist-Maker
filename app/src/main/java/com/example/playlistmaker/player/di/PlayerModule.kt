@@ -4,7 +4,7 @@ import com.example.playlistmaker.player.data.repository.AndroidMediaPlayerProvid
 import com.example.playlistmaker.player.data.repository.AudioPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 import com.example.playlistmaker.player.domain.repository.MediaPlayerProvider
-import com.example.playlistmaker.player.domain.usecase.*
+import com.example.playlistmaker.player.domain.usecase.AudioPlayerInteractor
 import com.example.playlistmaker.player.ui.AudioPlayerViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -16,27 +16,13 @@ val playerModule = module {
     // Репозиторий
     single<AudioPlayerRepository> { AudioPlayerRepositoryImpl(get()) }
 
-    // UseCases
-    factory { PrepareAudioUseCase(get()) }
-    factory { StartAudioUseCase(get()) }
-    factory { PauseAudioUseCase(get()) }
-    factory { StopAudioUseCase(get()) }
-    factory { IsAudioPlayingUseCase(get()) }
-    factory { GetAudioPositionUseCase(get()) }
-    factory { ReleasePlayerUseCase(get()) }
-    factory { SetCompletionListenerUseCase(get()) }
+    // Интерактор (вместо множества UseCase)
+    factory { AudioPlayerInteractor(get()) }
 
     // ViewModel
     viewModel {
         AudioPlayerViewModel(
-            prepareAudioUseCase = get(),
-            startAudioUseCase = get(),
-            pauseAudioUseCase = get(),
-            stopAudioUseCase = get(),
-            isAudioPlayingUseCase = get(),
-            getAudioPositionUseCase = get(),
-            releasePlayerUseCase = get(),
-            setCompletionListenerUseCase = get()
+            audioPlayerInteractor = get()
         )
     }
 }
