@@ -56,7 +56,7 @@ class AudioPlayerViewModel(
             .catch { error ->
                 // Логируем ошибку
                 Log.e("AudioPlayer", "Playback progress error", error)
-                _currentPosition.postValue("00:00")
+                _currentPosition.postValue(formatTime(0L))
             }
             .launchIn(viewModelScope)
 
@@ -82,23 +82,6 @@ class AudioPlayerViewModel(
     }
 
     // Debounce для кликов по кнопке play/pause (используем корутины)
-//    fun togglePlayPause() {
-//        clickDebounceJob?.cancel()
-//        clickDebounceJob = viewModelScope.launch {
-//            delay(CLICK_DEBOUNCE_DELAY_MS) // Простая реализация debounce с отменой Job
-//
-//            when {
-//                audioPlayerInteractor.isAudioPlaying() -> {
-//                    pause()
-//                }
-//                _playerState.value == PlayerState.Prepared ||
-//                        _playerState.value == PlayerState.Paused -> {
-//                    play()
-//                }
-//            }
-//        }
-//    }
-
     fun togglePlayPause() {
         clickDebounceJob?.cancel()
         clickDebounceJob = viewModelScope.launch {

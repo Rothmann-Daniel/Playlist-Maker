@@ -107,7 +107,7 @@ class AudioPlayerRepositoryImpl(
             val currentPos = mediaPlayer?.currentPosition?.toLong() ?: 0L
             lastKnownPosition = currentPos
             emit(currentPos)
-            delay(300L) // Обновление каждые 300мс согласно ТЗ
+            delay(PLAYBACK_PROGRESS_UPDATE_DELAY) // Обновление каждые 300мс согласно ТЗ
         }
     }
 
@@ -121,4 +121,9 @@ class AudioPlayerRepositoryImpl(
     override fun getLastKnownPosition(): Long = lastKnownPosition
 
     override fun getPlayerStateFlow(): Flow<AudioPlayerState> = _playerState.asStateFlow()
+
+    companion object {
+        private const val PLAYBACK_PROGRESS_UPDATE_DELAY = 300L // согласно ТЗ
+    }
+
 }
