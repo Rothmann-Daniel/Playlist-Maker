@@ -38,8 +38,15 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
 
     private fun initViews() {
         val track = getTrackFromArguments()
+        viewModel.setTrack(track) // Устанавливаем трек во ViewModel
+
         loadTrackCover(track)
         setTrackInfo(track)
+
+        // Настройка кнопки избранного
+        binding.ibFavorite.setOnClickListener {
+            viewModel.onFavoriteClicked()
+        }
 
         track.previewUrl?.let { url ->
             viewModel.preparePlayer(url)
@@ -109,6 +116,16 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
 
         viewModel.currentPosition.observe(viewLifecycleOwner) { position ->
             binding.tvTrackTime.text = position
+        }
+
+        // Observer для состояния избранного
+        viewModel.isFavorite.observe(viewLifecycleOwner) { isFavorite ->
+            val favoriteIcon = if (isFavorite) {
+                R.drawable.favourite_fill // Подсвеченное сердечко
+            } else {
+                R.drawable.favourite // Неподсвеченное сердечко
+            }
+            binding.ibFavorite.setImageResource(favoriteIcon)
         }
     }
 

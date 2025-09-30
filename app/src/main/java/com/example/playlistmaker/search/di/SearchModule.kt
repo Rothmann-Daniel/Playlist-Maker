@@ -18,7 +18,8 @@ val searchModule = module {
     single<TrackRepository> {
         TrackRepositoryImpl(
             networkClient = get(),
-            searchHistoryRepository = get()
+            searchHistoryRepository = get(),
+            database = get() // Добавляем базу данных
         )
     }
 

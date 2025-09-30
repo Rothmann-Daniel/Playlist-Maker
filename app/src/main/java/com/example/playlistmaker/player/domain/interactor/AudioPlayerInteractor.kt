@@ -1,4 +1,4 @@
-package com.example.playlistmaker.player.domain.usecase
+package com.example.playlistmaker.player.domain.interactor
 
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 import com.example.playlistmaker.player.domain.model.AudioPlayerState

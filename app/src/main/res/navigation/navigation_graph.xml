@@ -39,4 +39,17 @@
             app:argType="string" />
     </fragment>
 
+
+    <fragment
+        android:id="@+id/favoriteTracksFragment"
+        android:name="com.example.playlistmaker.media.ui.FavoriteTracksFragment"
+        android:label="FavoriteTracksFragment"
+        tools:layout="@layout/fragment_favorite_tracks">
+
+        <action
+            android:id="@+id/action_favorite_to_audioPlayer"
+            app:destination="@id/audioPlayerFragment" />
+
+    </fragment>
+
 </navigation>

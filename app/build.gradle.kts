@@ -81,9 +81,10 @@ dependencies {
     implementation ("androidx.navigation:navigation-ui-ktx:2.5.3")
 
     //Room
-    implementation ("androidx.room:room-runtime:2.5.2")
-    annotationProcessor ("androidx.room:room-compiler:2.5.2")
-    kapt("androidx.room:room-compiler:2.5.2")
-    implementation("androidx.room:room-ktx:2.5.2")
+   var room_version = "2.6.0"
+
+    implementation ("androidx.room:room-runtime:$room_version")
+    implementation ("androidx.room:room-ktx:$room_version")
+    kapt ("androidx.room:room-compiler:$room_version")
 
 }
