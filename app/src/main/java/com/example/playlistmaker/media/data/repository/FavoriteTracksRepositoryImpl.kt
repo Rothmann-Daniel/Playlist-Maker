@@ -19,11 +19,11 @@ class FavoriteTracksRepositoryImpl(
     }
 
     override suspend fun removeTrackFromFavorites(track: Track) {
-        trackDao.deleteTrack(track.trackId) // Исправлен вызов
+        trackDao.deleteTrack(track.trackId)
     }
 
     override fun getAllFavoriteTracks(): Flow<List<Track>> {
-        return trackDao.getAll() // Исправлен вызов метода
+        return trackDao.getAll()
             .map { entities ->
                 entities.map { TrackDbConverter.mapEntityToTrack(it) }
             }

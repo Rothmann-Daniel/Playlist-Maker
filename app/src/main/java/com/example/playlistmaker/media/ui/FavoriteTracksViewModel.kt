@@ -8,7 +8,7 @@ import com.example.playlistmaker.media.domain.interactor.FavoriteTracksInteracto
 import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
+
 
 class FavoriteTracksViewModel(
     private val interactor: FavoriteTracksInteractor

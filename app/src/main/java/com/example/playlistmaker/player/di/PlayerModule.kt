@@ -16,7 +16,7 @@ val playerModule = module {
     // Репозиторий
     single<AudioPlayerRepository> { AudioPlayerRepositoryImpl(get()) }
 
-    // Интерактор (вместо множества UseCase)
+    // Интерактор
     factory { AudioPlayerInteractor(get()) }
 
     // ViewModel

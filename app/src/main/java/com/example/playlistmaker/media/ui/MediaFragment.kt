@@ -71,8 +71,6 @@ class MediaFragment : Fragment(R.layout.fragment_media) {
         if (::tabMediator.isInitialized) {
             tabMediator.detach()
         }
-        // Можно оставить adapter = null или убрать эту строку
-        // binding.viewPager.adapter = null
         _binding = null
     }
 }

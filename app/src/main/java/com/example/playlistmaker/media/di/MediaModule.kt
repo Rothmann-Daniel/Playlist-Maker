@@ -7,7 +7,6 @@ import com.example.playlistmaker.media.ui.FavoriteTracksViewModel
 import com.example.playlistmaker.media.ui.MediaViewModel
 import com.example.playlistmaker.media.ui.PlaylistsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.core.scope.get
 import org.koin.dsl.module
 
 
