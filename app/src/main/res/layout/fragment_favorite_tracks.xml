@@ -7,6 +7,13 @@
     android:orientation="vertical"
     tools:context=".media.ui.FavoriteTracksFragment">
 
+    <!-- Контейнер для пустого состояния -->
+    <LinearLayout
+        android:id="@+id/emptyStateContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -23,5 +30,13 @@
         style="@style/MediaFavoriteFragment"
         android:textFontWeight="400"
         android:text="@string/empty_media"/>
+</LinearLayout>
+
+    <!-- RecyclerView для списка треков -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favoriteTracksRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </LinearLayout>

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.media.data.db.di.dataModule
 import com.example.playlistmaker.media.di.mediaModule
 import com.example.playlistmaker.player.di.playerModule
 import com.example.playlistmaker.search.di.networkModule
@@ -32,6 +33,7 @@ class App : Application() {
             modules(
                 networkModule,
                 searchModule,
+                dataModule,
                 settingsModule,
                 mediaModule,
                 playerModule,

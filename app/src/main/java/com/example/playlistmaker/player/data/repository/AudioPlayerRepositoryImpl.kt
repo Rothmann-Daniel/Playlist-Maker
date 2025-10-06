@@ -107,7 +107,7 @@ class AudioPlayerRepositoryImpl(
             val currentPos = mediaPlayer?.currentPosition?.toLong() ?: 0L
             lastKnownPosition = currentPos
             emit(currentPos)
-            delay(PLAYBACK_PROGRESS_UPDATE_DELAY) // Обновление каждые 300мс согласно ТЗ
+            delay(PLAYBACK_PROGRESS_UPDATE_DELAY)
         }
     }
 

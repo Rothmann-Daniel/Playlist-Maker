@@ -5,8 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.player.domain.usecase.AudioPlayerInteractor
+import com.example.playlistmaker.media.domain.interactor.FavoriteTracksInteractor
+import com.example.playlistmaker.player.domain.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.player.domain.model.AudioPlayerState
+import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
@@ -16,10 +18,10 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 class AudioPlayerViewModel(
-    private val audioPlayerInteractor: AudioPlayerInteractor
+    private val audioPlayerInteractor: AudioPlayerInteractor,
+    private val favoriteTracksInteractor: FavoriteTracksInteractor
 ) : ViewModel() {
 
-    // Конвертируем AudioPlayerState в UI состояния
     sealed class PlayerState {
         object Preparing : PlayerState()
         object Prepared : PlayerState()
@@ -34,11 +36,51 @@ class AudioPlayerViewModel(
     private val _currentPosition = MutableLiveData<String>("00:00")
     val currentPosition: LiveData<String> = _currentPosition
 
-    // Job для debounce кликов
+    private val _isFavorite = MutableLiveData<Boolean>()
+    val isFavorite: LiveData<Boolean> = _isFavorite
+
+    private var currentTrack: Track? = null
+
+    fun setTrack(track: Track) {
+        currentTrack = track
+        // Проверяем актуальное состояние из БД
+        checkFavoriteStatus(track)
+    }
+
+    private fun checkFavoriteStatus(track: Track) {
+        viewModelScope.launch {
+            favoriteTracksInteractor.getAllFavoriteTracks()
+                .onEach { favoriteTracks ->
+                    val isFav = favoriteTracks.any { it.trackId == track.trackId }
+                    track.isFavorite = isFav
+                    _isFavorite.postValue(isFav)
+                }
+                .catch { error ->
+                    Log.e("AudioPlayer", "Error checking favorite status", error)
+                    _isFavorite.postValue(false)
+                }
+                .launchIn(this)
+        }
+    }
+
+    fun onFavoriteClicked() {
+        val track = currentTrack ?: return
+
+        viewModelScope.launch {
+            if (track.isFavorite) {
+                favoriteTracksInteractor.removeTrackFromFavorites(track)
+            } else {
+                favoriteTracksInteractor.addTrackToFavorites(track)
+            }
+            // Обновляем состояние
+            track.isFavorite = !track.isFavorite
+            _isFavorite.value = track.isFavorite
+        }
+    }
+
     private var clickDebounceJob: Job? = null
 
     fun preparePlayer(url: String) {
-        // Используем viewModelScope для запуска корутин и работы с Flow
         audioPlayerInteractor.prepareAudio(url)
             .onEach { state ->
                 _playerState.postValue(mapToUiState(state))
@@ -48,51 +90,43 @@ class AudioPlayerViewModel(
             }
             .launchIn(viewModelScope)
 
-        // Подписываемся на прогресс воспроизведения
         audioPlayerInteractor.getPlaybackProgress()
             .onEach { position ->
                 _currentPosition.postValue(formatTime(position))
             }
             .catch { error ->
-                // Логируем ошибку
                 Log.e("AudioPlayer", "Playback progress error", error)
                 _currentPosition.postValue(formatTime(0L))
             }
             .launchIn(viewModelScope)
 
-        // Подписываемся на изменения состояния плеера
         audioPlayerInteractor.getPlayerState()
             .onEach { state ->
                 _playerState.postValue(mapToUiState(state))
                 when (state) {
                     is AudioPlayerState.Completed -> {
-                        // При завершении трека устанавливаем 00:00
                         _currentPosition.postValue("00:00")
                     }
                     is AudioPlayerState.Paused,
                     is AudioPlayerState.Prepared -> {
                         // При паузе или подготовке не сбрасываем позицию
                     }
-                    else -> {
-                        // Для других состояний ничего дополнительно не делаем
-                    }
+                    else -> {}
                 }
             }
             .launchIn(viewModelScope)
     }
 
-    // Debounce для кликов по кнопке play/pause (используем корутины)
     fun togglePlayPause() {
         clickDebounceJob?.cancel()
         clickDebounceJob = viewModelScope.launch {
-            delay(CLICK_DEBOUNCE_DELAY_MS) // Простая реализация debounce с отменой Job
+            delay(CLICK_DEBOUNCE_DELAY_MS)
 
-            // Использую актуальное состояние из LiveData, а не запрос к интерактору (избегаю сценарий race condition)
             when (playerState.value) {
                 is PlayerState.Playing -> pause()
                 is PlayerState.Paused -> play()
                 is PlayerState.Prepared -> play()
-                else -> { /* Игнорируем */ }
+                else -> {}
             }
         }
     }
@@ -118,8 +152,6 @@ class AudioPlayerViewModel(
             _currentPosition.postValue("00:00")
         }
     }
-
-
 
     private fun mapToUiState(state: AudioPlayerState): PlayerState {
         return when (state) {
@@ -148,6 +180,6 @@ class AudioPlayerViewModel(
     }
 
     companion object {
-        private const val CLICK_DEBOUNCE_DELAY_MS = 300L // Debounce для кликов
+        private const val CLICK_DEBOUNCE_DELAY_MS = 300L
     }
 }
