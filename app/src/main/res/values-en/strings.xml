@@ -47,6 +47,7 @@
     <string name="no_email_app_installed">No email app installed</string>
     <string name="empty_media">Empty Media</string>
     <string name="newPlayList">Add new Playlist</string>
+    <string name="playlist_cover">Cover Image</string>
     <string name="not_created_playlists">You haven\'t created any playlists</string>
     <string name="favorite_tracks">Favorite tracks</string>
     <string name="play_lists">Playlist\'s</string>

@@ -81,7 +81,8 @@
             app:hintTextAppearance="@style/NewPlaylistHintTextAppearance"
             app:layout_constraintEnd_toEndOf="@id/right_guideline_16"
             app:layout_constraintStart_toStartOf="@id/left_guideline_16"
-            app:layout_constraintTop_toBottomOf="@id/playlistCover">
+            app:layout_constraintTop_toBottomOf="@id/playlistCover"
+            >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputName"
