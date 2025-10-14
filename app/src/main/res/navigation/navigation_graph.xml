@@ -73,6 +73,11 @@
         android:label="NewPlaylistFragment"
         tools:layout="@layout/fragment_new_playlist">
 
+        <action
+            android:id="@+id/action_newPlaylist_to_playlists"
+            app:popUpTo="@id/playlistsFragment"
+            app:popUpToInclusive="true" />
+
     </fragment>
 
 </navigation>

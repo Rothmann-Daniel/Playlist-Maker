@@ -54,6 +54,11 @@
     <string name="description">Description</string>
     <string name="create">Create</string>
     <string name="title_NewPlayList">New Playlist</string>
+    <string name="exit_dialog_title">Finish creating a playlist?</string>
+    <string name="exit_dialog_message">All unsaved data will be lost</string>
+    <string name="cancel">Cansel</string>
+    <string name="exit">Complete</string>
+    <string name="playlist_created_success">Playlist \"%s\" created</string>
 
 
 </resources>
