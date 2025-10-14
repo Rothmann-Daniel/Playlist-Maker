@@ -1,131 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/newPlaylistFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:background="@color/white_night"
+    android:fitsSystemWindows="true"
     tools:context=".media.ui.NewPlaylistFragment">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/left_guideline_24"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="24dp" />
+        android:background="@color/white_night"
+        tools:context=".media.ui.NewPlaylistFragment">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/right_guideline_24"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="24dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/left_guideline_16"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="16dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/right_guideline_16"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="16dp" />
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_newPlayList"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        app:title="Новый плейлист"
-        app:titleTextColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/back"
-        app:navigationIconTint="@color/black"/>
-
-    <ImageView
-        android:id="@+id/playlistCover"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="26dp"
-        android:adjustViewBounds="true"
-        android:background="@drawable/gray_border"
-        android:scaleType="centerCrop"
-        android:src="@drawable/icon_add_photo"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@id/right_guideline_24"
-        app:layout_constraintStart_toStartOf="@id/left_guideline_24"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_newPlayList" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/inputNameLayout"
-        style="@style/NewPlaylist"
-        android:layout_marginTop="32dp"
-        app:boxBackgroundColor="@android:color/transparent"
-        app:boxBackgroundMode="outline"
-        app:hintTextAppearance="@style/NewPlaylistHintTextAppearance"
-        app:layout_constraintEnd_toEndOf="@id/right_guideline_16"
-        app:layout_constraintStart_toStartOf="@id/left_guideline_16"
-        app:layout_constraintTop_toBottomOf="@id/playlistCover">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/inputName"
-            android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/left_guideline_24"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/NewPlaylist_EdText"
-            android:hint="@string/title_name" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="24dp" />
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/right_guideline_24"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="24dp" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/inputDescriptionLayout"
-        style="@style/NewPlaylist"
-        android:layout_marginTop="16dp"
-        android:tag="inputDescriptionLayout"
-        app:boxBackgroundColor="@android:color/transparent"
-        app:boxBackgroundMode="outline"
-        app:layout_constraintEnd_toEndOf="@id/right_guideline_16"
-        app:layout_constraintStart_toStartOf="@id/left_guideline_16"
-        app:layout_constraintTop_toBottomOf="@id/inputNameLayout">
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/left_guideline_16"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/inputDescription"
-            style="@style/NewPlaylist_EdText"
-            android:hint="@string/description" />
-    </com.google.android.material.textfield.TextInputLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/right_guideline_16"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
 
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_newPlayList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/back"
+            app:navigationIconTint="@color/black"
+            app:title="@string/title_NewPlayList"
+            app:titleTextColor="@color/black" />
 
-    <FrameLayout
-        android:id="@+id/progressBarContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+        <ImageView
+            android:id="@+id/playlistCover"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="26dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/gray_border"
+            android:scaleType="centerCrop"
+            android:src="@drawable/icon_add_photo"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/right_guideline_24"
+            app:layout_constraintStart_toStartOf="@id/left_guideline_24"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_newPlayList" />
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_gravity="center"
-            android:indeterminate="true"
-            app:indicatorColor="@color/progress_bar" />
-    </FrameLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputNameLayout"
+            style="@style/NewPlaylist"
+            android:layout_marginTop="32dp"
+            app:boxBackgroundColor="@android:color/transparent"
+            app:boxBackgroundMode="outline"
+            app:hintTextAppearance="@style/NewPlaylistHintTextAppearance"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline_16"
+            app:layout_constraintStart_toStartOf="@id/left_guideline_16"
+            app:layout_constraintTop_toBottomOf="@id/playlistCover">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/createPlaylist"
-        style="@style/CreateNewPlaylist"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="17dp"
-        android:enabled="false"
-        android:text="@string/create"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/NewPlaylist_EdText"
+                android:hint="@string/title_name" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputDescriptionLayout"
+            style="@style/NewPlaylist"
+            android:layout_marginTop="16dp"
+            android:tag="inputDescriptionLayout"
+            app:boxBackgroundColor="@android:color/transparent"
+            app:boxBackgroundMode="outline"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline_16"
+            app:layout_constraintStart_toStartOf="@id/left_guideline_16"
+            app:layout_constraintTop_toBottomOf="@id/inputNameLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputDescription"
+                style="@style/NewPlaylist_EdText"
+                android:hint="@string/description" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <FrameLayout
+            android:id="@+id/progressBarContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                app:indicatorColor="@color/progress_bar" />
+        </FrameLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/createPlaylist"
+            style="@style/CreateNewPlaylist"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="24dp"
+            android:enabled="false"
+            android:text="@string/create"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inputDescriptionLayout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

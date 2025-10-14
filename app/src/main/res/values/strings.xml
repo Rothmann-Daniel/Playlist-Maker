@@ -75,6 +75,7 @@
     <string name="title_name">Название*</string>
     <string name="description">Описание</string>
     <string name="create">Создать</string>
+    <string name="title_NewPlayList">Новый плейлист</string>
 
 
 </resources>
