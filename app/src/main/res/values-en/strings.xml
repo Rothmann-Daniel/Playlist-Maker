@@ -50,6 +50,9 @@
     <string name="not_created_playlists">You haven\'t created any playlists</string>
     <string name="favorite_tracks">Favorite tracks</string>
     <string name="play_lists">Playlist\'s</string>
+    <string name="title_name">Title Albom*</string>
+    <string name="description">Description</string>
+    <string name="create">Create</string>
 
 
 </resources>

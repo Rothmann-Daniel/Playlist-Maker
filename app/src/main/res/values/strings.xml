@@ -72,5 +72,9 @@
     <string name="favorite_tracks">Избранные треки</string>
     <string name="play_lists">Плейлисты</string>
 
+    <string name="title_name">Название*</string>
+    <string name="description">Описание</string>
+    <string name="create">Создать</string>
+
 
 </resources>

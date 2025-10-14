@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import androidx.navigation.fragment.findNavController
+import com.example.playlistmaker.R
 
 class PlaylistsFragment : Fragment() {
 
@@ -32,6 +34,9 @@ class PlaylistsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Подписываемся на изменения в ViewModel
+        binding.newPlaylistButton.setOnClickListener {
+            findNavController().navigate(R.id.newPlayList)
+        }
 
     }
 
