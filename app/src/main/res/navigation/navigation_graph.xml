@@ -36,6 +36,12 @@
             android:id="@+id/action_newPlaylist_to_mediaFragment"
             app:popUpTo="@id/mediaFragment"
             app:popUpToInclusive="true" />
+
+        <!-- Добавьте действие для возврата из AudioPlayer -->
+        <action
+            android:id="@+id/action_newPlaylist_to_audioPlayerFragment"
+            app:popUpTo="@id/audioPlayerFragment"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <!-- Остальные фрагменты -->
@@ -65,6 +71,11 @@
         <argument
             android:name="trackJson"
             app:argType="string" />
+
+        <!-- ДОБАВЬТЕ ЭТО ДЕЙСТВИЕ -->
+        <action
+            android:id="@+id/action_audioPlayerFragment_to_newPlayList"
+            app:destination="@id/newPlayList" />
     </fragment>
 
     <fragment

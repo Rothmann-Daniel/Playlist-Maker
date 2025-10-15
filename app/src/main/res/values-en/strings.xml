@@ -47,6 +47,7 @@
     <string name="no_email_app_installed">No email app installed</string>
     <string name="empty_media">Empty Media</string>
     <string name="newPlayList">Add new Playlist</string>
+    <string name="add_to_playlist">Add to Playlist</string>
     <string name="playlist_cover">Cover Image</string>
     <string name="not_created_playlists">You haven\'t created any playlists</string>
     <string name="favorite_tracks">Favorite tracks</string>
@@ -60,6 +61,11 @@
     <string name="cancel">Cansel</string>
     <string name="exit">Complete</string>
     <string name="playlist_created_success">Playlist \"%s\" created</string>
+    <string name="added_to_playlist">Added to playlist</string>
+    <string name="track_already_in_playlist">Track already in playlist</string>
+    <string name="failed_to_add_track">Failed to add Track</string>
+    <string name="loading_playlists">Loading playlists</string>
+    <string name="no_playlists">No Playlist</string>
 
 
 </resources>

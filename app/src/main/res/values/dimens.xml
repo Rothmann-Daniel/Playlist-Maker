@@ -25,6 +25,7 @@
 
     <!-- item_list_view -->
     <dimen name="card_height">64dp</dimen>
+    <dimen name="peekHeight_240">240dp</dimen>
 
     <!-- Защита от сжатия -->
     <dimen name="track_image_size">45dp</dimen>
