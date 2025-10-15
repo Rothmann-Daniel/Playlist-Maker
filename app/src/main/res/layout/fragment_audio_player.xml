@@ -94,10 +94,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible"
-            app:constraint_referenced_ids="ib_Seen,ib_Favorite" />
+            app:constraint_referenced_ids="addToPlayListButton,addToFavoriteButton" />
 
         <ImageButton
-            android:id="@+id/ib_Seen"
+            android:id="@+id/addToPlayListButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
@@ -114,13 +114,13 @@
             android:layout_height="84dp"
             android:background="@color/white"
             android:src="@drawable/play"
-            app:layout_constraintEnd_toStartOf="@id/ib_Favorite"
-            app:layout_constraintStart_toEndOf="@id/ib_Seen"
+            app:layout_constraintEnd_toStartOf="@id/addToFavoriteButton"
+            app:layout_constraintStart_toEndOf="@id/addToPlayListButton"
             app:layout_constraintTop_toBottomOf="@id/tv_ArtistName"
             android:layout_marginTop="24dp" />
 
         <ImageButton
-            android:id="@+id/ib_Favorite"
+            android:id="@+id/addToFavoriteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"

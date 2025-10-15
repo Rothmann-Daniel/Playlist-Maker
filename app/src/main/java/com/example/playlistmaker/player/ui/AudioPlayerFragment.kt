@@ -44,7 +44,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
         setTrackInfo(track)
 
         // Настройка кнопки избранного
-        binding.ibFavorite.setOnClickListener {
+        binding.addToFavoriteButton.setOnClickListener {
             viewModel.onFavoriteClicked()
         }
 
@@ -125,7 +125,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
             } else {
                 R.drawable.favourite // Неподсвеченное сердечко
             }
-            binding.ibFavorite.setImageResource(favoriteIcon)
+            binding.addToFavoriteButton.setImageResource(favoriteIcon)
         }
     }
 

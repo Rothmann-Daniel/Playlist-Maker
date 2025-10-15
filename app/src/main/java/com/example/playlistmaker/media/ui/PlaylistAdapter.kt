@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ItemPlaylistBinding
+import com.example.playlistmaker.databinding.PlaylistItemGridViewBinding
 import com.example.playlistmaker.media.domain.model.Playlist
 import java.io.File
 
@@ -16,7 +16,7 @@ class PlaylistAdapter(
 ) : RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
-        val binding = ItemPlaylistBinding.inflate(
+        val binding = PlaylistItemGridViewBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -36,7 +36,7 @@ class PlaylistAdapter(
     }
 
     inner class PlaylistViewHolder(
-        private val binding: ItemPlaylistBinding
+        private val binding: PlaylistItemGridViewBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(playlist: Playlist) {
