@@ -65,6 +65,7 @@
             android:layout_marginTop="26dp"
             app:cardCornerRadius="@dimen/corner_radius"
             app:cardElevation="0dp"
+            app:cardBackgroundColor="@android:color/transparent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toStartOf="@id/right_guideline_24"
             app:layout_constraintStart_toStartOf="@id/left_guideline_24"
