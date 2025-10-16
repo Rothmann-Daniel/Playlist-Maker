@@ -41,6 +41,8 @@ class PlaylistBottomSheetAdapter(
 
         fun bind(playlist: Playlist) {
             with(binding) {
+                // Получаем фиксированный размер изображения из dimens
+                val imageSize = itemView.resources.getDimensionPixelSize(R.dimen.track_image_size)
                 // Устанавливаем обложку с скругленными углами
                 if (!playlist.coverImagePath.isNullOrEmpty()) {
                     val coverFile = File(playlist.coverImagePath)
@@ -50,6 +52,7 @@ class PlaylistBottomSheetAdapter(
 
                         Glide.with(itemView)
                             .load(coverFile)
+                            .override(imageSize, imageSize) // ФИКСИРУЕМ РАЗМЕР
                             .centerCrop()
                             .transform(RoundedCorners(radiusInPx)) // Применяем скругление
                             .placeholder(R.drawable.placeholder)
