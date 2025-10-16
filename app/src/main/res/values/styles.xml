@@ -302,4 +302,10 @@
         <item name="cornerSize">8dp</item>
     </style>
 
+    <style name="RoundedCorners_2" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">2dp</item>
+    </style>
+
+
 </resources>

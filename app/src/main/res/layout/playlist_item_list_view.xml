@@ -9,14 +9,14 @@
     android:gravity="center_vertical|start"
     android:orientation="horizontal">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/playlistCover"
         android:layout_width="@dimen/track_image_size"
         android:layout_height="@dimen/track_image_size"
         android:layout_marginStart="@dimen/padding_16"
-        android:background="@drawable/image_shape_2"
-        android:clipToOutline="true"
-        android:src="@drawable/placeholder" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/placeholder"
+        app:shapeAppearanceOverlay="@style/RoundedCorners_2" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -43,6 +43,7 @@
             android:ellipsize="end"
             android:maxWidth="150dp"
             android:maxLines="1"
+            android:textColor="@color/buttonSettings"
             tools:text="Number of Tracks" />
 
     </LinearLayout>

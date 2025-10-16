@@ -67,5 +67,10 @@
     <string name="loading_playlists">Loading playlists</string>
     <string name="no_playlists">No Playlist</string>
 
+    <plurals name="tracks_count">
+        <item quantity="one">%d track</item>
+        <item quantity="other">%d tracks</item>
+    </plurals>
+
 
 </resources>

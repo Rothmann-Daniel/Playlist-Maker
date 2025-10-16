@@ -24,8 +24,11 @@
     <dimen name="corner_radius">8dp</dimen>
 
     <!-- item_list_view -->
-    <dimen name="card_height">64dp</dimen>
+    <dimen name="card_height">61dp</dimen>
     <dimen name="peekHeight_240">240dp</dimen>
+
+    <!-- bottom sheet -->
+    <dimen name="bottomSheetHeight_505">505dp</dimen>
 
     <!-- Защита от сжатия -->
     <dimen name="track_image_size">45dp</dimen>

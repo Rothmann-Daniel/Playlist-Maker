@@ -41,33 +41,26 @@ class PlaylistBottomSheetAdapter(
 
         fun bind(playlist: Playlist) {
             with(binding) {
-                // Получаем фиксированный размер изображения из dimens
                 val imageSize = itemView.resources.getDimensionPixelSize(R.dimen.track_image_size)
-                // Устанавливаем обложку с скругленными углами
+
                 if (!playlist.coverImagePath.isNullOrEmpty()) {
                     val coverFile = File(playlist.coverImagePath)
                     if (coverFile.exists()) {
-                        // Получаем радиус скругления в пикселях (8dp как в AudioPlayerFragment)
-                        val radiusInPx = (8f * itemView.resources.displayMetrics.density).toInt()
-
                         Glide.with(itemView)
                             .load(coverFile)
                             .override(imageSize, imageSize) // ФИКСИРУЕМ РАЗМЕР
                             .centerCrop()
-                            .transform(RoundedCorners(radiusInPx)) // Применяем скругление
+                            .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)))
                             .placeholder(R.drawable.placeholder)
                             .into(playlistCover)
                     } else {
-                        playlistCover.setImageResource(R.drawable.placeholder)
+                        loadPlaceholder(imageSize)
                     }
                 } else {
-                    playlistCover.setImageResource(R.drawable.placeholder)
+                    loadPlaceholder(imageSize)
                 }
 
-                // Устанавливаем название
                 playlistName.text = playlist.name
-
-                // Устанавливаем количество треков
                 val tracksText = itemView.resources.getQuantityString(
                     R.plurals.tracks_count,
                     playlist.tracksCount,
@@ -75,11 +68,19 @@ class PlaylistBottomSheetAdapter(
                 )
                 playlistTrackCount.text = tracksText
 
-                // Обработка клика
                 itemView.setOnClickListener {
                     onPlaylistClick(playlist)
                 }
             }
+        }
+
+        private fun loadPlaceholder(imageSize: Int) {
+            Glide.with(itemView)
+                .load(R.drawable.placeholder)
+                .override(imageSize, imageSize)
+                .centerCrop()
+                .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)))
+                .into(binding.playlistCover)
         }
     }
 }
