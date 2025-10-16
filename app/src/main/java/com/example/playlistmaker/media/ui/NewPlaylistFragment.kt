@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.NestedScrollView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -52,6 +53,44 @@ class NewPlaylistFragment : Fragment() {
         setupClickListeners()
         setupTextWatchers()
         setupObservers()
+        // Установливаем фокус на поле ввода имени
+        setFocusOnInputName()
+
+        // Настройка скроллинг при открытой клавиатуре
+        setupKeyboardScrolling()
+    }
+
+    private fun setFocusOnInputName() {
+        binding.inputName.requestFocus()
+        try {
+            val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            imm.showSoftInput(binding.inputName, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+        } catch (e: Exception) {
+            // Игнорируем ошибки, связанные с показом клавиатуры
+            e.printStackTrace()
+        }
+    }
+
+    private fun setupKeyboardScrolling() {
+        val container = binding.root as? NestedScrollView
+
+        // Слушатель для автоматического скролла при фокусе
+        binding.inputDescription.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                // Скроллим к полю описания с задержкой
+                binding.inputDescription.postDelayed({
+                    container?.scrollTo(0, binding.inputDescriptionLayout.bottom)
+                }, 100)
+            }
+        }
+
+        binding.inputName.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.inputName.postDelayed({
+                    container?.scrollTo(0, binding.inputNameLayout.top)
+                }, 100)
+            }
+        }
     }
 
     private fun setupToolbar() {
