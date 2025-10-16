@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -124,10 +126,23 @@ class NewPlaylistFragment : Fragment() {
             binding.createPlaylist.isEnabled = isEnabled
         }
 
-        viewModel.playlistCreated.observe(viewLifecycleOwner) { success ->
-            if (success) {
-                showSuccessMessage()
-                findNavController().navigateUp()
+        viewModel.createState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is NewPlaylistViewModel.CreatePlaylistState.Loading -> {
+                    showLoading(true)
+                }
+                is NewPlaylistViewModel.CreatePlaylistState.Success -> {
+                    showLoading(false)
+                    showSuccessMessage(state.playlistName)
+                    findNavController().navigateUp()
+                }
+                is NewPlaylistViewModel.CreatePlaylistState.Error -> {
+                    showLoading(false)
+                    showError(state.message)
+                }
+                else -> {
+                    showLoading(false)
+                }
             }
         }
 
@@ -137,6 +152,21 @@ class NewPlaylistFragment : Fragment() {
             }
         }
     }
+
+    private fun showLoading(show: Boolean) {
+        binding.progressBarContainer.isVisible = show
+        binding.createPlaylist.isEnabled = !show
+    }
+
+    private fun showError(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showSuccessMessage(playlistName: String) {
+        val message = getString(R.string.playlist_created_success, playlistName)
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
 
     private fun pickImageFromGallery() {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {

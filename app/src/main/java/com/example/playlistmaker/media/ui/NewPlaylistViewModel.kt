@@ -3,110 +3,112 @@ package com.example.playlistmaker.media.ui
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.interactor.PlaylistInteractor
-import com.example.playlistmaker.media.domain.model.Playlist
-import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
-
+/**
+ * ViewModel для создания плейлиста
+ * Упрощена - работа с файлами перенесена в репозиторий
+ */
 class NewPlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor,
-    private val fileManager: PlaylistFileManager,
-    private val gson: Gson
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _playlistCreated = MutableLiveData<Boolean>()
-    val playlistCreated: LiveData<Boolean> = _playlistCreated
+    // Состояния
+    sealed class CreatePlaylistState {
+        object Idle : CreatePlaylistState()
+        object Loading : CreatePlaylistState()
+        data class Success(val playlistName: String) : CreatePlaylistState()
+        data class Error(val message: String) : CreatePlaylistState()
+    }
+
+    private val _createState = MutableLiveData<CreatePlaylistState>(CreatePlaylistState.Idle)
+    val createState: LiveData<CreatePlaylistState> = _createState
 
     private val _showExitDialog = MutableLiveData<Boolean>()
     val showExitDialog: LiveData<Boolean> = _showExitDialog
 
-    private val _coverUri = MutableLiveData<Uri?>()
-    val coverUri: LiveData<Uri?> = _coverUri
+    private val _isCreateButtonEnabled = MutableLiveData<Boolean>()
+    val isCreateButtonEnabled: LiveData<Boolean> = _isCreateButtonEnabled
 
+    // Данные формы с сохранением состояния
     private val _name = MutableLiveData<String>()
     val name: LiveData<String> = _name
 
     private val _description = MutableLiveData<String>()
     val description: LiveData<String> = _description
 
-    private val _isCreateButtonEnabled = MutableLiveData<Boolean>()
-    val isCreateButtonEnabled: LiveData<Boolean> = _isCreateButtonEnabled
-
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
+    private val _coverUri = MutableLiveData<Uri?>()
+    val coverUri: LiveData<Uri?> = _coverUri
 
     private var hasUnsavedChanges = false
 
     init {
-        _name.value = ""
-        _description.value = ""
-        _isCreateButtonEnabled.value = false
-        _coverUri.value = null
-        _isLoading.value = false
+        // Восстанавливаем состояние
+        restoreState()
+    }
+
+    private fun restoreState() {
+        _name.value = savedStateHandle.get<String>(KEY_NAME) ?: ""
+        _description.value = savedStateHandle.get<String>(KEY_DESCRIPTION) ?: ""
+        _coverUri.value = savedStateHandle.get<String>(KEY_COVER_URI)?.let { Uri.parse(it) }
+
+        updateCreateButtonState()
+        updateUnsavedChanges()
     }
 
     fun onNameChanged(name: String) {
         _name.value = name
-        _isCreateButtonEnabled.value = name.isNotBlank()
+        savedStateHandle[KEY_NAME] = name
+        updateCreateButtonState()
         updateUnsavedChanges()
     }
 
     fun onDescriptionChanged(description: String) {
         _description.value = description
+        savedStateHandle[KEY_DESCRIPTION] = description
         updateUnsavedChanges()
     }
 
     fun setCoverUri(uri: Uri?) {
         _coverUri.value = uri
+        savedStateHandle[KEY_COVER_URI] = uri?.toString()
         updateUnsavedChanges()
     }
 
     fun createPlaylist() {
+        val currentName = _name.value?.trim()
+        if (currentName.isNullOrBlank()) {
+            _createState.value = CreatePlaylistState.Error("Название плейлиста не может быть пустым")
+            return
+        }
+
+        _createState.value = CreatePlaylistState.Loading
+
         viewModelScope.launch {
-            try {
-                _isLoading.value = true
+            val result = playlistInteractor.createPlaylist(
+                name = currentName,
+                description = _description.value?.trim()?.takeIf { it.isNotEmpty() },
+                coverImageUri = _coverUri.value
+            )
 
-                // Сохраняем обложку, если она была выбрана
-                val coverUriValue = _coverUri.value
-                var finalCoverPath: String? = null
-
-                if (coverUriValue != null) {
-                    val inputStream = fileManager.getInputStreamFromUri(coverUriValue)
-                    inputStream?.use { stream ->
-                        finalCoverPath = fileManager.saveCoverImage(stream)
-                    }
-                }
-
-                val playlist = Playlist(
-                    name = _name.value ?: "",
-                    description = _description.value?.takeIf { it.isNotBlank() },
-                    coverImagePath = finalCoverPath,
-                    trackIds = emptyList(),
-                    tracksCount = 0
-                )
-
-                val playlistId = playlistInteractor.createPlaylist(playlist)
-                if (playlistId > 0) {
-                    _playlistCreated.value = true
+            _createState.value = when {
+                result.isSuccess -> {
                     hasUnsavedChanges = false
-                } else {
-                    _playlistCreated.value = false
+                    CreatePlaylistState.Success(currentName)
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _playlistCreated.value = false
-            } finally {
-                _isLoading.value = false
+                else -> CreatePlaylistState.Error(
+                    result.exceptionOrNull()?.message ?: "Неизвестная ошибка"
+                )
             }
         }
     }
 
-    fun checkUnsavedChanges(): Boolean {
-        return hasUnsavedChanges
-    }
+    fun checkUnsavedChanges(): Boolean = hasUnsavedChanges
 
     fun showExitDialog() {
         _showExitDialog.value = true
@@ -119,6 +121,14 @@ class NewPlaylistViewModel(
     fun exitWithoutSaving() {
         _showExitDialog.value = false
         hasUnsavedChanges = false
+        // Очищаем сохраненное состояние
+        savedStateHandle.remove<String>(KEY_NAME)
+        savedStateHandle.remove<String>(KEY_DESCRIPTION)
+        savedStateHandle.remove<String>(KEY_COVER_URI)
+    }
+
+    private fun updateCreateButtonState() {
+        _isCreateButtonEnabled.value = !_name.value.isNullOrBlank()
     }
 
     private fun updateUnsavedChanges() {
@@ -129,5 +139,11 @@ class NewPlaylistViewModel(
         hasUnsavedChanges = currentName.isNotBlank() ||
                 currentDescription.isNotBlank() ||
                 currentCoverUri != null
+    }
+
+    companion object {
+        private const val KEY_NAME = "playlist_name"
+        private const val KEY_DESCRIPTION = "playlist_description"
+        private const val KEY_COVER_URI = "playlist_cover_uri"
     }
 }

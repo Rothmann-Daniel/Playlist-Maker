@@ -11,7 +11,7 @@ data class PlaylistEntity(
     val name: String,
     val description: String?,
     val coverImagePath: String?,
-    val trackIdsJson: String, // Список ID треков в формате JSON
+    val trackIdsJson: String,
     val tracksCount: Int = 0,
     val createdTimestamp: Long = System.currentTimeMillis()
 )

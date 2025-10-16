@@ -14,7 +14,7 @@ import com.example.playlistmaker.media.data.db.entity.PlaylistTrackEntity
 import com.example.playlistmaker.media.data.db.entity.TrackEntity
 
 @Database(
-    version = 4, // Увеличьте версию
+    version = 4,
     entities = [
         TrackEntity::class,
         PlaylistEntity::class,

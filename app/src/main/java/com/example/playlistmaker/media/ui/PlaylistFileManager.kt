@@ -7,6 +7,11 @@ import kotlinx.coroutines.withContext
 import java.io.*
 import java.util.UUID
 
+/**
+ * Класс для работы с файловым хранилищем плейлистов
+ * Переведен из UI слоя в Data слой
+ */
+@Deprecated("Переведен из UI слоя в Data слой")
 class PlaylistFileManager(private val context: Context) {
 
     companion object {

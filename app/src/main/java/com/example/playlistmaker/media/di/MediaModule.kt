@@ -1,7 +1,9 @@
 package com.example.playlistmaker.media.di
 
+import androidx.lifecycle.SavedStateHandle
 import com.example.playlistmaker.media.data.repository.FavoriteTracksRepositoryImpl
 import com.example.playlistmaker.media.data.repository.PlaylistRepositoryImpl
+import com.example.playlistmaker.media.data.storage.PlaylistFileStorage
 import com.example.playlistmaker.media.domain.interactor.FavoriteTracksInteractor
 import com.example.playlistmaker.media.domain.interactor.PlaylistInteractor
 import com.example.playlistmaker.media.domain.repository.FavoriteTracksRepository
@@ -9,25 +11,26 @@ import com.example.playlistmaker.media.domain.repository.PlaylistRepository
 import com.example.playlistmaker.media.ui.FavoriteTracksViewModel
 import com.example.playlistmaker.media.ui.MediaViewModel
 import com.example.playlistmaker.media.ui.NewPlaylistViewModel
-import com.example.playlistmaker.media.ui.PlaylistFileManager
 import com.example.playlistmaker.media.ui.PlaylistsViewModel
-import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 
 val mediaModule = module {
 
-    // Repository
+    // File Storage
+    single { PlaylistFileStorage(get()) }
+
+    // Repositories
     single<FavoriteTracksRepository> {
         FavoriteTracksRepositoryImpl(get())
     }
 
     single<PlaylistRepository> {
-        PlaylistRepositoryImpl(get())
+        PlaylistRepositoryImpl(get(), get()) // database + fileStorage
     }
 
-    // Interactor
+    // Interactors
     factory {
         FavoriteTracksInteractor(get())
     }
@@ -36,22 +39,17 @@ val mediaModule = module {
         PlaylistInteractor(get())
     }
 
-    // File Manager
-    factory {
-        PlaylistFileManager(androidContext())
-    }
-
     // ViewModels
     viewModel { MediaViewModel() }
+
     viewModel { PlaylistsViewModel(get()) }
-    viewModel {
-        FavoriteTracksViewModel(get())
-    }
-    viewModel {
+
+    viewModel { FavoriteTracksViewModel(get()) }
+
+    viewModel { (savedStateHandle: SavedStateHandle) ->
         NewPlaylistViewModel(
             playlistInteractor = get(),
-            fileManager = get(),
-            gson = get()
+            savedStateHandle = savedStateHandle
         )
     }
 }

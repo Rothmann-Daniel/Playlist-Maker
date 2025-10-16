@@ -5,6 +5,9 @@ import com.example.playlistmaker.media.domain.model.Playlist
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
+/**
+ * Конвертер для работы с плейлистами
+ */
 object PlaylistDbConverter {
 
     private val gson = Gson()

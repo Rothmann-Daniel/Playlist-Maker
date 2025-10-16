@@ -10,7 +10,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
-import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.ui.PlaylistBottomSheetAdapter
 import com.example.playlistmaker.search.domain.model.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
