@@ -17,6 +17,8 @@
         android:layout_marginBottom="@dimen/padding_8"
         android:adjustViewBounds="true"
         android:contentDescription="@string/track_cover_desc"
+        android:background="@drawable/image_shape_2"
+        android:clipToOutline="true"
         tools:src="@tools:sample/avatars"/>
 
     <!-- Информация о треке -->
