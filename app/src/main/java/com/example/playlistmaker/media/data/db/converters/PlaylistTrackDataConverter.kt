@@ -1,12 +1,11 @@
 package com.example.playlistmaker.media.data.db.converters
 
-import com.example.playlistmaker.media.data.db.entity.TrackEntity
+import com.example.playlistmaker.media.data.db.entity.PlaylistTrackDataEntity
 import com.example.playlistmaker.search.domain.model.Track
 
-object TrackDbConverter {
-
-    fun mapTrackToEntity(track: Track): TrackEntity {
-        return TrackEntity(
+object PlaylistTrackDataConverter {
+    fun mapTrackToEntity(track: Track): PlaylistTrackDataEntity {
+        return PlaylistTrackDataEntity(
             trackId = track.trackId,
             artworkUrl100 = track.artworkUrl100,
             trackName = track.trackName,
@@ -16,13 +15,11 @@ object TrackDbConverter {
             primaryGenreName = track.primaryGenreName,
             country = track.country,
             trackTimeMillis = track.trackTimeMillis,
-            previewUrl = track.previewUrl,
-            isFavorite = track.isFavorite, // Для сохранения в избранное
-            addedTimestamp = System.currentTimeMillis()
+            previewUrl = track.previewUrl
         )
     }
 
-    fun mapEntityToTrack(entity: TrackEntity): Track {
+    fun mapEntityToTrack(entity: PlaylistTrackDataEntity, isFavorite: Boolean = false): Track {
         return Track(
             trackId = entity.trackId,
             artworkUrl100 = entity.artworkUrl100,
@@ -34,7 +31,7 @@ object TrackDbConverter {
             country = entity.country,
             trackTimeMillis = entity.trackTimeMillis,
             previewUrl = entity.previewUrl,
-            isFavorite = entity.isFavorite // Используем значение из БД
+            isFavorite = isFavorite
         )
     }
 }
