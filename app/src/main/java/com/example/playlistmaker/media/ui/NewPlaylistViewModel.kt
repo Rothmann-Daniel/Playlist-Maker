@@ -19,11 +19,12 @@ class NewPlaylistViewModel(
 ) : ViewModel() {
 
     // Состояния
-    sealed class CreatePlaylistState {
-        object Idle : CreatePlaylistState()
-        object Loading : CreatePlaylistState()
-        data class Success(val playlistName: String) : CreatePlaylistState()
-        data class Error(val message: String) : CreatePlaylistState()
+
+    sealed interface CreatePlaylistState {
+        object Idle : CreatePlaylistState
+        object Loading : CreatePlaylistState
+        data class Success(val playlistName: String) : CreatePlaylistState
+        data class Error(val message: String) : CreatePlaylistState
     }
 
     private val _createState = MutableLiveData<CreatePlaylistState>(CreatePlaylistState.Idle)
