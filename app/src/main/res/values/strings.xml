@@ -98,4 +98,10 @@
     <string name="loading_playlists">Загрузка плейлистов…</string>
     <string name="no_playlists">Нет плейлистов</string>
 
+    <!-- Permission -->
+    <string name="permission_required_title">Требуется разрешение</string>
+    <string name="permission_required_message">Для выбора обложки плейлиста из галереи необходимо разрешение на доступ к изображениям</string>
+    <string name="permission_denied_message">Без разрешения нельзя выбрать изображение из галереи</string>
+    <string name="continue_text">Продолжить</string>
+
 </resources>

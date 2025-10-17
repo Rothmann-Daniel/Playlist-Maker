@@ -41,19 +41,4 @@ object PlaylistTrackDataConverter {
         )
     }
 
-    // Конвертация из DTO в Entity (для внутреннего использования)
-    fun mapDtoToEntity(dto: com.example.playlistmaker.media.data.dto.TrackDto): PlaylistTrackDataEntity {
-        return PlaylistTrackDataEntity(
-            trackId = dto.trackId,
-            artworkUrl100 = dto.artworkUrl100,
-            trackName = dto.trackName,
-            artistName = dto.artistName,
-            collectionName = dto.collectionName,
-            releaseDate = dto.releaseDate,
-            primaryGenreName = dto.primaryGenreName,
-            country = dto.country,
-            trackTimeMillis = dto.trackTimeMillis,
-            previewUrl = dto.previewUrl
-        )
-    }
 }

@@ -2,12 +2,15 @@ package com.example.playlistmaker.media.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.addTextChangedListener
@@ -29,6 +32,7 @@ class NewPlaylistFragment : Fragment() {
     private val gson: Gson by inject()
     private val viewModel: NewPlaylistViewModel by viewModel { parametersOf(gson) }
 
+    // Launcher для выбора изображения
     private val pickImageLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -37,6 +41,19 @@ class NewPlaylistFragment : Fragment() {
                 viewModel.setCoverUri(uri)
                 binding.playlistCover.setImageURI(uri)
             }
+        }
+    }
+
+    // Launcher для запроса разрешений (Android 13+)
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Разрешение получено - открываем галерею
+            launchGalleryIntent()
+        } else {
+            // Разрешение не получено - показываем объяснение
+            showPermissionDeniedMessage()
         }
     }
 
@@ -55,10 +72,10 @@ class NewPlaylistFragment : Fragment() {
         setupClickListeners()
         setupTextWatchers()
         setupObservers()
-        // Установливаем фокус на поле ввода имени
+        // Устанавливаем фокус на поле ввода имени
         setFocusOnInputName()
 
-        // Настройка скроллинг при открытой клавиатуре
+        // Настройка скроллинга при открытой клавиатуре
         setupKeyboardScrolling()
     }
 
@@ -167,11 +184,95 @@ class NewPlaylistFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-
+    /**
+     * Основной метод для выбора изображения с проверкой разрешений
+     */
     private fun pickImageFromGallery() {
+        // Проверяем разрешения в зависимости от версии Android
+        if (hasReadMediaImagesPermission()) {
+            // Разрешение есть - открываем галерею
+            launchGalleryIntent()
+        } else {
+            // Разрешения нет - запрашиваем
+            requestReadMediaImagesPermission()
+        }
+    }
+
+    /**
+     * Проверяет наличие разрешения на чтение медиа-файлов
+     */
+    private fun hasReadMediaImagesPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13+ (API 33+) - READ_MEDIA_IMAGES
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.READ_MEDIA_IMAGES
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            // Android 12 и ниже - разрешение не требуется для ACTION_GET_CONTENT
+            true
+        }
+    }
+
+    /**
+     * Запрашивает разрешение на чтение медиа-файлов
+     */
+    private fun requestReadMediaImagesPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Показываем диалог с объяснением перед запросом
+            if (shouldShowRequestPermissionRationale(android.Manifest.permission.READ_MEDIA_IMAGES)) {
+                showPermissionRationaleDialog()
+            } else {
+                // Запрашиваем разрешение напрямую
+                requestPermissionLauncher.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+            }
+        }
+        // На Android 12 и ниже не запрашиваем - разрешение не требуется
+    }
+
+    /**
+     * Показывает диалог с объяснением необходимости разрешения
+     */
+    private fun showPermissionRationaleDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.permission_required_title))
+            .setMessage(getString(R.string.permission_required_message))
+            .setPositiveButton(getString(R.string.continue_text)) { dialog, _ ->
+                // Пользователь понял - запрашиваем разрешение
+                requestPermissionLauncher.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+                dialog.dismiss()
+            }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    /**
+     * Показывает сообщение об отказе в разрешении
+     */
+    private fun showPermissionDeniedMessage() {
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.permission_denied_message),
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    /**
+     * Запускает интент для выбора изображения из галереи
+     */
+    private fun launchGalleryIntent() {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             type = "image/*"
             addCategory(Intent.CATEGORY_OPENABLE)
+            // Опционально: ограничиваем типы файлов
+            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf(
+                "image/jpeg",
+                "image/jpg",
+                "image/png",
+                "image/webp"
+            ))
         }
         pickImageLauncher.launch(intent)
     }
@@ -200,12 +301,6 @@ class NewPlaylistFragment : Fragment() {
             .show()
     }
 
-    private fun showSuccessMessage() {
-        val playlistName = binding.inputName.text.toString()
-        val message = getString(R.string.playlist_created_success, playlistName)
-        android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -213,5 +308,8 @@ class NewPlaylistFragment : Fragment() {
 
     companion object {
         fun newInstance() = NewPlaylistFragment()
+
+        // Константы для строк
+        private const val PERMISSION_REQUEST_CODE = 1001
     }
 }
