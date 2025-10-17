@@ -3,6 +3,9 @@ package com.example.playlistmaker.media.data.db.converters
 import com.example.playlistmaker.media.data.db.entity.TrackEntity
 import com.example.playlistmaker.search.domain.model.Track
 
+/**
+ * Конвертер для избранных треков
+ */
 object TrackDbConverter {
 
     fun mapTrackToEntity(track: Track): TrackEntity {
@@ -17,7 +20,7 @@ object TrackDbConverter {
             country = track.country,
             trackTimeMillis = track.trackTimeMillis,
             previewUrl = track.previewUrl,
-            isFavorite = true, // Для сохранения в избранное
+            isFavorite = track.isFavorite,
             addedTimestamp = System.currentTimeMillis()
         )
     }
@@ -34,7 +37,7 @@ object TrackDbConverter {
             country = entity.country,
             trackTimeMillis = entity.trackTimeMillis,
             previewUrl = entity.previewUrl,
-            isFavorite = entity.isFavorite // Используем значение из БД
+            isFavorite = entity.isFavorite
         )
     }
 }

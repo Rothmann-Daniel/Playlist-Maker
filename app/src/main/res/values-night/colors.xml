@@ -3,6 +3,7 @@
 
     <color name="white">#FF000000</color>
     <color name="black">#FFFFFFFF</color>
+    <color name="white_night">#1A1B22</color>
     <color name="dark_and_white">#FFFFFFFF</color>
 
 

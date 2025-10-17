@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.interactor.FavoriteTracksInteractor
+import com.example.playlistmaker.media.domain.interactor.PlaylistInteractor
+import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.player.domain.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.player.domain.model.AudioPlayerState
 import com.example.playlistmaker.search.domain.model.Track
@@ -19,7 +21,8 @@ import java.util.*
 
 class AudioPlayerViewModel(
     private val audioPlayerInteractor: AudioPlayerInteractor,
-    private val favoriteTracksInteractor: FavoriteTracksInteractor
+    private val favoriteTracksInteractor: FavoriteTracksInteractor,
+    private val playlistInteractor: PlaylistInteractor // Добавляем интерактор плейлистов
 ) : ViewModel() {
 
     sealed class PlayerState {
@@ -162,6 +165,71 @@ class AudioPlayerViewModel(
             is AudioPlayerState.Error -> PlayerState.Error(state.message)
             else -> PlayerState.Paused
         }
+    }
+
+
+    // Работа с PlayList
+
+    private val _playlistsState = MutableLiveData<PlaylistsState>()
+    val playlistsState: LiveData<PlaylistsState> = _playlistsState
+
+    private val _addToPlaylistResult = MutableLiveData<AddToPlaylistResult?>()
+    val addToPlaylistResult: LiveData<AddToPlaylistResult?> = _addToPlaylistResult
+
+    sealed class PlaylistsState {
+        object Loading : PlaylistsState()
+        object Empty : PlaylistsState()
+        data class Content(val playlists: List<Playlist>) : PlaylistsState()
+        data class Error(val message: String) : PlaylistsState()
+    }
+
+    sealed class AddToPlaylistResult {
+        data class Success(val playlistName: String) : AddToPlaylistResult()
+        data class AlreadyExists(val playlistName: String) : AddToPlaylistResult()
+        data class Error(val message: String) : AddToPlaylistResult()
+    }
+
+    fun loadPlaylists() {
+        viewModelScope.launch {
+            _playlistsState.value = PlaylistsState.Loading
+            try {
+                playlistInteractor.getAllPlaylists().collect { playlists ->
+                    _playlistsState.value = if (playlists.isEmpty()) {
+                        PlaylistsState.Empty
+                    } else {
+                        PlaylistsState.Content(playlists)
+                    }
+                }
+            } catch (e: Exception) {
+                _playlistsState.value = PlaylistsState.Error("Failed to load playlists")
+            }
+        }
+    }
+
+
+    fun addTrackToPlaylist(track: Track, playlist: Playlist) {
+        viewModelScope.launch {
+            try {
+                // Проверяем, есть ли уже трек в плейлисте
+                val isTrackInPlaylist = playlistInteractor.isTrackInPlaylist(playlist.playlistId, track.trackId)
+
+                if (isTrackInPlaylist) {
+                    _addToPlaylistResult.value = AddToPlaylistResult.AlreadyExists(playlist.name)
+                    return@launch
+                }
+
+                // Добавляем трек в плейлист
+                playlistInteractor.addTrackToPlaylist(playlist.playlistId, track)
+                _addToPlaylistResult.value = AddToPlaylistResult.Success(playlist.name)
+
+            } catch (e: Exception) {
+                _addToPlaylistResult.value = AddToPlaylistResult.Error("Failed to add track to playlist: ${e.message}")
+            }
+        }
+    }
+
+    fun clearAddToPlaylistResult() {
+        _addToPlaylistResult.value = null
     }
 
     override fun onCleared() {

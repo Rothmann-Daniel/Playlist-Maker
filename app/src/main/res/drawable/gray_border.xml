@@ -1,0 +1,9 @@
+<!-- res/drawable/custom_dashed_stroke.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/transparent"/>
+    <corners android:radius="@dimen/corner_radius"/>
+    <stroke android:width="2dp"
+        android:color="@color/gray"
+        android:dashWidth="34dp"
+        android:dashGap="34dp" />
+</shape>
