@@ -1,6 +1,7 @@
 package com.example.playlistmaker.media.di
 
 import androidx.lifecycle.SavedStateHandle
+import com.example.playlistmaker.media.data.db.AppDatabase
 import com.example.playlistmaker.media.data.repository.FavoriteTracksRepositoryImpl
 import com.example.playlistmaker.media.data.repository.PlaylistRepositoryImpl
 import com.example.playlistmaker.media.data.storage.PlaylistFileStorage
@@ -21,13 +22,25 @@ val mediaModule = module {
     // File Storage
     single { PlaylistFileStorage(get()) }
 
+    // DAOs
+    single { get<AppDatabase>().playlistDao() }
+    single { get<AppDatabase>().playlistTrackDao() }
+    single { get<AppDatabase>().playlistTrackDataDao() }
+    single { get<AppDatabase>().trackDao() }
+
     // Repositories
     single<FavoriteTracksRepository> {
-        FavoriteTracksRepositoryImpl(get())
+        FavoriteTracksRepositoryImpl(get()) // передаем TrackDao
     }
 
     single<PlaylistRepository> {
-        PlaylistRepositoryImpl(get(), get()) // database + fileStorage
+        PlaylistRepositoryImpl(
+            playlistDao = get(),
+            playlistTrackDao = get(),
+            playlistTrackDataDao = get(),
+            favoriteTrackDao = get(),
+            fileStorage = get()
+        )
     }
 
     // Interactors

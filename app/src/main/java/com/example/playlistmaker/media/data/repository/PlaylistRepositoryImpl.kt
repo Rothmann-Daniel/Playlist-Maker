@@ -1,7 +1,10 @@
 package com.example.playlistmaker.media.data.repository
 
 import android.net.Uri
-import com.example.playlistmaker.media.data.db.AppDatabase
+import com.example.playlistmaker.media.data.db.dao.PlaylistDao
+import com.example.playlistmaker.media.data.db.dao.PlaylistTrackDao
+import com.example.playlistmaker.media.data.db.dao.PlaylistTrackDataDao
+import com.example.playlistmaker.media.data.db.dao.TrackDao
 import com.example.playlistmaker.media.data.db.converters.PlaylistDbConverter
 import com.example.playlistmaker.media.data.db.converters.PlaylistTrackDataConverter
 import com.example.playlistmaker.media.data.db.entity.PlaylistTrackEntity
@@ -14,14 +17,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class PlaylistRepositoryImpl(
-    private val database: AppDatabase,
+    private val playlistDao: PlaylistDao,
+    private val playlistTrackDao: PlaylistTrackDao,
+    private val playlistTrackDataDao: PlaylistTrackDataDao,
+    private val favoriteTrackDao: TrackDao,
     private val fileStorage: PlaylistFileStorage
 ) : PlaylistRepository {
-
-    private val playlistDao = database.playlistDao()
-    private val playlistTrackDao = database.playlistTrackDao()
-    private val playlistTrackDataDao = database.playlistTrackDataDao()
-    private val favoriteTrackDao = database.trackDao()
 
     override suspend fun createPlaylist(
         name: String,
