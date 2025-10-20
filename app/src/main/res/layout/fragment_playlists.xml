@@ -1,37 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".media.ui.PlaylistsFragment">
+
     <Button
-        android:id="@+id/addPlayList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/newPlaylistButton"
         style="@style/AddPlayList"
-        android:text="@string/newPlayList"/>
-
-    <ImageView
-        android:id="@+id/image_notFound_FragmentPlaylists"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="46dp"
-        android:src="@drawable/not_found"/>
+        android:text="@string/newPlayList" />
 
-    <TextView
-        android:id="@+id/text_notFound_FragmentPlaylists"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        style="@style/MediaFavoriteFragment"
-        android:gravity="center"
-        android:textFontWeight="500"
-        android:text="@string/not_created_playlists"/>
+    <LinearLayout
+        android:id="@+id/placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center|top"
+        android:orientation="vertical"
+        android:visibility="visible">
 
+        <ImageView
+            android:id="@+id/image_notFound_FragmentPlaylists"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="46dp"
+            android:src="@drawable/not_found" />
+
+        <TextView
+            android:id="@+id/text_notFound_FragmentPlaylists"
+            style="@style/MediaFavoriteFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/not_created_playlists"
+            android:textFontWeight="500" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlistsGrid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone" />
 
 </LinearLayout>

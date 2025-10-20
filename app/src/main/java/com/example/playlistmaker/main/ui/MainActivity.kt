@@ -33,7 +33,8 @@ class MainActivity : AppCompatActivity() {
         // Скрываем BottomNavigationView на экране плеера
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.audioPlayerFragment -> {
+                R.id.audioPlayerFragment,
+                R.id.newPlayList -> { // Добавляем экран создания плейлиста
                     binding.bottomNavigation.visibility = android.view.View.GONE
                 }
                 else -> {

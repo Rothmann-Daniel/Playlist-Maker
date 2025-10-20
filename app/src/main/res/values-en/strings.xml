@@ -47,9 +47,34 @@
     <string name="no_email_app_installed">No email app installed</string>
     <string name="empty_media">Empty Media</string>
     <string name="newPlayList">Add new Playlist</string>
+    <string name="add_to_playlist">Add to Playlist</string>
+    <string name="playlist_cover">Cover Image</string>
     <string name="not_created_playlists">You haven\'t created any playlists</string>
     <string name="favorite_tracks">Favorite tracks</string>
     <string name="play_lists">Playlist\'s</string>
+    <string name="title_name">Title Albom*</string>
+    <string name="description">Description</string>
+    <string name="create">Create</string>
+    <string name="title_NewPlayList">New Playlist</string>
+    <string name="exit_dialog_title">Finish creating a playlist?</string>
+    <string name="exit_dialog_message">All unsaved data will be lost</string>
+    <string name="cancel">Cansel</string>
+    <string name="exit">Complete</string>
+    <string name="playlist_created_success">Playlist \"%s\" created</string>
+    <string name="added_to_playlist">Added to playlist</string>
+    <string name="track_already_in_playlist">Track already in playlist</string>
+    <string name="failed_to_add_track">Failed to add Track</string>
+    <string name="loading_playlists">Loading playlists</string>
+    <string name="no_playlists">No Playlist</string>
+
+    <plurals name="tracks_count">
+        <item quantity="one">%d track</item>
+        <item quantity="other">%d tracks</item>
+    </plurals>
+    <string name="permission_required_title">Permission is required</string>
+    <string name="permission_required_message">To select a playlist cover from the gallery, you need permission to access the images.</string>
+    <string name="permission_denied_message">You cannot select an image from the gallery without permission.</string>
+    <string name="continue_text">Continue</string>
 
 
 </resources>
