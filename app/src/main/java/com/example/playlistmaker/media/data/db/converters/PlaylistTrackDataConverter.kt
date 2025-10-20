@@ -26,8 +26,9 @@ object PlaylistTrackDataConverter {
     }
 
     // Конвертация из Domain модели в Entity (только внутри Data слоя)
-    fun mapTrackToEntity(track: Track): PlaylistTrackDataEntity {
+    fun mapTrackToEntity(track: Track, playlistId: Long): PlaylistTrackDataEntity {
         return PlaylistTrackDataEntity(
+            playlistId = playlistId,
             trackId = track.trackId,
             artworkUrl100 = track.artworkUrl100,
             trackName = track.trackName,

@@ -5,27 +5,24 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import android.content.Context
 import com.example.playlistmaker.media.data.db.dao.PlaylistDao
-import com.example.playlistmaker.media.data.db.dao.PlaylistTrackDao
 import com.example.playlistmaker.media.data.db.dao.PlaylistTrackDataDao
 import com.example.playlistmaker.media.data.db.dao.TrackDao
 import com.example.playlistmaker.media.data.db.entity.PlaylistEntity
 import com.example.playlistmaker.media.data.db.entity.PlaylistTrackDataEntity
-import com.example.playlistmaker.media.data.db.entity.PlaylistTrackEntity
 import com.example.playlistmaker.media.data.db.entity.TrackEntity
 
 @Database(
-    version = 4,
+    version = 5, // Всегда увеличиваем версию
     entities = [
         TrackEntity::class,
         PlaylistEntity::class,
-        PlaylistTrackEntity::class,
-        PlaylistTrackDataEntity::class ],
+        PlaylistTrackDataEntity::class
+    ],
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun trackDao(): TrackDao
     abstract fun playlistDao(): PlaylistDao
-    abstract fun playlistTrackDao(): PlaylistTrackDao
     abstract fun playlistTrackDataDao(): PlaylistTrackDataDao
 
     companion object {

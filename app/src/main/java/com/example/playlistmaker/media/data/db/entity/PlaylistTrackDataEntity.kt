@@ -1,15 +1,29 @@
 package com.example.playlistmaker.media.data.db.entity
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
- * Отдельная таблица для хранения данных треков в плейлистах
- * (не смешивается с таблицей избранного)
+ * Трек в плейлисте с прямой связью One-to-Many
  */
-@Entity(tableName = "playlist_track_data")
+@Entity(
+    tableName = "playlist_track_data",
+    foreignKeys = [
+        ForeignKey(
+            entity = PlaylistEntity::class,
+            parentColumns = ["playlistId"],
+            childColumns = ["playlistId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index(value = ["playlistId"])]
+)
 data class PlaylistTrackDataEntity(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val playlistId: Long,
     val trackId: Int,
     val trackName: String,
     val artistName: String,

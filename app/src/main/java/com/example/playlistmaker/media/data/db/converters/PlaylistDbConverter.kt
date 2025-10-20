@@ -10,24 +10,18 @@ import com.google.gson.reflect.TypeToken
  */
 object PlaylistDbConverter {
 
-    private val gson = Gson()
-
     fun mapPlaylistToEntity(playlist: Playlist): PlaylistEntity {
         return PlaylistEntity(
             playlistId = playlist.playlistId,
             name = playlist.name,
             description = playlist.description,
             coverImagePath = playlist.coverImagePath,
-            trackIdsJson = gson.toJson(playlist.trackIds),
             tracksCount = playlist.tracksCount,
             createdTimestamp = playlist.createdTimestamp
         )
     }
 
-    fun mapEntityToPlaylist(entity: PlaylistEntity): Playlist {
-        val trackIdsType = object : TypeToken<List<Int>>() {}.type
-        val trackIds: List<Int> = gson.fromJson(entity.trackIdsJson, trackIdsType) ?: emptyList()
-
+    fun mapEntityToPlaylist(entity: PlaylistEntity, trackIds: List<Int> = emptyList()): Playlist {
         return Playlist(
             playlistId = entity.playlistId,
             name = entity.name,

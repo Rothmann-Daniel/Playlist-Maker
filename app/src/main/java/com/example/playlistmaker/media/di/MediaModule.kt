@@ -16,7 +16,6 @@ import com.example.playlistmaker.media.ui.PlaylistsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-
 val mediaModule = module {
 
     // File Storage
@@ -24,19 +23,17 @@ val mediaModule = module {
 
     // DAOs
     single { get<AppDatabase>().playlistDao() }
-    single { get<AppDatabase>().playlistTrackDao() }
     single { get<AppDatabase>().playlistTrackDataDao() }
     single { get<AppDatabase>().trackDao() }
 
     // Repositories
     single<FavoriteTracksRepository> {
-        FavoriteTracksRepositoryImpl(get()) // передаем TrackDao
+        FavoriteTracksRepositoryImpl(get())
     }
 
     single<PlaylistRepository> {
         PlaylistRepositoryImpl(
             playlistDao = get(),
-            playlistTrackDao = get(),
             playlistTrackDataDao = get(),
             favoriteTrackDao = get(),
             fileStorage = get()
@@ -54,11 +51,8 @@ val mediaModule = module {
 
     // ViewModels
     viewModel { MediaViewModel() }
-
     viewModel { PlaylistsViewModel(get()) }
-
     viewModel { FavoriteTracksViewModel(get()) }
-
     viewModel { (savedStateHandle: SavedStateHandle) ->
         NewPlaylistViewModel(
             playlistInteractor = get(),
