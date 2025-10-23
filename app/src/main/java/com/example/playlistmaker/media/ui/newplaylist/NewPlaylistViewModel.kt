@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media.ui
+package com.example.playlistmaker.media.ui.newplaylist
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
@@ -84,7 +84,8 @@ class NewPlaylistViewModel(
     fun createPlaylist() {
         val currentName = _name.value?.trim()
         if (currentName.isNullOrBlank()) {
-            _createState.value = CreatePlaylistState.Error("Название плейлиста не может быть пустым")
+            _createState.value =
+                CreatePlaylistState.Error("Название плейлиста не может быть пустым")
             return
         }
 

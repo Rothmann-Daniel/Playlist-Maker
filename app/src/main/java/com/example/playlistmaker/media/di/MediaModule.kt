@@ -9,10 +9,10 @@ import com.example.playlistmaker.media.domain.interactor.FavoriteTracksInteracto
 import com.example.playlistmaker.media.domain.interactor.PlaylistInteractor
 import com.example.playlistmaker.media.domain.repository.FavoriteTracksRepository
 import com.example.playlistmaker.media.domain.repository.PlaylistRepository
-import com.example.playlistmaker.media.ui.FavoriteTracksViewModel
-import com.example.playlistmaker.media.ui.MediaViewModel
-import com.example.playlistmaker.media.ui.NewPlaylistViewModel
-import com.example.playlistmaker.media.ui.PlaylistsViewModel
+import com.example.playlistmaker.media.ui.favorite.FavoriteTracksViewModel
+import com.example.playlistmaker.media.ui.mediafragment.MediaViewModel
+import com.example.playlistmaker.media.ui.newplaylist.NewPlaylistViewModel
+import com.example.playlistmaker.media.ui.playlist.PlaylistsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

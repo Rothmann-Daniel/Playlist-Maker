@@ -8,7 +8,7 @@
     <!-- Media Fragment с ViewPager -->
     <fragment
         android:id="@+id/mediaFragment"
-        android:name="com.example.playlistmaker.media.ui.MediaFragment"
+        android:name="com.example.playlistmaker.media.ui.mediafragment.MediaFragment"
         android:label="Media"
         tools:layout="@layout/fragment_media">
 
@@ -21,14 +21,14 @@
     <!-- Playlists Fragment (вложенный в ViewPager) -->
     <fragment
         android:id="@+id/playlistsFragment"
-        android:name="com.example.playlistmaker.media.ui.PlaylistsFragment"
+        android:name="com.example.playlistmaker.media.ui.playlist.PlaylistsFragment"
         android:label="Playlists"
         tools:layout="@layout/fragment_playlists" />
 
     <!-- New Playlist Fragment -->
     <fragment
         android:id="@+id/newPlayList"
-        android:name="com.example.playlistmaker.media.ui.NewPlaylistFragment"
+        android:name="com.example.playlistmaker.media.ui.newplaylist.NewPlaylistFragment"
         android:label="NewPlaylistFragment"
         tools:layout="@layout/fragment_new_playlist">
 
@@ -80,7 +80,7 @@
 
     <fragment
         android:id="@+id/favoriteTracksFragment"
-        android:name="com.example.playlistmaker.media.ui.FavoriteTracksFragment"
+        android:name="com.example.playlistmaker.media.ui.favorite.FavoriteTracksFragment"
         android:label="FavoriteTracksFragment"
         tools:layout="@layout/fragment_favorite_tracks">
 
