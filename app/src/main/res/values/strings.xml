@@ -92,6 +92,13 @@
         <item quantity="other">%d треков</item>
     </plurals>
 
+    <plurals name="minutes_count">
+        <item quantity="one">%d минута</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+        <item quantity="other">%d минут</item>
+    </plurals>
+
     <string name="added_to_playlist">Добавлено в плейлист \"%1$s\"</string>
     <string name="track_already_in_playlist">Трек уже добавлен в плейлист \"%1$s\"</string>
     <string name="failed_to_add_track">Не удалось добавить трек в плейлист</string>
@@ -103,5 +110,7 @@
     <string name="permission_required_message">Для выбора обложки плейлиста из галереи необходимо разрешение на доступ к изображениям</string>
     <string name="permission_denied_message">Без разрешения нельзя выбрать изображение из галереи</string>
     <string name="continue_text">Продолжить</string>
+
+
 
 </resources>

@@ -5,16 +5,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gray_light"
     tools:context=".media.ui.openplaylist.OpenPlaylistFragment">
 
-    <ScrollView
+    <!-- Фиксированный Toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:elevation="0dp"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_openplaylist"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            android:elevation="0dp"
+            app:elevation="0dp"
+            app:contentInsetStart="0dp"
+            app:contentInsetStartWithNavigation="0dp"
+            app:navigationIcon="@drawable/back"
+            app:title=""
+            app:layout_scrollFlags="scroll|enterAlways" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Скроллируемая область под Toolbar -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/gray_light">
+        android:background="@color/gray_light"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/gray_light">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/left_guideline_24"
@@ -44,27 +72,18 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_end="@dimen/padding_16" />
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar_openplaylist"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:navigationIcon="@drawable/back" />
-
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_CoverPlaylist"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="@dimen/padding_4"
                 android:scaleType="centerCrop"
                 android:src="@drawable/placeholder"
+                app:shapeAppearanceOverlay="@style/RoundedCorners"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toStartOf="@id/right_guideline_24"
                 app:layout_constraintStart_toStartOf="@id/left_guideline_24"
-                app:layout_constraintTop_toBottomOf="@id/toolbar_openplaylist" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_PlayListName"
@@ -131,8 +150,7 @@
                 app:layout_constraintEnd_toStartOf="@id/right_guideline_16"
                 app:layout_constraintTop_toBottomOf="@+id/ln1">
 
-
-            <ImageView
+                <ImageView
                     android:id="@+id/shareIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -148,27 +166,26 @@
                     app:tint="@color/textColorDescription"/>
             </LinearLayout>
 
-
+            <!-- Пустой View для создания отступа внизу скроллируемой области -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="16dp"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline_16"
+                app:layout_constraintStart_toStartOf="@id/left_guideline_16"
+                app:layout_constraintTop_toBottomOf="@id/ln2" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-
-    <!-- Overlay для затемнения фона -->
-    <View
-        android:id="@+id/overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/overlay"
-        android:visibility="gone"/>
+    </androidx.core.widget.NestedScrollView>
 
     <!-- Bottom Sheet для треков -->
     <LinearLayout
         android:id="@+id/bottom_sheet_playlists"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bottomSheetHeight_505"
+        android:layout_height="match_parent"
         android:background="@drawable/bottom_sheet_layout"
         app:backgroundTint="@color/white_night"
         android:orientation="vertical"
+        android:layout_marginTop="@dimen/padding_24"
         android:paddingHorizontal="@dimen/padding_8"
         app:behavior_hideable="true"
         android:visibility="visible"
@@ -179,10 +196,9 @@
             android:id="@+id/rect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/padding_24"
+            android:layout_marginVertical="@dimen/padding_8"
             android:src="@drawable/rectangle_bottom_sheet"
             app:tint="@color/rectangle"/>
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/tracksListView"
@@ -192,4 +208,23 @@
             tools:itemCount="3"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
     </LinearLayout>
+
+    <!-- ProgressBar поверх всего -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <!-- Overlay для затемнения фона -->
+    <View
+    android:id="@+id/overlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/overlay"
+    android:visibility="gone"
+    android:clickable="true"
+    android:focusable="true"/>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

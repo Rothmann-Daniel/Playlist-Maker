@@ -12,10 +12,13 @@
         android:label="Media"
         tools:layout="@layout/fragment_media">
 
-        <!-- Действие для перехода к созданию плейлиста -->
         <action
             android:id="@+id/action_mediaFragment_to_newPlayList"
             app:destination="@id/newPlayList" />
+
+        <action
+            android:id="@+id/action_mediaFragment_to_openPlaylist"
+            app:destination="@id/openPlaylistFragment" />
     </fragment>
 
     <!-- Playlists Fragment (вложенный в ViewPager) -->
@@ -37,14 +40,26 @@
             app:popUpTo="@id/mediaFragment"
             app:popUpToInclusive="true" />
 
-        <!-- Добавьте действие для возврата из AudioPlayer -->
         <action
             android:id="@+id/action_newPlaylist_to_audioPlayerFragment"
             app:popUpTo="@id/audioPlayerFragment"
             app:popUpToInclusive="false" />
     </fragment>
 
-    <!-- Остальные фрагменты -->
+    <!-- Open Playlist Fragment -->
+    <fragment
+        android:id="@+id/openPlaylistFragment"
+        android:name="com.example.playlistmaker.media.ui.openplaylist.OpenPlaylistFragment"
+        android:label="OpenPlaylistFragment"
+        tools:layout="@layout/fragment_open_playlist">
+
+        <!-- Аргумент для передачи ID плейлиста -->
+        <argument
+            android:name="playlistId"
+            app:argType="long" />
+    </fragment>
+
+    <!-- Search Fragment -->
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.playlistmaker.search.ui.SearchFragment"
@@ -56,12 +71,14 @@
             app:destination="@id/audioPlayerFragment" />
     </fragment>
 
+    <!-- Settings Fragment -->
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
         android:label="Settings"
         tools:layout="@layout/fragment_settings" />
 
+    <!-- Audio Player Fragment -->
     <fragment
         android:id="@+id/audioPlayerFragment"
         android:name="com.example.playlistmaker.player.ui.AudioPlayerFragment"
@@ -72,12 +89,12 @@
             android:name="trackJson"
             app:argType="string" />
 
-        <!-- ДОБАВЬТЕ ЭТО ДЕЙСТВИЕ -->
         <action
             android:id="@+id/action_audioPlayerFragment_to_newPlayList"
             app:destination="@id/newPlayList" />
     </fragment>
 
+    <!-- Favorite Tracks Fragment -->
     <fragment
         android:id="@+id/favoriteTracksFragment"
         android:name="com.example.playlistmaker.media.ui.favorite.FavoriteTracksFragment"

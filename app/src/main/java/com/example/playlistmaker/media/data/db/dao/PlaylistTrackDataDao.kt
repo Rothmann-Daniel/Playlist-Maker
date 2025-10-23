@@ -29,4 +29,8 @@ interface PlaylistTrackDataDao {
 
     @Query("DELETE FROM playlist_track_data WHERE playlistId = :playlistId")
     suspend fun deleteAllTracksFromPlaylist(playlistId: Long)
+
+    // Получение всех треков
+    @Query("SELECT * FROM playlist_track_data")
+    suspend fun getAllTracks(): List<PlaylistTrackDataEntity>
 }

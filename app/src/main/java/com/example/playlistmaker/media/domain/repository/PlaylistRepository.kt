@@ -67,4 +67,9 @@ interface PlaylistRepository {
      * Обновляет список ID треков в плейлисте
      */
     suspend fun updatePlaylistTrackIds(playlistId: Long, trackIds: List<Int>)
+
+    /**
+     * список треков по их ID из локальной базы данных
+     */
+    suspend fun getTracksByIds(trackIds: List<Int>): List<Track>
 }

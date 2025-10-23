@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
+import com.example.playlistmaker.media.ui.mediafragment.MediaFragmentDirections
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
@@ -19,7 +20,7 @@ class PlaylistsFragment : Fragment() {
 
     private val viewModel: PlaylistsViewModel by viewModel()
 
-    private val playlistsAdapter = PlaylistAdapter()
+    private lateinit var playlistsAdapter: PlaylistAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +44,11 @@ class PlaylistsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        // Инициализация адаптера с обработчиком клика
+        playlistsAdapter = PlaylistAdapter { playlistId ->
+            navigateToPlaylist(playlistId)
+        }
+
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
         binding.playlistsGrid.apply {
             layoutManager = gridLayoutManager
@@ -53,23 +59,32 @@ class PlaylistsFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.newPlaylistButton.setOnClickListener {
-            // Используем родительский фрагмент для навигации
             navigateToNewPlaylist()
         }
     }
 
     private fun navigateToNewPlaylist() {
         try {
-            // Способ 1: Через родительский фрагмент (MediaFragment)
-            requireParentFragment().findNavController().navigate(R.id.action_mediaFragment_to_newPlayList)
+            requireParentFragment().findNavController()
+                .navigate(R.id.action_mediaFragment_to_newPlayList)
         } catch (e: Exception) {
-            // Способ 2: Альтернативный подход
             try {
                 findNavController().navigate(R.id.newPlayList)
             } catch (e2: Exception) {
-                // Способ 3: Используем прямой ID назначения
                 findNavController().navigate(R.id.newPlayList)
             }
+        }
+    }
+
+    private fun navigateToPlaylist(playlistId: Long) {
+        try {
+            // Используем Safe Args для передачи аргументов
+            val action = MediaFragmentDirections
+                .actionMediaFragmentToOpenPlaylist(playlistId)
+
+            requireParentFragment().findNavController().navigate(action)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

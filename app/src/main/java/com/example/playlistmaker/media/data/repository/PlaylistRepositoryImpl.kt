@@ -124,4 +124,20 @@ class PlaylistRepositoryImpl(
         val count = playlistTrackDataDao.getTracksCount(playlistId)
         updatePlaylistTrackCount(playlistId, count)
     }
+
+    override suspend fun getTracksByIds(trackIds: List<Int>): List<Track> {
+        if (trackIds.isEmpty()) return emptyList()
+
+        val allTracks = playlistTrackDataDao.getAllTracks()
+        val favoriteTrackIds = favoriteTrackDao.getFavoriteTrackIds().first()
+
+        return allTracks
+            .filter { it.trackId in trackIds }
+            .map { entity ->
+                PlaylistTrackDataConverter.mapEntityToTrack(
+                    entity,
+                    isFavorite = entity.trackId in favoriteTrackIds
+                )
+            }
+    }
 }

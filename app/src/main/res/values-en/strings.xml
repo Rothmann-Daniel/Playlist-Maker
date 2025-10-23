@@ -71,10 +71,17 @@
         <item quantity="one">%d track</item>
         <item quantity="other">%d tracks</item>
     </plurals>
+
+    <plurals name="minutes_count">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+
     <string name="permission_required_title">Permission is required</string>
     <string name="permission_required_message">To select a playlist cover from the gallery, you need permission to access the images.</string>
     <string name="permission_denied_message">You cannot select an image from the gallery without permission.</string>
     <string name="continue_text">Continue</string>
+
 
 
 </resources>
