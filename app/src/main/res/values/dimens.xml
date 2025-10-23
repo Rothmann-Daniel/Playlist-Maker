@@ -30,6 +30,7 @@
     <!-- bottom sheet -->
     <dimen name="bottomSheetHeight_505">505dp</dimen>
 
+
     <!-- Защита от сжатия -->
     <dimen name="track_image_size">45dp</dimen>
     <dimen name="min_track_info_height">48dp</dimen>

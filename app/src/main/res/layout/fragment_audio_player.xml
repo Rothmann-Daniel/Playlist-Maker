@@ -244,6 +244,7 @@
                 app:layout_constraintBaseline_toBaselineOf="@id/tv_Country"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline_16" />
 
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
@@ -272,7 +273,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/padding_24"
-            android:src="@drawable/pl_rectangle_bottom_sheet" />
+            android:src="@drawable/rectangle_bottom_sheet" />
 
         <TextView
             style="@style/text_bottomSheet_title"
