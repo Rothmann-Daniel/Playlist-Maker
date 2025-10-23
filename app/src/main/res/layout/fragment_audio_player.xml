@@ -266,6 +266,7 @@
         app:behavior_hideable="true"
         app:behavior_peekHeight="@dimen/peekHeight_240"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
         <ImageView
             android:id="@+id/rect"
             android:layout_width="match_parent"
