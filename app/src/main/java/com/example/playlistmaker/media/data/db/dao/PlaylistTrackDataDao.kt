@@ -33,4 +33,8 @@ interface PlaylistTrackDataDao {
     // Получение всех треков
     @Query("SELECT * FROM playlist_track_data")
     suspend fun getAllTracks(): List<PlaylistTrackDataEntity>
+
+    //  метод для проверки использования трека в других плейлистах
+    @Query("SELECT COUNT(DISTINCT playlistId) FROM playlist_track_data WHERE trackId = :trackId")
+    suspend fun countPlaylistsWithTrack(trackId: Int): Int
 }

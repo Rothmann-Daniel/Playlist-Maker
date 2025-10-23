@@ -7,8 +7,7 @@ import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Интерактор для работы с плейлистами
- * Содержит всю бизнес-логику
+ * Интерактор для работы с плейлистами Содержит всю бизнес-логику
  */
 class PlaylistInteractor(
     private val repository: PlaylistRepository
@@ -121,10 +120,6 @@ class PlaylistInteractor(
 
             // Удаляем трек
             repository.removeTrackFromPlaylist(playlistId, trackId)
-
-            // Обновляем список ID треков и счетчик
-            val updatedTrackIds = playlist.trackIds.filter { it != trackId }
-            repository.updatePlaylistTrackIds(playlistId, updatedTrackIds)
 
             Result.success(Unit)
         } catch (e: Exception) {

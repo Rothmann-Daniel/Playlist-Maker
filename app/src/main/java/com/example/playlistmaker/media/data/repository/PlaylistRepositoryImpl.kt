@@ -82,10 +82,20 @@ class PlaylistRepositoryImpl(
         updatePlaylistTrackCount(playlistId)
     }
 
-    override suspend fun removeTrackFromPlaylist(playlistId: Long, trackId: Int) {
+   override suspend fun removeTrackFromPlaylist(playlistId: Long, trackId: Int) {
+        // Удаляем трек из плейлиста
         playlistTrackDataDao.removeTrackFromPlaylist(playlistId, trackId)
 
-        // Обновляем счетчик треков
+        // Проверяем, используется ли трек в других плейлистах
+        val playlistsCount = playlistTrackDataDao.countPlaylistsWithTrack(trackId)
+
+        // Если трек больше не используется ни в одном плейлисте - удаляем его из таблицы
+        if (playlistsCount == 0) {
+            // Трек можно удалить из playlist_track_data через каскадное удаление
+            // или он уже удален выше
+        }
+
+        // Обновляем счетчик треков в плейлисте
         updatePlaylistTrackCount(playlistId)
     }
 

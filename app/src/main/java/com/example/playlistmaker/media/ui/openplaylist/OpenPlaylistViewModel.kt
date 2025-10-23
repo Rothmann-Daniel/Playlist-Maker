@@ -27,11 +27,14 @@ class OpenPlaylistViewModel(
     private val _state = MutableLiveData<PlaylistState>()
     val state: LiveData<PlaylistState> = _state
 
-    // Эти поля должны быть инициализированы из Activity/Fragment с контекстом
+    private var currentPlaylistId: Long = 0
+
+    // Plurals функции
     var tracksCountPlurals: ((Int) -> String)? = null
     var minutesCountPlurals: ((Int) -> String)? = null
 
     fun loadPlaylist(playlistId: Long) {
+        currentPlaylistId = playlistId
         _state.value = PlaylistState.Loading
 
         viewModelScope.launch {
@@ -44,28 +47,42 @@ class OpenPlaylistViewModel(
                 }
 
                 val tracks = playlistInteractor.getTracksForPlaylist(playlistId)
-
-                // Вычисляем общую длительность в минутах
-                val totalDurationMs = tracks.sumOf { it.trackTimeMillis }
-                val totalDurationMinutes = (totalDurationMs / 60000).toInt()
-
-                // Форматируем количество треков и минут с использованием plurals
-                val tracksCountText = tracksCountPlurals?.invoke(tracks.size) ?: formatTracksCountFallback(tracks.size)
-                val totalDurationText = minutesCountPlurals?.invoke(totalDurationMinutes) ?: formatDurationFallback(totalDurationMinutes)
-
-                _state.value = PlaylistState.Content(
-                    playlist = playlist,
-                    tracks = tracks,
-                    totalDuration = totalDurationText,
-                    tracksCount = tracksCountText
-                )
+                updateState(playlist, tracks)
             } catch (e: Exception) {
                 _state.value = PlaylistState.Error(e.message ?: "Неизвестная ошибка")
             }
         }
     }
 
-    // Фолбэк методы на случай, если plurals не были установлены
+    fun deleteTrack(trackId: Int) {
+        viewModelScope.launch {
+            try {
+                playlistInteractor.removeTrackFromPlaylist(currentPlaylistId, trackId)
+                // Перезагружаем плейлист
+                loadPlaylist(currentPlaylistId)
+            } catch (e: Exception) {
+                _state.value = PlaylistState.Error("Не удалось удалить трек")
+            }
+        }
+    }
+
+    private fun updateState(playlist: Playlist, tracks: List<Track>) {
+        val totalDurationMs = tracks.sumOf { it.trackTimeMillis }
+        val totalDurationMinutes = (totalDurationMs / 60000).toInt()
+
+        val tracksCountText = tracksCountPlurals?.invoke(tracks.size)
+            ?: formatTracksCountFallback(tracks.size)
+        val totalDurationText = minutesCountPlurals?.invoke(totalDurationMinutes)
+            ?: formatDurationFallback(totalDurationMinutes)
+
+        _state.value = PlaylistState.Content(
+            playlist = playlist,
+            tracks = tracks,
+            totalDuration = totalDurationText,
+            tracksCount = tracksCountText
+        )
+    }
+
     private fun formatDurationFallback(minutes: Int): String {
         return when {
             minutes % 10 == 1 && minutes % 100 != 11 -> "$minutes минута"

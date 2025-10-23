@@ -57,6 +57,10 @@
         <argument
             android:name="playlistId"
             app:argType="long" />
+        <!-- action для перехода к плееру -->
+        <action
+            android:id="@+id/action_openPlaylistFragment_to_audioPlayerFragment"
+            app:destination="@id/audioPlayerFragment" />
     </fragment>
 
     <!-- Search Fragment -->
