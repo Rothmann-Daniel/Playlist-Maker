@@ -86,6 +86,22 @@
     <string name="playlist_cover">Обложка плейлиста</string>
     <string name="no_tracks_in_playlist">В плейлисте нет треков</string>
 
+    <!-- Menu PlayList -->
+    <string name="share_playlist">Поделиться</string>
+    <string name="edit_playlist">Редактировать информацию</string>
+    <string name="remove_playlist">Удалить плейлист</string>
+
+    <!-- Диалоги -->
+    <string name="delete_playlist_title">Удалить плейлист</string>
+    <string name="delete_playlist_message">Хотите удалить плейлист</string>
+    <string name="delete_track_message">Хотите удалить трек?</string>
+    <string name="no_tracks_to_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
+
+    <!-- Кнопки -->
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+
+
     <plurals name="tracks_count">
         <item quantity="one">%d трек</item>
         <item quantity="few">%d трека</item>

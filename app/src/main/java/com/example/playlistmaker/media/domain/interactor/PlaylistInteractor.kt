@@ -7,7 +7,8 @@ import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Интерактор для работы с плейлистами Содержит всю бизнес-логику
+ * Интерактор для работы с плейлистами
+ * Содержит всю бизнес-логику
  */
 class PlaylistInteractor(
     private val repository: PlaylistRepository
@@ -57,6 +58,7 @@ class PlaylistInteractor(
 
     /**
      * Удаляет плейлист
+     * После удаления плейлиста автоматически удаляются неиспользуемые треки
      */
     suspend fun deletePlaylist(playlistId: Long): Result<Unit> {
         return try {
@@ -111,6 +113,7 @@ class PlaylistInteractor(
 
     /**
      * Удаляет трек из плейлиста с обновлением счетчиков
+     * Автоматически удаляет трек из БД, если он больше не используется
      */
     suspend fun removeTrackFromPlaylist(playlistId: Long, trackId: Int): Result<Unit> {
         return try {

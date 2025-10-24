@@ -154,7 +154,11 @@
                     android:id="@+id/shareIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="8dp"
                     android:src="@drawable/share"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     app:tint="@color/textColorDescription"/>
 
                 <ImageView
@@ -162,7 +166,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/padding_16"
+                    android:padding="8dp"
                     android:src="@drawable/ic_more"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     app:tint="@color/textColorDescription"/>
             </LinearLayout>
 
@@ -218,6 +226,76 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
     </LinearLayout>
 
+
+    <!-- Bottom Sheet для меню -->
+    <LinearLayout
+        android:id="@+id/bottom_sheet_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bottom_sheet_layout"
+        app:backgroundTint="@color/white_night"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/padding_8"
+        android:paddingBottom="@dimen/padding_16"
+        app:behavior_hideable="true"
+        android:visibility="visible"
+        app:behavior_peekHeight="383dp"
+        app:behavior_fitToContents="true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <ImageView
+            android:id="@+id/rect_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/padding_8"
+            android:src="@drawable/rectangle_bottom_sheet"
+            app:tint="@color/rectangle"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/playlist_item_list_view"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <TextView
+            android:id="@+id/sharePlayList"
+            android:layout_width="match_parent"
+            android:layout_height="61dp"
+            android:layout_marginStart="@dimen/padding_16"
+            android:gravity="start|center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
+            style="@style/TrackNameText"
+            android:text="@string/share_playlist"/>
+
+        <TextView
+            android:id="@+id/editPlayList"
+            android:layout_width="match_parent"
+            android:layout_height="61dp"
+            android:layout_marginStart="@dimen/padding_16"
+            android:gravity="start|center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
+            style="@style/TrackNameText"
+            android:text="@string/edit_playlist"/>
+
+        <TextView
+            android:id="@+id/removePlayList"
+            android:layout_width="match_parent"
+            android:layout_height="61dp"
+            android:layout_marginStart="@dimen/padding_16"
+            android:gravity="start|center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
+            style="@style/TrackNameText"
+            android:text="@string/remove_playlist"/>
+
+    </LinearLayout>
+
     <!-- ProgressBar поверх всего -->
     <ProgressBar
         android:id="@+id/progressBar"
@@ -228,12 +306,12 @@
 
     <!-- Overlay для затемнения фона -->
     <View
-    android:id="@+id/overlay"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/overlay"
-    android:visibility="gone"
-    android:clickable="true"
-    android:focusable="true"/>
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/overlay"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

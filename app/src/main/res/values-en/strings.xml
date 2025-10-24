@@ -67,6 +67,19 @@
     <string name="loading_playlists">Loading playlists</string>
     <string name="no_playlists">No Playlist</string>
     <string name="no_tracks_in_playlist">There are no tracks in the playlist</string>
+    <!-- Menu PlayList -->
+    <string name="share_playlist">Share</string>
+    <string name="edit_playlist">Edit information</string>
+    <string name="remove_playlist">Delete playlist</string>
+    <!-- Dialogues -->
+    <string name="delete_playlist_title">Delete playlist</string>
+    <string name="delete_playlist_message">Do you want to delete a playlist?</string>
+    <string name="delete_track_message">Do you want to delete a track?</string>
+    <string name="no_tracks_to_share">There is no track list in this playlist that can be shared</string>
+
+    <!-- Buttons -->
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <plurals name="tracks_count">
         <item quantity="one">%d track</item>

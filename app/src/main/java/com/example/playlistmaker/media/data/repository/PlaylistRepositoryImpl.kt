@@ -50,12 +50,16 @@ class PlaylistRepositoryImpl(
     override suspend fun deletePlaylist(playlistId: Long) {
         val playlist = getPlaylistById(playlistId)
 
+        // Удаление обложки
         playlist?.coverImagePath?.let { coverPath ->
             fileStorage.deleteCoverImage(coverPath)
         }
 
-        // Удаление плейлиста автоматически удалит все треки благодаря CASCADE
+        // Удаление плейлиста (CASCADE автоматически удалит записи из playlist_track_data)
         playlistDao.deletePlaylist(playlistId)
+
+        // После удаления плейлиста, записи из playlist_track_data уже удалены благодаря CASCADE
+        // Дополнительной очистки не требуется
     }
 
     override fun getAllPlaylists(): Flow<List<Playlist>> {

@@ -27,6 +27,9 @@ class OpenPlaylistViewModel(
     private val _state = MutableLiveData<PlaylistState>()
     val state: LiveData<PlaylistState> = _state
 
+    private val _deleteResult = MutableLiveData<Boolean?>()
+    val deleteResult: LiveData<Boolean?> = _deleteResult
+
     private var currentPlaylistId: Long = 0
 
     // Plurals функции
@@ -62,6 +65,17 @@ class OpenPlaylistViewModel(
                 loadPlaylist(currentPlaylistId)
             } catch (e: Exception) {
                 _state.value = PlaylistState.Error("Не удалось удалить трек")
+            }
+        }
+    }
+
+    fun deletePlaylist() {
+        viewModelScope.launch {
+            try {
+                playlistInteractor.deletePlaylist(currentPlaylistId)
+                _deleteResult.value = true
+            } catch (e: Exception) {
+                _deleteResult.value = false
             }
         }
     }

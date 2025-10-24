@@ -38,4 +38,8 @@ interface PlaylistTrackDataDao {
     //  метод для проверки использования трека в других плейлистах
     @Query("SELECT COUNT(DISTINCT playlistId) FROM playlist_track_data WHERE trackId = :trackId")
     suspend fun countPlaylistsWithTrack(trackId: Int): Int
+
+    // Удаление треков, которые не используются ни в одном плейлисте
+    @Query("DELETE FROM playlist_track_data WHERE trackId IN (SELECT DISTINCT trackId FROM playlist_track_data GROUP BY trackId HAVING COUNT(DISTINCT playlistId) = 0)")
+    suspend fun cleanupUnusedTracks()
 }
