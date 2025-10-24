@@ -31,7 +31,6 @@ class OpenPlaylistFragment : Fragment() {
     private val gson: Gson by inject()
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
-    private lateinit var tracksAdapter: TrackAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,7 +47,6 @@ class OpenPlaylistFragment : Fragment() {
         setupToolbar()
         setupBottomSheetBehavior()
         setupPlurals()
-        setupTracksRecyclerView()
         setupObservers()
 
         viewModel.loadPlaylist(args.playlistId)
@@ -100,18 +98,6 @@ class OpenPlaylistFragment : Fragment() {
         }
         viewModel.minutesCountPlurals = { minutes ->
             resources.getQuantityString(R.plurals.minutes_count, minutes, minutes)
-        }
-    }
-
-    private fun setupTracksRecyclerView() {
-        tracksAdapter = TrackAdapter(
-            tracks = emptyList(),
-            clickListener = { track -> onTrackClick(track) }
-        )
-
-        binding.tracksListView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = tracksAdapter
         }
     }
 
@@ -173,20 +159,33 @@ class OpenPlaylistFragment : Fragment() {
             playlistDuration.text = state.totalDuration
             playlistTrackCount.text = state.tracksCount
 
-            // Список треков
-            updateTracksList(state.tracks)
+            // Проверяем наличие треков
+            if (state.tracks.isEmpty()) {
+                // Показываем сообщение о пустом плейлисте
+                noTracksMessage.isVisible = true
+                tracksListView.isVisible = false
+            } else {
+                // Показываем список треков
+                noTracksMessage.isVisible = false
+                tracksListView.isVisible = true
+                setupTracksRecyclerView(state.tracks)
+            }
         }
     }
 
-    private fun updateTracksList(tracks: List<Track>) {
+    private fun setupTracksRecyclerView(tracks: List<Track>) {
         val adapter = TrackAdapter(
             tracks = tracks,
             clickListener = { track -> onTrackClick(track) },
             longClickListener = { track -> showDeleteDialog(track) }
         )
 
-        binding.tracksListView.adapter = adapter
+        binding.tracksListView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            this.adapter = adapter
+        }
     }
+
     private fun onTrackClick(track: Track) {
         navigateToPlayer(track)
     }

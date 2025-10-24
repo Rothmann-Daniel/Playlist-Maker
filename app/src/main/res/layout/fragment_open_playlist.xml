@@ -200,6 +200,15 @@
             android:src="@drawable/rectangle_bottom_sheet"
             app:tint="@color/rectangle"/>
 
+        <TextView
+            android:id="@+id/noTracksMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_8"
+            android:gravity="center"
+            style="@style/TrackNameText"
+            android:text="@string/no_tracks_in_playlist"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/tracksListView"
             android:layout_width="match_parent"

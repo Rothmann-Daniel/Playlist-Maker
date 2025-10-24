@@ -12,6 +12,7 @@ interface PlaylistTrackDataDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTrack(track: PlaylistTrackDataEntity): Long
 
+    // ВАЖНО: ORDER BY addedTimestamp DESC - сортировка по убыванию:  Последние добавленные треки будут первыми в списке
     @Query("SELECT * FROM playlist_track_data WHERE playlistId = :playlistId ORDER BY addedTimestamp DESC")
     suspend fun getTracksByPlaylistId(playlistId: Long): List<PlaylistTrackDataEntity>
 
