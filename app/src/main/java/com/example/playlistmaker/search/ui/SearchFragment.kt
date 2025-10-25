@@ -44,8 +44,16 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private lateinit var historyTitle: TextView
     private lateinit var progressBar: FrameLayout
 
-    private val tracksAdapter = TrackAdapter(emptyList()) { onTrackClick(it) }
-    private val historyAdapter = TrackAdapter(emptyList()) { onTrackClick(it) }
+    // Исправленная инициализация адаптеров
+    private val tracksAdapter = TrackAdapter(
+        tracks = emptyList(),
+        clickListener = { onTrackClick(it) }
+    )
+
+    private val historyAdapter = TrackAdapter(
+        tracks = emptyList(),
+        clickListener = { onTrackClick(it) }
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

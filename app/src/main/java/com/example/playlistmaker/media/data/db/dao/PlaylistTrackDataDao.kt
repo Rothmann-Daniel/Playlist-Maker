@@ -12,6 +12,7 @@ interface PlaylistTrackDataDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTrack(track: PlaylistTrackDataEntity): Long
 
+    // ВАЖНО: ORDER BY addedTimestamp DESC - сортировка по убыванию:  Последние добавленные треки будут первыми в списке
     @Query("SELECT * FROM playlist_track_data WHERE playlistId = :playlistId ORDER BY addedTimestamp DESC")
     suspend fun getTracksByPlaylistId(playlistId: Long): List<PlaylistTrackDataEntity>
 
@@ -29,4 +30,16 @@ interface PlaylistTrackDataDao {
 
     @Query("DELETE FROM playlist_track_data WHERE playlistId = :playlistId")
     suspend fun deleteAllTracksFromPlaylist(playlistId: Long)
+
+    // Получение всех треков
+    @Query("SELECT * FROM playlist_track_data")
+    suspend fun getAllTracks(): List<PlaylistTrackDataEntity>
+
+    //  метод для проверки использования трека в других плейлистах
+    @Query("SELECT COUNT(DISTINCT playlistId) FROM playlist_track_data WHERE trackId = :trackId")
+    suspend fun countPlaylistsWithTrack(trackId: Int): Int
+
+    // Удаление треков, которые не используются ни в одном плейлисте
+    @Query("DELETE FROM playlist_track_data WHERE trackId IN (SELECT DISTINCT trackId FROM playlist_track_data GROUP BY trackId HAVING COUNT(DISTINCT playlistId) = 0)")
+    suspend fun cleanupUnusedTracks()
 }

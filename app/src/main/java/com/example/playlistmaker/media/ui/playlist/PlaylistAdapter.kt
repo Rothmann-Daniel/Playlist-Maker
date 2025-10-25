@@ -1,3 +1,5 @@
+package com.example.playlistmaker.media.ui.playlist
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +12,7 @@ import java.io.File
 
 class PlaylistAdapter(
     private var playlists: List<Playlist> = emptyList(),
-    private val onPlaylistClick: (Playlist) -> Unit = {}
+    private val onPlaylistClick: (Long) -> Unit = {} // Теперь передаем только ID
 ) : RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
@@ -39,10 +41,8 @@ class PlaylistAdapter(
 
         fun bind(playlist: Playlist) {
             with(binding) {
-                // Конвертируем 8dp в пиксели
                 val radiusInPx = (8f * itemView.resources.displayMetrics.density).toInt()
 
-                // Устанавливаем обложку
                 if (!playlist.coverImagePath.isNullOrEmpty()) {
                     val coverFile = File(playlist.coverImagePath)
                     if (coverFile.exists()) {
@@ -60,10 +60,8 @@ class PlaylistAdapter(
                     playlistCover.setImageResource(R.drawable.placeholder)
                 }
 
-                // Устанавливаем название
                 playlistName.text = playlist.name
 
-                // Устанавливаем количество треков
                 val tracksText = itemView.resources.getQuantityString(
                     R.plurals.tracks_count,
                     playlist.tracksCount,
@@ -71,9 +69,9 @@ class PlaylistAdapter(
                 )
                 playlistTrackCount.text = tracksText
 
-                // Обработка клика
+                // Передаем только ID плейлиста
                 itemView.setOnClickListener {
-                    onPlaylistClick(playlist)
+                    onPlaylistClick(playlist.playlistId)
                 }
             }
         }

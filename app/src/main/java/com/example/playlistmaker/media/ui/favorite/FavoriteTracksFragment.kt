@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media.ui
+package com.example.playlistmaker.media.ui.favorite
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,7 +24,10 @@ class FavoriteTracksFragment : Fragment() {
     private val viewModel: FavoriteTracksViewModel by viewModel()
     private val gson: Gson by inject()
 
-    private val tracksAdapter = TrackAdapter(emptyList()) { onTrackClick(it) }
+    private val tracksAdapter = TrackAdapter(
+        tracks = emptyList(),
+        clickListener = { track -> onTrackClick(track) }
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

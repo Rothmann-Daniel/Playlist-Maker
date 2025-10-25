@@ -182,6 +182,7 @@
         <item name="android:textColor">@color/textColor_AudioPlayer</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
+        <item name="android:maxEms">15</item>
     </style>
 
     <style name="MediaFavoriteFragment">
@@ -307,5 +308,11 @@
         <item name="cornerSize">2dp</item>
     </style>
 
+    <style name="text_playlist_description">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/textColorDescription</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
 
 </resources>

@@ -25,4 +25,8 @@ interface PlaylistDao {
 
     @Query("DELETE FROM playlists_table WHERE playlistId = :playlistId")
     suspend fun deletePlaylist(playlistId: Long)
+
+    // Flow версия для наблюдения за плейлистом
+    @Query("SELECT * FROM playlists_table WHERE playlistId = :playlistId")
+    fun getPlaylistByIdFlow(playlistId: Long): Flow<PlaylistEntity?>
 }

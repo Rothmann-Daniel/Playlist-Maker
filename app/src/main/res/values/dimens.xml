@@ -29,6 +29,8 @@
 
     <!-- bottom sheet -->
     <dimen name="bottomSheetHeight_505">505dp</dimen>
+    <dimen name="bottomSheetHeight_2">266dp</dimen>
+
 
     <!-- Защита от сжатия -->
     <dimen name="track_image_size">45dp</dimen>

@@ -30,10 +30,11 @@ class MainActivity : AppCompatActivity() {
         // Настройка BottomNavigationView
         binding.bottomNavigation.setupWithNavController(navController)
 
-        // Скрываем BottomNavigationView на экране плеера
+        // Скрываем BottomNavigationView на экранах:
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.audioPlayerFragment,
+                R.id.openPlaylistFragment,
                 R.id.newPlayList -> { // Добавляем экран создания плейлиста
                     binding.bottomNavigation.visibility = android.view.View.GONE
                 }

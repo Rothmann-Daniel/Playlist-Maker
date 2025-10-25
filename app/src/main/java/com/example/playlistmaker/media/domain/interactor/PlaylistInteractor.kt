@@ -58,6 +58,7 @@ class PlaylistInteractor(
 
     /**
      * Удаляет плейлист
+     * После удаления плейлиста автоматически удаляются неиспользуемые треки
      */
     suspend fun deletePlaylist(playlistId: Long): Result<Unit> {
         return try {
@@ -112,6 +113,7 @@ class PlaylistInteractor(
 
     /**
      * Удаляет трек из плейлиста с обновлением счетчиков
+     * Автоматически удаляет трек из БД, если он больше не используется
      */
     suspend fun removeTrackFromPlaylist(playlistId: Long, trackId: Int): Result<Unit> {
         return try {
@@ -121,10 +123,6 @@ class PlaylistInteractor(
 
             // Удаляем трек
             repository.removeTrackFromPlaylist(playlistId, trackId)
-
-            // Обновляем список ID треков и счетчик
-            val updatedTrackIds = playlist.trackIds.filter { it != trackId }
-            repository.updatePlaylistTrackIds(playlistId, updatedTrackIds)
 
             Result.success(Unit)
         } catch (e: Exception) {

@@ -8,6 +8,7 @@
     <color name="blue">#3772E7</color>
     <color name="YP_Blue_Light">#9FBBF3</color>
     <color name="gray">#AEAFB4</color>
+    <color name="gray_light">#E6E8EB</color>
     <color name="switch_thumb_active_color">#FFFFFF</color>
     <color name="switch_thumb_inactive_color">#CCCCCC</color>
 
@@ -19,6 +20,7 @@
 
     <color name="background">#3772E7</color>
     <color name="textColor">#000000</color>
+    <color name="textColorDescription">#1A1B22</color>
     <color name="buttonColor">#FFFFFFFF</color>
     <color name="buttonTextColor">#FFFFFF</color>
     <color name="buttonSettings">#AEAFB4</color>
@@ -48,5 +50,6 @@
     <color name="unselected_color">#1A1B22</color>
     <color name="bottom_nav_background_color">#FFFFFFFF</color>
     <color name="overlay">#99000000</color>
+    <color name="rectangle">#E6E8EB</color>
 
 </resources>

@@ -9,6 +9,7 @@
 
     <color name="background">#1A1B22</color>
     <color name="textColor">#FF000000</color>
+    <color name="textColorDescription">#1A1B22</color>
     <color name="buttonColor">#FFFFFFFF</color>
     <color name="buttonTextColor">#FFFFFFFF</color>
     <color name="buttonSettings">#FFFFFFFF</color>
@@ -41,5 +42,6 @@
     <color name="selected_color">#3772E7</color>
     <color name="unselected_color">#FFFFFFFF</color>
     <color name="bottom_nav_background_color">#1A1B22</color>
+    <color name="rectangle">#FFFFFF</color>
 
 </resources>
