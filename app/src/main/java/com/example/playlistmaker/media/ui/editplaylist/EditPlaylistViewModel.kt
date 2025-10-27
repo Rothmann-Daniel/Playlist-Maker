@@ -12,10 +12,6 @@ import com.example.playlistmaker.media.ui.newplaylist.NewPlaylistViewModel
 import kotlinx.coroutines.launch
 import java.io.File
 
-/**
- * ViewModel для редактирования плейлиста
- * Наследуется от NewPlaylistViewModel и переопределяет логику
- */
 class EditPlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor,
     private val fileStorage: PlaylistFileStorage,
@@ -28,17 +24,27 @@ class EditPlaylistViewModel(
 
     private var originalCoverPath: String? = null
     private var isInitialLoad = true
+
+    // Оригинальные значения для сравнения - инициализируем пустыми строками
     private var originalName: String = ""
     private var originalDescription: String = ""
     private var originalCoverUri: Uri? = null
+
+    // Флаг для отслеживания загрузки данных
+    private var isDataLoaded = false
+
+    //  используем родительский hasUnsavedChanges
+    private var editModeHasUnsavedChanges: Boolean = false
+        set(value) {
+            field = value
+            // Синхронизируем с родительским флагом
+            hasUnsavedChanges = value
+        }
 
     init {
         loadPlaylistData()
     }
 
-    /**
-     * Загружает данные плейлиста для редактирования
-     */
     private fun loadPlaylistData() {
         viewModelScope.launch {
             try {
@@ -70,10 +76,13 @@ class EditPlaylistViewModel(
 
                     // Включаем observer обратно
                     isInitialLoad = false
+                    isDataLoaded = true
 
                     // Обновляем состояние кнопки после загрузки данных
                     updateCreateButtonState()
                     updateUnsavedChanges()
+
+                    android.util.Log.d("EditPlaylistVM", "Data loaded: name='$originalName', description='$originalDescription'")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -87,23 +96,68 @@ class EditPlaylistViewModel(
      */
     override fun onNameChanged(name: String) {
         super.onNameChanged(name)
-        if (!isInitialLoad) {
-            updateCreateButtonState()
+        if (!isInitialLoad && isDataLoaded) {
             updateUnsavedChanges()
+            updateCreateButtonState()
         }
     }
 
     override fun onDescriptionChanged(description: String) {
         super.onDescriptionChanged(description)
-        if (!isInitialLoad) {
+        if (!isInitialLoad && isDataLoaded) {
             updateUnsavedChanges()
+            updateCreateButtonState()
         }
     }
 
     override fun setCoverUri(uri: Uri?) {
         super.setCoverUri(uri)
-        if (!isInitialLoad) {
+        if (!isInitialLoad && isDataLoaded) {
             updateUnsavedChanges()
+            updateCreateButtonState()
+        }
+    }
+
+    /**
+     * ПЕРЕОПРЕДЕЛЕНИЕ: Обновляет состояние кнопки "Сохранить".
+     * Кнопка активна, если название не пустое И есть несохраненные изменения.
+     */
+    override fun updateCreateButtonState() {
+        val nameValid = _name.value?.trim()?.isNotEmpty() == true
+
+        // В режиме редактирования кнопка активна, только если название не пустое И есть изменения
+        val buttonShouldBeEnabled = nameValid && editModeHasUnsavedChanges
+
+        if (_isCreateButtonEnabled.value != buttonShouldBeEnabled) {
+            _isCreateButtonEnabled.value = buttonShouldBeEnabled
+            android.util.Log.d("EditPlaylistVM", "Button state updated to $buttonShouldBeEnabled (Valid=$nameValid, Unsaved=$editModeHasUnsavedChanges)")
+        }
+    }
+
+    /**
+     * ПЕРЕОПРЕДЕЛЕНИЕ: Обновляем флаг несохраненных изменений на основе сравнения с оригиналом
+     */
+    override fun updateUnsavedChanges() {
+        // Не выполняем проверку, пока данные не загружены
+        if (!isDataLoaded) {
+            android.util.Log.d("EditPlaylistVM", "updateUnsavedChanges: data not loaded yet, skipping")
+            return
+        }
+
+        val currentName = _name.value ?: ""
+        val currentDescription = _description.value ?: ""
+        val currentCoverUri = _coverUri.value
+
+        // Сравниваем с оригинальными значениями - безопасно обрабатываем null
+        val nameChanged = currentName.trim() != (originalName ?: "").trim()
+        val descriptionChanged = currentDescription.trim() != (originalDescription ?: "").trim()
+        val coverChanged = currentCoverUri != originalCoverUri
+
+        val newHasUnsavedChanges = nameChanged || descriptionChanged || coverChanged
+
+        if (newHasUnsavedChanges != editModeHasUnsavedChanges) {
+            editModeHasUnsavedChanges = newHasUnsavedChanges
+            android.util.Log.d("EditPlaylistVM", "Unsaved changes: $editModeHasUnsavedChanges (name=$nameChanged, desc=$descriptionChanged, cover=$coverChanged)")
         }
     }
 
@@ -129,8 +183,8 @@ class EditPlaylistViewModel(
                 // Определяем путь к обложке
                 val coverPath = when {
                     // Если выбрана новая обложка (URI изменился)
-                    coverUri.value != null && hasCoverChanged() -> {
-                        coverUri.value?.let { uri ->
+                    _coverUri.value != null && hasCoverChanged() -> {
+                        _coverUri.value?.let { uri ->
                             fileStorage.saveCoverImageFromUri(uri)
                         }
                     }
@@ -153,9 +207,10 @@ class EditPlaylistViewModel(
                     if (coverPath != originalCoverPath && originalCoverPath != null) {
                         fileStorage.deleteCoverImage(originalCoverPath)
                     }
-                    hasUnsavedChanges = false
+                    editModeHasUnsavedChanges = false
                     clearSavedState()
                     _createState.value = CreatePlaylistState.Success(currentName)
+                    android.util.Log.d("EditPlaylistVM", "Playlist updated successfully: '$currentName'")
                 } else {
                     _createState.value = CreatePlaylistState.Error(
                         result.exceptionOrNull()?.message ?: "Неизвестная ошибка"
@@ -171,35 +226,9 @@ class EditPlaylistViewModel(
      * Проверяет, изменилась ли обложка
      */
     private fun hasCoverChanged(): Boolean {
-        val currentUri = coverUri.value
+        val currentUri = _coverUri.value
         return currentUri != originalCoverUri
     }
-
-    /**
-     * Переопределяем проверку изменений для режима редактирования
-     */
-    override fun updateUnsavedChanges() {
-        val currentName = _name.value ?: ""
-        val currentDescription = _description.value ?: ""
-        val currentCoverUri = coverUri.value
-
-        // Проверяем, есть ли изменения по сравнению с оригинальными данными
-        val nameChanged = currentName != originalName
-        val descriptionChanged = currentDescription != originalDescription
-        val coverChanged = currentCoverUri != originalCoverUri
-
-        val newHasUnsavedChanges = nameChanged || descriptionChanged || coverChanged
-
-        if (newHasUnsavedChanges != hasUnsavedChanges) {
-            hasUnsavedChanges = newHasUnsavedChanges
-            android.util.Log.d("EditPlaylistVM", "updateUnsavedChanges: hasUnsavedChanges=$hasUnsavedChanges, nameChanged=$nameChanged, descriptionChanged=$descriptionChanged, coverChanged=$coverChanged")
-        }
-    }
-
-    /**
-     * В режиме редактирования проверяем unsaved changes
-     */
-    override fun checkUnsavedChanges(): Boolean = hasUnsavedChanges
 
     companion object {
         private const val TAG = "EditPlaylistViewModel"

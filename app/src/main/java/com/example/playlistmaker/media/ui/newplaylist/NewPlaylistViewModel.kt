@@ -21,11 +21,9 @@ open class NewPlaylistViewModel(
         data class Error(val message: String) : CreatePlaylistState
     }
 
-    // Изменяем на protected для доступа в наследниках
     protected val _createState = MutableLiveData<CreatePlaylistState>(CreatePlaylistState.Idle)
     val createState: LiveData<CreatePlaylistState> = _createState
 
-    // Также делаем protected другие LiveData, которые могут понадобиться наследникам
     protected val _showExitDialog = MutableLiveData<Boolean>(false)
     val showExitDialog: LiveData<Boolean> = _showExitDialog
 
@@ -41,7 +39,8 @@ open class NewPlaylistViewModel(
     protected val _coverUri = MutableLiveData<Uri?>(null)
     val coverUri: LiveData<Uri?> = _coverUri
 
-    protected var hasUnsavedChanges = false
+    // ДОБАВЛЯЕМ open для возможности переопределения
+    protected open var hasUnsavedChanges = false
 
     init {
         android.util.Log.d("NewPlaylistVM", "ViewModel init")
@@ -145,7 +144,8 @@ open class NewPlaylistViewModel(
         clearSavedState()
     }
 
-    protected fun updateCreateButtonState() {
+    // ДОБАВЛЯЕМ open для возможности переопределения
+    protected open fun updateCreateButtonState() {
         val currentName = _name.value
         val isEnabled = !currentName.isNullOrBlank()
         android.util.Log.d("NewPlaylistVM", "updateCreateButtonState: name='$currentName', isEnabled=$isEnabled")
