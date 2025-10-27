@@ -36,4 +36,15 @@
         <item name="bottom_nav_background_color">@color/bottom_nav_background_color</item>
     </style>
 
+    <style name="App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <!-- Цвет фона -->
+        <item name="colorSurface">@color/buttonColor</item>
+
+        <!-- Цвет текста -->
+        <item name="colorOnSurface">@color/textColor</item>
+
+        <!-- Цвет кнопок -->
+        <item name="colorPrimary">@color/blue</item>
+    </style>
+
 </resources>

@@ -372,7 +372,7 @@ class OpenPlaylistFragment : Fragment() {
         // Показываем overlay
         showOverlay()
 
-        MaterialAlertDialogBuilder(requireContext())
+        MaterialAlertDialogBuilder(requireContext(), R.style.App_MaterialAlertDialog)
             .setTitle(R.string.delete_playlist_title)
             .setMessage(getString(R.string.delete_playlist_message) + " \"$playlistName\"?")
             .setNegativeButton(R.string.no) { dialog, _ ->
@@ -394,7 +394,7 @@ class OpenPlaylistFragment : Fragment() {
 
     private fun showDeleteTrackDialog(track: Track) {
         // Overlay уже показан в longClickListener
-        MaterialAlertDialogBuilder(requireContext())
+        MaterialAlertDialogBuilder(requireContext(), R.style.App_MaterialAlertDialog)
             .setMessage(getString(R.string.delete_track_message))
             .setNegativeButton(R.string.no) { dialog, _ ->
                 dialog.dismiss()
