@@ -154,7 +154,6 @@
                     android:id="@+id/shareIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
                     android:src="@drawable/share"
                     android:clickable="true"
                     android:focusable="true"
@@ -184,6 +183,14 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- ProgressBar поверх всего -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
     <!-- Bottom Sheet для треков -->
     <LinearLayout
@@ -226,8 +233,17 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
     </LinearLayout>
 
+    <!-- Overlay для затемнения фона (между двумя Bottom Sheets) -->
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/overlay"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true"/>
 
-    <!-- Bottom Sheet для меню -->
+    <!-- Bottom Sheet для меню (должен быть последним, чтобы быть поверх overlay) -->
     <LinearLayout
         android:id="@+id/bottom_sheet_menu"
         android:layout_width="match_parent"
@@ -295,23 +311,5 @@
             android:text="@string/remove_playlist"/>
 
     </LinearLayout>
-
-    <!-- ProgressBar поверх всего -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-
-    <!-- Overlay для затемнения фона -->
-    <View
-        android:id="@+id/overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/overlay"
-        android:visibility="gone"
-        android:clickable="true"
-        android:focusable="true"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

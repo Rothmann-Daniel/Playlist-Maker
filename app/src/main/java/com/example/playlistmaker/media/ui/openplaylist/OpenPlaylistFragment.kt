@@ -76,28 +76,12 @@ class OpenPlaylistFragment : Fragment() {
 
         tracksBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                        // Показываем overlay только для треков, если меню скрыто
-                        if (menuBottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) {
-                            binding.overlay.isVisible = true
-                        }
-                    }
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        // Скрываем overlay только если меню тоже скрыто
-                        if (menuBottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) {
-                            binding.overlay.isVisible = false
-                        }
-                    }
-                    else -> {}
-                }
+                // Список треков не показывает overlay при развороте
+                // Overlay показывается только для меню и диалогов
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                // Обновляем прозрачность только если меню скрыто
-                if (menuBottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) {
-                    binding.overlay.alpha = slideOffset.coerceAtLeast(0f)
-                }
+                // Не управляем overlay для списка треков
             }
         })
 
@@ -109,38 +93,41 @@ class OpenPlaylistFragment : Fragment() {
         menuBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                        // УБРАНО: не показываем overlay для меню
-                        binding.overlay.isVisible = false
-                    }
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        // УБРАНО: не показываем overlay для меню
-                        binding.overlay.isVisible = false
+                    BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
+                        // Показываем overlay когда меню открыто
+                        showOverlay()
                     }
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                        binding.overlay.isVisible = false
-                        // Проверяем состояние треков
-                        if (tracksBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                            binding.overlay.isVisible = true
-                        }
+                        // Скрываем overlay при закрытии меню
+                        hideOverlay()
                     }
                     else -> {}
                 }
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                // не меняем прозрачность overlay для меню
+                // Для меню устанавливаем полную прозрачность overlay
+                if (slideOffset > 0) {
+                    binding.overlay.alpha = 0.5f
+                }
             }
         })
 
-        // Клик по overlay закрывает меню или сворачивает треки
+        // Клик по overlay закрывает меню
         binding.overlay.setOnClickListener {
             if (menuBottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
                 menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            } else if (tracksBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                tracksBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         }
+    }
+
+    private fun showOverlay() {
+        binding.overlay.isVisible = true
+        binding.overlay.alpha = 0.5f
+    }
+
+    private fun hideOverlay() {
+        binding.overlay.isVisible = false
     }
 
     private fun setupPlurals() {
@@ -153,7 +140,7 @@ class OpenPlaylistFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        // Кнопка "Поделиться" на главном экране
+        // Кнопка "Поделиться"
         binding.shareIcon.setOnClickListener {
             sharePlaylist()
         }
@@ -276,7 +263,11 @@ class OpenPlaylistFragment : Fragment() {
         val adapter = TrackAdapter(
             tracks = tracks,
             clickListener = { track -> onTrackClick(track) },
-            longClickListener = { track -> showDeleteTrackDialog(track) }
+            longClickListener = { track ->
+                // Показываем overlay перед диалогом
+                showOverlay()
+                showDeleteTrackDialog(track)
+            }
         )
 
         binding.tracksListView.apply {
@@ -338,11 +329,11 @@ class OpenPlaylistFragment : Fragment() {
             sb.append("\n")
         }
 
-        // Количество треков -  использование plural
+        // Количество треков
         val tracksCountText = resources.getQuantityString(
             R.plurals.tracks_count,
             tracks.size,
-            tracks.size // передаем количество как параметр
+            tracks.size
         )
         sb.append(tracksCountText)
         sb.append("\n\n")
@@ -377,28 +368,46 @@ class OpenPlaylistFragment : Fragment() {
 
         val playlistName = currentState.playlist.name
 
+        // Показываем overlay
+        showOverlay()
+
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.delete_playlist_title)
             .setMessage(getString(R.string.delete_playlist_message) + " \"$playlistName\"?")
             .setNegativeButton(R.string.no) { dialog, _ ->
                 dialog.dismiss()
+                // Скрываем overlay после закрытия диалога
+                hideOverlay()
             }
             .setPositiveButton(R.string.yes) { dialog, _ ->
                 viewModel.deletePlaylist()
                 dialog.dismiss()
+                hideOverlay()
+            }
+            .setOnCancelListener {
+                // Скрываем overlay если диалог закрыт другим способом
+                hideOverlay()
             }
             .show()
     }
 
     private fun showDeleteTrackDialog(track: Track) {
+        // Overlay уже показан в longClickListener
         MaterialAlertDialogBuilder(requireContext())
             .setMessage(getString(R.string.delete_track_message))
             .setNegativeButton(R.string.no) { dialog, _ ->
                 dialog.dismiss()
+                // Скрываем overlay после закрытия диалога
+                hideOverlay()
             }
             .setPositiveButton(R.string.yes) { dialog, _ ->
                 viewModel.deleteTrack(track.trackId)
                 dialog.dismiss()
+                hideOverlay()
+            }
+            .setOnCancelListener {
+                // Скрываем overlay если диалог закрыт другим способом
+                hideOverlay()
             }
             .show()
     }
