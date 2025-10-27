@@ -1,11 +1,12 @@
 package com.example.playlistmaker.media.ui.editplaylist
 
+
+
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.media.ui.newplaylist.NewPlaylistFragment
 import com.example.playlistmaker.media.ui.newplaylist.NewPlaylistViewModel
@@ -13,114 +14,108 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.io.File
 
-/**
- * Fragment для редактирования плейлиста
- * Наследуется от NewPlaylistFragment и переопределяет поведение
- */
 class EditPlaylistFragment : NewPlaylistFragment() {
 
     private val args: EditPlaylistFragmentArgs by navArgs()
 
-    // Переопределяем ViewModel на EditPlaylistViewModel
-    override val viewModel: EditPlaylistViewModel by viewModel {
+    private val editViewModel: EditPlaylistViewModel by viewModel {
         parametersOf(args.playlistId)
     }
+
+    override val viewModel get() = editViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Изменяем заголовок и текст кнопки
-        setupEditMode()
+        setupEditModeUI()
+        setupEditObservers()
 
-        // Подписываемся на данные плейлиста
-        observePlaylistData()
+        android.util.Log.d("EditPlaylistFragment", "Fragment created, observing button state")
     }
 
-    /**
-     * Настройка UI для режима редактирования
-     */
-    private fun setupEditMode() {
-        binding.toolbarNewPlayList.title = getString(R.string.edit_playlist_title)
+    private fun setupEditModeUI() {
+        binding.toolbarNewPlayList.title = getString(R.string.edit_playlist)
         binding.createPlaylist.text = getString(R.string.save)
+
+        android.util.Log.d("EditPlaylistFragment", "Edit mode UI setup completed")
     }
 
-    /**
-     * Наблюдение за данными плейлиста
-     */
-    private fun observePlaylistData() {
-        viewModel.playlist.observe(viewLifecycleOwner) { playlist ->
+    private fun setupEditObservers() {
+        editViewModel.playlist.observe(viewLifecycleOwner) { playlist ->
             playlist?.let {
-                // Заполняем поля (они уже заполнены через ViewModel, но обложку нужно загрузить)
-                it.coverImagePath?.let { coverPath ->
-                    val coverFile = File(coverPath)
-                    if (coverFile.exists()) {
-                        Glide.with(requireContext())
-                            .load(coverFile)
-                            .centerCrop()
-                            .placeholder(R.drawable.icon_add_photo)
-                            .error(R.drawable.icon_add_photo)
-                            .into(binding.playlistCover)
+                android.util.Log.d("EditPlaylistFragment", "Playlist loaded: ${it.name}")
+
+                // --- ИСПРАВЛЕНИЕ 1: Предзаполнение полей UI ---
+                // Заполнение полей Название и Описание
+                binding.inputName.setText(it.name)
+                binding.inputDescription.setText(it.description)
+
+                // Заполнение обложки
+                it.coverImagePath?.let { path ->
+                    val file = File(path)
+                    if (file.exists()) {
+                        // Устанавливаем URI, чтобы фрагмент отобразил обложку
+                        binding.playlistCover.setImageURI(Uri.fromFile(file))
                     }
+                }
+
+
+                android.util.Log.d("EditPlaylistFragment", "Button enabled after data load: ${binding.createPlaylist.isEnabled}")
+            }
+        }
+
+        editViewModel.isCreateButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
+            android.util.Log.d("EditPlaylistFragment", "Button enabled state changed: $isEnabled")
+            binding.createPlaylist.isEnabled = isEnabled
+        }
+
+        editViewModel.createState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is NewPlaylistViewModel.CreatePlaylistState.Success -> {
+                    showSuccessMessage(state.playlistName)
+                    // Возвращаемся на предыдущий экран (экран плейлиста), где увидим изменения
+                    findNavController().navigateUp()
+                }
+                else -> {
+                    // Базовая обработка уже в родительском классе
                 }
             }
         }
     }
 
+
     /**
-     * Переопределяем логику кнопки "Назад" - выход без подтверждения
+     * Переопределяем логику обработки нажатия "Назад" (системная кнопка/жест)
+     * В режиме редактирования изменения игнорируются без подтверждения.
      */
     override fun handleBackPress() {
         findNavController().navigateUp()
     }
 
     /**
-     * Переопределяем клик на кнопку создания/сохранения
+     * Переопределяем логику нажатия на кнопку в тулбаре "Назад"
      */
-    override fun setupClickListeners() {
-        binding.playlistCover.setOnClickListener {
-            pickImageFromGallery()
-        }
-
-        // Переопределяем действие кнопки - теперь обновляем плейлист
-        binding.createPlaylist.setOnClickListener {
-            viewModel.updatePlaylist()
+    override fun setupToolbar() {
+        binding.toolbarNewPlayList.setNavigationOnClickListener {
+            handleBackPress() // Вызовет переопределенный метод
         }
     }
 
-    /**
-     * Переопределяем наблюдение за состоянием - не показываем диалог выхода
-     */
-    override fun setupObservers() {
-        viewModel.isCreateButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
-            binding.createPlaylist.isEnabled = isEnabled
-        }
 
-        viewModel.createState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is NewPlaylistViewModel.CreatePlaylistState.Loading -> {
-                    showLoading(true)
-                }
-                is NewPlaylistViewModel.CreatePlaylistState.Success -> {
-                    showLoading(false)
-                    showSuccessMessage(state.playlistName)
-                    findNavController().navigateUp()
-                }
-                is NewPlaylistViewModel.CreatePlaylistState.Error -> {
-                    showLoading(false)
-                    showError(state.message)
-                }
-                else -> {
-                    showLoading(false)
-                }
-            }
-        }
+    override fun setupClickListeners() {
+        // Вызываем родительский метод, чтобы сохранить слушатель для обложки,
+        // но переопределяем слушатель для кнопки "Сохранить"
+        super.setupClickListeners()
 
-        // НЕ подписываемся на showExitDialog
+        binding.createPlaylist.setOnClickListener {
+            android.util.Log.d("EditPlaylistFragment", "Save button clicked, enabled: ${binding.createPlaylist.isEnabled}")
+            editViewModel.updatePlaylist()
+        }
     }
 
     override fun showSuccessMessage(playlistName: String) {
         val message = getString(R.string.playlist_updated_success, playlistName)
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
     }
 
     companion object {

@@ -161,7 +161,7 @@ class OpenPlaylistFragment : Fragment() {
             showDeleteConfirmationDialog()
         }
 
-        // Редактирование - пока не реализовано
+        // Редактирование
         binding.editPlayList.setOnClickListener {
             menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             navigateToEditPlaylist()

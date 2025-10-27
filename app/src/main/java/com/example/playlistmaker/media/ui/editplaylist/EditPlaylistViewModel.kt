@@ -10,6 +10,7 @@ import com.example.playlistmaker.media.domain.interactor.PlaylistInteractor
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.ui.newplaylist.NewPlaylistViewModel
 import kotlinx.coroutines.launch
+import java.io.File
 
 /**
  * ViewModel для редактирования плейлиста
@@ -26,6 +27,10 @@ class EditPlaylistViewModel(
     val playlist: LiveData<Playlist?> = _playlist
 
     private var originalCoverPath: String? = null
+    private var isInitialLoad = true
+    private var originalName: String = ""
+    private var originalDescription: String = ""
+    private var originalCoverUri: Uri? = null
 
     init {
         loadPlaylistData()
@@ -41,22 +46,64 @@ class EditPlaylistViewModel(
                 _playlist.value = playlist
 
                 playlist?.let {
-                    // Сохраняем оригинальный путь к обложке
+                    // Сохраняем оригинальные данные
+                    originalName = it.name
+                    originalDescription = it.description ?: ""
                     originalCoverPath = it.coverImagePath
 
-                    // Заполняем поля формы
+                    // Временно отключаем observer для предотвращения двойного вызова
+                    isInitialLoad = true
+
+                    // Заполняем поля формы через родительские методы
                     onNameChanged(it.name)
                     onDescriptionChanged(it.description ?: "")
 
                     // Устанавливаем URI обложки, если есть
                     it.coverImagePath?.let { path ->
-                        // Конвертируем путь в URI для отображения
-                        setCoverUri(Uri.parse("file://$path"))
+                        val file = File(path)
+                        if (file.exists()) {
+                            val uri = Uri.fromFile(file)
+                            originalCoverUri = uri
+                            setCoverUri(uri)
+                        }
                     }
+
+                    // Включаем observer обратно
+                    isInitialLoad = false
+
+                    // Обновляем состояние кнопки после загрузки данных
+                    updateCreateButtonState()
+                    updateUnsavedChanges()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                _createState.value = CreatePlaylistState.Error("Не удалось загрузить данные плейлиста")
             }
+        }
+    }
+
+    /**
+     * Переопределяем методы изменения данных для правильного отслеживания изменений
+     */
+    override fun onNameChanged(name: String) {
+        super.onNameChanged(name)
+        if (!isInitialLoad) {
+            updateCreateButtonState()
+            updateUnsavedChanges()
+        }
+    }
+
+    override fun onDescriptionChanged(description: String) {
+        super.onDescriptionChanged(description)
+        if (!isInitialLoad) {
+            updateUnsavedChanges()
+        }
+    }
+
+    override fun setCoverUri(uri: Uri?) {
+        super.setCoverUri(uri)
+        if (!isInitialLoad) {
+            updateUnsavedChanges()
         }
     }
 
@@ -64,7 +111,7 @@ class EditPlaylistViewModel(
      * Обновляет плейлист вместо создания нового
      */
     fun updatePlaylist() {
-        val currentName = name.value?.trim()
+        val currentName = _name.value?.trim()
         if (currentName.isNullOrBlank()) {
             _createState.value = CreatePlaylistState.Error("Название плейлиста не может быть пустым")
             return
@@ -74,40 +121,43 @@ class EditPlaylistViewModel(
 
         viewModelScope.launch {
             try {
-                val playlist = _playlist.value ?: return@launch
+                val currentPlaylist = _playlist.value ?: run {
+                    _createState.value = CreatePlaylistState.Error("Плейлист не найден")
+                    return@launch
+                }
 
                 // Определяем путь к обложке
                 val coverPath = when {
                     // Если выбрана новая обложка (URI изменился)
-                    coverUri.value != null && coverUri.value.toString() != "file://$originalCoverPath" -> {
+                    coverUri.value != null && hasCoverChanged() -> {
                         coverUri.value?.let { uri ->
-                            // Сохраняем новую обложку
                             fileStorage.saveCoverImageFromUri(uri)
-                        } ?: originalCoverPath
+                        }
                     }
                     // Если обложка не изменилась
                     else -> originalCoverPath
                 }
 
                 // Создаем обновленный плейлист
-                val updatedPlaylist = playlist.copy(
+                val updatedPlaylist = currentPlaylist.copy(
                     name = currentName,
-                    description = description.value?.trim()?.takeIf { it.isNotEmpty() },
+                    description = _description.value?.trim()?.takeIf { it.isNotEmpty() },
                     coverImagePath = coverPath
                 )
 
                 // Обновляем плейлист
                 val result = playlistInteractor.updatePlaylist(updatedPlaylist)
 
-                _createState.value = when {
-                    result.isSuccess -> {
-                        // Удаляем старую обложку, если была заменена
-                        if (coverPath != originalCoverPath && originalCoverPath != null) {
-                            fileStorage.deleteCoverImage(originalCoverPath)
-                        }
-                        CreatePlaylistState.Success(currentName)
+                if (result.isSuccess) {
+                    // Удаляем старую обложку, если была заменена
+                    if (coverPath != originalCoverPath && originalCoverPath != null) {
+                        fileStorage.deleteCoverImage(originalCoverPath)
                     }
-                    else -> CreatePlaylistState.Error(
+                    hasUnsavedChanges = false
+                    clearSavedState()
+                    _createState.value = CreatePlaylistState.Success(currentName)
+                } else {
+                    _createState.value = CreatePlaylistState.Error(
                         result.exceptionOrNull()?.message ?: "Неизвестная ошибка"
                     )
                 }
@@ -118,9 +168,38 @@ class EditPlaylistViewModel(
     }
 
     /**
-     * В режиме редактирования не показываем диалог выхода
+     * Проверяет, изменилась ли обложка
      */
-    override fun checkUnsavedChanges(): Boolean = false
+    private fun hasCoverChanged(): Boolean {
+        val currentUri = coverUri.value
+        return currentUri != originalCoverUri
+    }
+
+    /**
+     * Переопределяем проверку изменений для режима редактирования
+     */
+    override fun updateUnsavedChanges() {
+        val currentName = _name.value ?: ""
+        val currentDescription = _description.value ?: ""
+        val currentCoverUri = coverUri.value
+
+        // Проверяем, есть ли изменения по сравнению с оригинальными данными
+        val nameChanged = currentName != originalName
+        val descriptionChanged = currentDescription != originalDescription
+        val coverChanged = currentCoverUri != originalCoverUri
+
+        val newHasUnsavedChanges = nameChanged || descriptionChanged || coverChanged
+
+        if (newHasUnsavedChanges != hasUnsavedChanges) {
+            hasUnsavedChanges = newHasUnsavedChanges
+            android.util.Log.d("EditPlaylistVM", "updateUnsavedChanges: hasUnsavedChanges=$hasUnsavedChanges, nameChanged=$nameChanged, descriptionChanged=$descriptionChanged, coverChanged=$coverChanged")
+        }
+    }
+
+    /**
+     * В режиме редактирования проверяем unsaved changes
+     */
+    override fun checkUnsavedChanges(): Boolean = hasUnsavedChanges
 
     companion object {
         private const val TAG = "EditPlaylistViewModel"

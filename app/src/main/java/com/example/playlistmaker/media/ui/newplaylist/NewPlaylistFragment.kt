@@ -11,7 +11,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -30,10 +33,8 @@ open class NewPlaylistFragment : Fragment() {
 
     private val gson: Gson by inject()
 
-    // Делаем open для переопределения в наследнике
     protected open val viewModel: NewPlaylistViewModel by viewModel { parametersOf(gson) }
 
-    // Launcher для выбора изображения
     private val pickImageLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -45,7 +46,6 @@ open class NewPlaylistFragment : Fragment() {
         }
     }
 
-    // Launcher для запроса разрешений (Android 13+)
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -66,6 +66,7 @@ open class NewPlaylistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        android.util.Log.d("NewPlaylistFragment", "onViewCreated")
 
         setupToolbar()
         setupClickListeners()
@@ -73,6 +74,12 @@ open class NewPlaylistFragment : Fragment() {
         setupObservers()
         setFocusOnInputName()
         setupKeyboardScrolling()
+        setupKeyboardInsets()
+
+        // Логируем конечное состояние
+        binding.createPlaylist.post {
+            android.util.Log.d("NewPlaylistFragment", "Final button state after setup: ${binding.createPlaylist.isEnabled}")
+        }
     }
 
     protected open fun setupToolbar() {
@@ -103,6 +110,7 @@ open class NewPlaylistFragment : Fragment() {
 
     protected open fun setupObservers() {
         viewModel.isCreateButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
+            android.util.Log.d("NewPlaylistFragment", "Button enabled state changed: $isEnabled")
             binding.createPlaylist.isEnabled = isEnabled
         }
 
@@ -163,7 +171,7 @@ open class NewPlaylistFragment : Fragment() {
 
     protected open fun showLoading(show: Boolean) {
         binding.progressBarContainer.isVisible = show
-        binding.createPlaylist.isEnabled = !show
+        // Не меняем состояние кнопки здесь - этим управляет ViewModel через isCreateButtonEnabled
     }
 
     protected open fun showError(message: String) {
@@ -262,6 +270,16 @@ open class NewPlaylistFragment : Fragment() {
                 dialog.dismiss()
             }
             .show()
+    }
+
+    private fun setupKeyboardInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomButtonContainer) { v, insets ->
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            v.updatePadding(bottom = imeInsets.bottom + systemBars.bottom)
+            insets
+        }
     }
 
     override fun onDestroyView() {

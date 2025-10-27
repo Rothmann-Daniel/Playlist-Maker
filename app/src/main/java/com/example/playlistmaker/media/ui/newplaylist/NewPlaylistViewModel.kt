@@ -9,16 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.interactor.PlaylistInteractor
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel для создания плейлиста
- * Класс открыт для наследования (open)
- */
 open class NewPlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
-    // Состояния
 
     sealed interface CreatePlaylistState {
         object Idle : CreatePlaylistState
@@ -27,42 +21,52 @@ open class NewPlaylistViewModel(
         data class Error(val message: String) : CreatePlaylistState
     }
 
+    // Изменяем на protected для доступа в наследниках
     protected val _createState = MutableLiveData<CreatePlaylistState>(CreatePlaylistState.Idle)
     val createState: LiveData<CreatePlaylistState> = _createState
 
-    private val _showExitDialog = MutableLiveData<Boolean>()
+    // Также делаем protected другие LiveData, которые могут понадобиться наследникам
+    protected val _showExitDialog = MutableLiveData<Boolean>(false)
     val showExitDialog: LiveData<Boolean> = _showExitDialog
 
-    private val _isCreateButtonEnabled = MutableLiveData<Boolean>()
+    protected val _isCreateButtonEnabled = MutableLiveData<Boolean>(false)
     val isCreateButtonEnabled: LiveData<Boolean> = _isCreateButtonEnabled
 
-    // Данные формы с сохранением состояния
-    protected val _name = MutableLiveData<String>()
+    protected val _name = MutableLiveData<String>("")
     val name: LiveData<String> = _name
 
-    protected val _description = MutableLiveData<String>()
+    protected val _description = MutableLiveData<String>("")
     val description: LiveData<String> = _description
 
-    protected val _coverUri = MutableLiveData<Uri?>()
+    protected val _coverUri = MutableLiveData<Uri?>(null)
     val coverUri: LiveData<Uri?> = _coverUri
 
-    private var hasUnsavedChanges = false
+    protected var hasUnsavedChanges = false
 
     init {
-        // Восстанавливаем состояние
+        android.util.Log.d("NewPlaylistVM", "ViewModel init")
         restoreState()
     }
 
     private fun restoreState() {
-        _name.value = savedStateHandle.get<String>(KEY_NAME) ?: ""
-        _description.value = savedStateHandle.get<String>(KEY_DESCRIPTION) ?: ""
-        _coverUri.value = savedStateHandle.get<String>(KEY_COVER_URI)?.let { Uri.parse(it) }
+        val savedName = savedStateHandle.get<String>(KEY_NAME) ?: ""
+        val savedDescription = savedStateHandle.get<String>(KEY_DESCRIPTION) ?: ""
+        val savedCoverUri = savedStateHandle.get<String>(KEY_COVER_URI)?.let { Uri.parse(it) }
 
-        updateCreateButtonState()
+        android.util.Log.d("NewPlaylistVM", "restoreState: name='$savedName', description='$savedDescription', coverUri=$savedCoverUri")
+
+        _name.value = savedName
+        _description.value = savedDescription
+        _coverUri.value = savedCoverUri
+
         updateUnsavedChanges()
+        updateCreateButtonState()
+
+        android.util.Log.d("NewPlaylistVM", "State restored: name='${_name.value}', buttonEnabled=${_isCreateButtonEnabled.value}")
     }
 
     open fun onNameChanged(name: String) {
+        android.util.Log.d("NewPlaylistVM", "onNameChanged: '$name'")
         _name.value = name
         savedStateHandle[KEY_NAME] = name
         updateCreateButtonState()
@@ -70,12 +74,14 @@ open class NewPlaylistViewModel(
     }
 
     open fun onDescriptionChanged(description: String) {
+        android.util.Log.d("NewPlaylistVM", "onDescriptionChanged: '$description'")
         _description.value = description
         savedStateHandle[KEY_DESCRIPTION] = description
         updateUnsavedChanges()
     }
 
     open fun setCoverUri(uri: Uri?) {
+        android.util.Log.d("NewPlaylistVM", "setCoverUri: $uri")
         _coverUri.value = uri
         savedStateHandle[KEY_COVER_URI] = uri?.toString()
         updateUnsavedChanges()
@@ -84,63 +90,88 @@ open class NewPlaylistViewModel(
     open fun createPlaylist() {
         val currentName = _name.value?.trim()
         if (currentName.isNullOrBlank()) {
-            _createState.value =
-                CreatePlaylistState.Error("Название плейлиста не может быть пустым")
+            _createState.value = CreatePlaylistState.Error("Название плейлиста не может быть пустым")
             return
         }
 
+        android.util.Log.d("NewPlaylistVM", "createPlaylist: '$currentName'")
         _createState.value = CreatePlaylistState.Loading
 
         viewModelScope.launch {
-            val result = playlistInteractor.createPlaylist(
-                name = currentName,
-                description = _description.value?.trim()?.takeIf { it.isNotEmpty() },
-                coverImageUri = _coverUri.value
-            )
-
-            _createState.value = when {
-                result.isSuccess -> {
-                    hasUnsavedChanges = false
-                    CreatePlaylistState.Success(currentName)
-                }
-                else -> CreatePlaylistState.Error(
-                    result.exceptionOrNull()?.message ?: "Неизвестная ошибка"
+            try {
+                val result = playlistInteractor.createPlaylist(
+                    name = currentName,
+                    description = _description.value?.trim()?.takeIf { it.isNotEmpty() },
+                    coverImageUri = _coverUri.value
                 )
+
+                if (result.isSuccess) {
+                    hasUnsavedChanges = false
+                    clearSavedState()
+                    _createState.value = CreatePlaylistState.Success(currentName)
+                    android.util.Log.d("NewPlaylistVM", "Playlist created successfully: '$currentName'")
+                } else {
+                    _createState.value = CreatePlaylistState.Error(
+                        result.exceptionOrNull()?.message ?: "Неизвестная ошибка"
+                    )
+                    android.util.Log.e("NewPlaylistVM", "Error creating playlist: ${result.exceptionOrNull()}")
+                }
+            } catch (e: Exception) {
+                _createState.value = CreatePlaylistState.Error(e.message ?: "Неизвестная ошибка")
+                android.util.Log.e("NewPlaylistVM", "Exception creating playlist: $e")
             }
         }
     }
 
-    open fun checkUnsavedChanges(): Boolean = hasUnsavedChanges
+    open fun checkUnsavedChanges(): Boolean {
+        android.util.Log.d("NewPlaylistVM", "checkUnsavedChanges: $hasUnsavedChanges")
+        return hasUnsavedChanges
+    }
 
-    fun showExitDialog() {
+    open fun showExitDialog() {
+        android.util.Log.d("NewPlaylistVM", "showExitDialog")
         _showExitDialog.value = true
     }
 
-    fun hideExitDialog() {
+    open fun hideExitDialog() {
+        android.util.Log.d("NewPlaylistVM", "hideExitDialog")
         _showExitDialog.value = false
     }
 
-    fun exitWithoutSaving() {
+    open fun exitWithoutSaving() {
+        android.util.Log.d("NewPlaylistVM", "exitWithoutSaving")
         _showExitDialog.value = false
         hasUnsavedChanges = false
-        // Очищаем сохраненное состояние
-        savedStateHandle.remove<String>(KEY_NAME)
-        savedStateHandle.remove<String>(KEY_DESCRIPTION)
-        savedStateHandle.remove<String>(KEY_COVER_URI)
+        clearSavedState()
     }
 
-    private fun updateCreateButtonState() {
-        _isCreateButtonEnabled.value = !_name.value.isNullOrBlank()
+    protected fun updateCreateButtonState() {
+        val currentName = _name.value
+        val isEnabled = !currentName.isNullOrBlank()
+        android.util.Log.d("NewPlaylistVM", "updateCreateButtonState: name='$currentName', isEnabled=$isEnabled")
+        _isCreateButtonEnabled.value = isEnabled
     }
 
-    private fun updateUnsavedChanges() {
+    protected open fun updateUnsavedChanges() {
         val currentName = _name.value ?: ""
         val currentDescription = _description.value ?: ""
         val currentCoverUri = _coverUri.value
 
-        hasUnsavedChanges = currentName.isNotBlank() ||
+        val newHasUnsavedChanges = currentName.isNotBlank() ||
                 currentDescription.isNotBlank() ||
                 currentCoverUri != null
+
+        if (newHasUnsavedChanges != hasUnsavedChanges) {
+            hasUnsavedChanges = newHasUnsavedChanges
+            android.util.Log.d("NewPlaylistVM", "updateUnsavedChanges: hasUnsavedChanges=$hasUnsavedChanges")
+        }
+    }
+
+    protected fun clearSavedState() {
+        savedStateHandle.remove<String>(KEY_NAME)
+        savedStateHandle.remove<String>(KEY_DESCRIPTION)
+        savedStateHandle.remove<String>(KEY_COVER_URI)
+        android.util.Log.d("NewPlaylistVM", "clearSavedState: state cleared")
     }
 
     companion object {

@@ -63,12 +63,11 @@ val mediaModule = module {
         )
     }
 
-    // ViewModel для редактирования с дополнительной зависимостью fileStorage
     viewModel { (playlistId: Long) ->
         EditPlaylistViewModel(
             playlistInteractor = get(),
             fileStorage = get(),
-            savedStateHandle = SavedStateHandle(),
+            savedStateHandle = get(),
             playlistId = playlistId
         )
     }
