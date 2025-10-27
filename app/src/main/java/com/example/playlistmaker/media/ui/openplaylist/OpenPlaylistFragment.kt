@@ -163,7 +163,8 @@ class OpenPlaylistFragment : Fragment() {
 
         // Редактирование - пока не реализовано
         binding.editPlayList.setOnClickListener {
-            Toast.makeText(requireContext(), "Функция в разработке", Toast.LENGTH_SHORT).show()
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            navigateToEditPlaylist()
         }
     }
 
@@ -429,6 +430,21 @@ class OpenPlaylistFragment : Fragment() {
             Toast.makeText(
                 requireContext(),
                 "Не удалось открыть плеер",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun navigateToEditPlaylist() {
+        try {
+            val action = OpenPlaylistFragmentDirections
+                .actionOpenPlaylistFragmentToEditPlaylist(args.playlistId)
+            findNavController().navigate(action)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(
+                requireContext(),
+                "Не удалось открыть редактирование",
                 Toast.LENGTH_SHORT
             ).show()
         }

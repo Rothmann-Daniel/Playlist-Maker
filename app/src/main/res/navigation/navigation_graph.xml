@@ -46,6 +46,19 @@
             app:popUpToInclusive="false" />
     </fragment>
 
+    <!-- Edit Playlist Fragment -->
+    <fragment
+        android:id="@+id/editPlaylistFragment"
+        android:name="com.example.playlistmaker.media.ui.editplaylist.EditPlaylistFragment"
+        android:label="EditPlaylistFragment"
+        tools:layout="@layout/fragment_new_playlist">
+
+        <!-- Аргумент для передачи ID плейлиста -->
+        <argument
+            android:name="playlistId"
+            app:argType="long" />
+    </fragment>
+
     <!-- Open Playlist Fragment -->
     <fragment
         android:id="@+id/openPlaylistFragment"
@@ -57,10 +70,16 @@
         <argument
             android:name="playlistId"
             app:argType="long" />
+
         <!-- action для перехода к плееру -->
         <action
             android:id="@+id/action_openPlaylistFragment_to_audioPlayerFragment"
             app:destination="@id/audioPlayerFragment" />
+
+        <!--action для перехода к редактированию -->
+        <action
+            android:id="@+id/action_openPlaylistFragment_to_editPlaylist"
+            app:destination="@id/editPlaylistFragment" />
     </fragment>
 
     <!-- Search Fragment -->

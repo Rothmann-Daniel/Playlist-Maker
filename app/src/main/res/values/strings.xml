@@ -128,6 +128,11 @@
     <string name="permission_denied_message">Без разрешения нельзя выбрать изображение из галереи</string>
     <string name="continue_text">Продолжить</string>
 
+    <!-- Редактирование плейлиста -->
+    <string name="edit_playlist_title">Редактировать</string>
+    <string name="save">Сохранить</string>
+    <string name="playlist_updated_success">Плейлист "%1$s" обновлен</string>
+
 
 
 </resources>

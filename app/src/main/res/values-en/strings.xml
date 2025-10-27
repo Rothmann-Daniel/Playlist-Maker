@@ -96,6 +96,11 @@
     <string name="permission_denied_message">You cannot select an image from the gallery without permission.</string>
     <string name="continue_text">Continue</string>
 
+    <!-- Playlist editing -->
+    <string name="edit_playlist_title">Edit</string>
+    <string name="save">Save</string>
+    <string name="playlist_updated_success">Playlist "%1$s" updated</string>
+
 
 
 </resources>

@@ -11,9 +11,9 @@ import kotlinx.coroutines.launch
 
 /**
  * ViewModel для создания плейлиста
- * Упрощена - работа с файлами перенесена в репозиторий
+ * Класс открыт для наследования (open)
  */
-class NewPlaylistViewModel(
+open class NewPlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -27,7 +27,7 @@ class NewPlaylistViewModel(
         data class Error(val message: String) : CreatePlaylistState
     }
 
-    private val _createState = MutableLiveData<CreatePlaylistState>(CreatePlaylistState.Idle)
+    protected val _createState = MutableLiveData<CreatePlaylistState>(CreatePlaylistState.Idle)
     val createState: LiveData<CreatePlaylistState> = _createState
 
     private val _showExitDialog = MutableLiveData<Boolean>()
@@ -37,13 +37,13 @@ class NewPlaylistViewModel(
     val isCreateButtonEnabled: LiveData<Boolean> = _isCreateButtonEnabled
 
     // Данные формы с сохранением состояния
-    private val _name = MutableLiveData<String>()
+    protected val _name = MutableLiveData<String>()
     val name: LiveData<String> = _name
 
-    private val _description = MutableLiveData<String>()
+    protected val _description = MutableLiveData<String>()
     val description: LiveData<String> = _description
 
-    private val _coverUri = MutableLiveData<Uri?>()
+    protected val _coverUri = MutableLiveData<Uri?>()
     val coverUri: LiveData<Uri?> = _coverUri
 
     private var hasUnsavedChanges = false
@@ -62,26 +62,26 @@ class NewPlaylistViewModel(
         updateUnsavedChanges()
     }
 
-    fun onNameChanged(name: String) {
+    open fun onNameChanged(name: String) {
         _name.value = name
         savedStateHandle[KEY_NAME] = name
         updateCreateButtonState()
         updateUnsavedChanges()
     }
 
-    fun onDescriptionChanged(description: String) {
+    open fun onDescriptionChanged(description: String) {
         _description.value = description
         savedStateHandle[KEY_DESCRIPTION] = description
         updateUnsavedChanges()
     }
 
-    fun setCoverUri(uri: Uri?) {
+    open fun setCoverUri(uri: Uri?) {
         _coverUri.value = uri
         savedStateHandle[KEY_COVER_URI] = uri?.toString()
         updateUnsavedChanges()
     }
 
-    fun createPlaylist() {
+    open fun createPlaylist() {
         val currentName = _name.value?.trim()
         if (currentName.isNullOrBlank()) {
             _createState.value =
@@ -110,7 +110,7 @@ class NewPlaylistViewModel(
         }
     }
 
-    fun checkUnsavedChanges(): Boolean = hasUnsavedChanges
+    open fun checkUnsavedChanges(): Boolean = hasUnsavedChanges
 
     fun showExitDialog() {
         _showExitDialog.value = true
