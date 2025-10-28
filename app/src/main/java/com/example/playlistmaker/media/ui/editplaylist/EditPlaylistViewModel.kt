@@ -81,8 +81,6 @@ class EditPlaylistViewModel(
                     // Обновляем состояние кнопки после загрузки данных
                     updateCreateButtonState()
                     updateUnsavedChanges()
-
-                    android.util.Log.d("EditPlaylistVM", "Data loaded: name='$originalName', description='$originalDescription'")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -130,7 +128,6 @@ class EditPlaylistViewModel(
 
         if (_isCreateButtonEnabled.value != buttonShouldBeEnabled) {
             _isCreateButtonEnabled.value = buttonShouldBeEnabled
-            android.util.Log.d("EditPlaylistVM", "Button state updated to $buttonShouldBeEnabled (Valid=$nameValid, Unsaved=$editModeHasUnsavedChanges)")
         }
     }
 
@@ -140,7 +137,6 @@ class EditPlaylistViewModel(
     override fun updateUnsavedChanges() {
         // Не выполняем проверку, пока данные не загружены
         if (!isDataLoaded) {
-            android.util.Log.d("EditPlaylistVM", "updateUnsavedChanges: data not loaded yet, skipping")
             return
         }
 
@@ -157,7 +153,6 @@ class EditPlaylistViewModel(
 
         if (newHasUnsavedChanges != editModeHasUnsavedChanges) {
             editModeHasUnsavedChanges = newHasUnsavedChanges
-            android.util.Log.d("EditPlaylistVM", "Unsaved changes: $editModeHasUnsavedChanges (name=$nameChanged, desc=$descriptionChanged, cover=$coverChanged)")
         }
     }
 
@@ -210,7 +205,6 @@ class EditPlaylistViewModel(
                     editModeHasUnsavedChanges = false
                     clearSavedState()
                     _createState.value = CreatePlaylistState.Success(currentName)
-                    android.util.Log.d("EditPlaylistVM", "Playlist updated successfully: '$currentName'")
                 } else {
                     _createState.value = CreatePlaylistState.Error(
                         result.exceptionOrNull()?.message ?: "Неизвестная ошибка"

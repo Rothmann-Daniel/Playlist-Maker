@@ -29,22 +29,16 @@ class EditPlaylistFragment : NewPlaylistFragment() {
 
         setupEditModeUI()
         setupEditObservers()
-
-        android.util.Log.d("EditPlaylistFragment", "Fragment created, observing button state")
     }
 
     private fun setupEditModeUI() {
         binding.toolbarNewPlayList.title = getString(R.string.edit_playlist)
         binding.createPlaylist.text = getString(R.string.save)
-
-        android.util.Log.d("EditPlaylistFragment", "Edit mode UI setup completed")
     }
 
     private fun setupEditObservers() {
         editViewModel.playlist.observe(viewLifecycleOwner) { playlist ->
             playlist?.let {
-                android.util.Log.d("EditPlaylistFragment", "Playlist loaded: ${it.name}")
-
                 // --- Предзаполнение полей UI ---
                 // Заполнение полей Название и Описание
                 binding.inputName.setText(it.name)
@@ -57,8 +51,6 @@ class EditPlaylistFragment : NewPlaylistFragment() {
                         binding.playlistCover.setImageURI(Uri.fromFile(file))
                     }
                 }
-
-                android.util.Log.d("EditPlaylistFragment", "Button enabled after data load: ${binding.createPlaylist.isEnabled}")
             }
         }
 
@@ -75,7 +67,6 @@ class EditPlaylistFragment : NewPlaylistFragment() {
                     try {
                         findNavController().popBackStack(R.id.openPlaylistFragment, false)
                     } catch (e: Exception) {
-                        android.util.Log.e("EditPlaylistFragment", "Navigation error: $e")
                         findNavController().navigateUp()
                     }
                 }
@@ -110,7 +101,6 @@ class EditPlaylistFragment : NewPlaylistFragment() {
         super.setupClickListeners()
 
         binding.createPlaylist.setOnClickListener {
-            android.util.Log.d("EditPlaylistFragment", "Save button clicked, enabled: ${binding.createPlaylist.isEnabled}")
             editViewModel.updatePlaylist()
         }
     }
