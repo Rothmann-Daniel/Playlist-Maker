@@ -132,7 +132,12 @@
     <string name="edit_playlist_title">Редактировать</string>
     <string name="save">Сохранить</string>
     <string name="playlist_updated_success">Плейлист "%1$s" обновлен</string>
-
+    <!-- Ошибки создания и редактирования плейлиста -->
+    <string name="error_empty_playlist_name">Название плейлиста не может быть пустым</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
+    <string name="error_load_playlist_data">Не удалось загрузить данные плейлиста</string>
+    <string name="error_playlist_not_found">Плейлист не найден</string>
+    <string name="error_update_playlist">Ошибка обновления плейлиста</string>
 
 
 </resources>

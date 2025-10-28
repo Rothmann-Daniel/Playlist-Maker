@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.interactor.PlaylistInteractor
+import com.example.playlistmaker.util.SingleLiveEvent
 import kotlinx.coroutines.launch
 
 open class NewPlaylistViewModel(
@@ -18,13 +19,14 @@ open class NewPlaylistViewModel(
         object Idle : CreatePlaylistState
         object Loading : CreatePlaylistState
         data class Success(val playlistName: String) : CreatePlaylistState
-        data class Error(val message: String) : CreatePlaylistState
+        data class Error(val messageResId: Int) : CreatePlaylistState
     }
 
-    protected val _createState = MutableLiveData<CreatePlaylistState>(CreatePlaylistState.Idle)
+    // Используем SingleLiveEvent для одноразовых событий
+    protected val _createState = SingleLiveEvent<CreatePlaylistState>()
     val createState: LiveData<CreatePlaylistState> = _createState
 
-    protected val _showExitDialog = MutableLiveData<Boolean>(false)
+    protected val _showExitDialog = SingleLiveEvent<Boolean>()
     val showExitDialog: LiveData<Boolean> = _showExitDialog
 
     protected val _isCreateButtonEnabled = MutableLiveData<Boolean>(false)
@@ -39,11 +41,9 @@ open class NewPlaylistViewModel(
     protected val _coverUri = MutableLiveData<Uri?>(null)
     val coverUri: LiveData<Uri?> = _coverUri
 
-    // ДОБАВЛЯЕМ open для возможности переопределения
     protected open var hasUnsavedChanges = false
 
     init {
-        android.util.Log.d("NewPlaylistVM", "ViewModel init")
         restoreState()
     }
 
@@ -82,7 +82,9 @@ open class NewPlaylistViewModel(
     open fun createPlaylist() {
         val currentName = _name.value?.trim()
         if (currentName.isNullOrBlank()) {
-            _createState.value = CreatePlaylistState.Error("Название плейлиста не может быть пустым")
+            _createState.value = CreatePlaylistState.Error(
+                com.example.playlistmaker.R.string.error_empty_playlist_name
+            )
             return
         }
 
@@ -102,38 +104,35 @@ open class NewPlaylistViewModel(
                     _createState.value = CreatePlaylistState.Success(currentName)
                 } else {
                     _createState.value = CreatePlaylistState.Error(
-                        result.exceptionOrNull()?.message ?: "Неизвестная ошибка"
+                        com.example.playlistmaker.R.string.error_unknown
                     )
                 }
             } catch (e: Exception) {
-                _createState.value = CreatePlaylistState.Error(e.message ?: "Неизвестная ошибка")
+                _createState.value = CreatePlaylistState.Error(
+                    com.example.playlistmaker.R.string.error_unknown
+                )
             }
         }
     }
 
     open fun checkUnsavedChanges(): Boolean {
-        android.util.Log.d("NewPlaylistVM", "checkUnsavedChanges: $hasUnsavedChanges")
         return hasUnsavedChanges
     }
 
     open fun showExitDialog() {
-        android.util.Log.d("NewPlaylistVM", "showExitDialog")
         _showExitDialog.value = true
     }
 
     open fun hideExitDialog() {
-        android.util.Log.d("NewPlaylistVM", "hideExitDialog")
         _showExitDialog.value = false
     }
 
     open fun exitWithoutSaving() {
-        android.util.Log.d("NewPlaylistVM", "exitWithoutSaving")
         _showExitDialog.value = false
         hasUnsavedChanges = false
         clearSavedState()
     }
 
-    // ДОБАВЛЯЕМ open для возможности переопределения
     protected open fun updateCreateButtonState() {
         val currentName = _name.value
         val isEnabled = !currentName.isNullOrBlank()

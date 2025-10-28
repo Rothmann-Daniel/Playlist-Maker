@@ -28,8 +28,10 @@ import org.koin.core.parameter.parametersOf
 
 open class NewPlaylistFragment : Fragment() {
 
-    protected var _binding: FragmentNewPlaylistBinding? = null
-    protected val binding get() = _binding!!
+    private var _binding: FragmentNewPlaylistBinding? = null
+    protected val binding get() = checkNotNull(_binding) {
+        "Binding should not be null"
+    }
 
     private val gson: Gson by inject()
 
@@ -57,7 +59,8 @@ open class NewPlaylistFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
@@ -74,11 +77,6 @@ open class NewPlaylistFragment : Fragment() {
         setFocusOnInputName()
         setupKeyboardScrolling()
         setupKeyboardInsets()
-
-        // Логируем конечное состояние
-        binding.createPlaylist.post {
-            android.util.Log.d("NewPlaylistFragment", "Final button state after setup: ${binding.createPlaylist.isEnabled}")
-        }
     }
 
     protected open fun setupToolbar() {
@@ -113,23 +111,7 @@ open class NewPlaylistFragment : Fragment() {
         }
 
         viewModel.createState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is NewPlaylistViewModel.CreatePlaylistState.Loading -> {
-                    showLoading(true)
-                }
-                is NewPlaylistViewModel.CreatePlaylistState.Success -> {
-                    showLoading(false)
-                    showSuccessMessage(state.playlistName)
-                    findNavController().navigateUp()
-                }
-                is NewPlaylistViewModel.CreatePlaylistState.Error -> {
-                    showLoading(false)
-                    showError(state.message)
-                }
-                else -> {
-                    showLoading(false)
-                }
-            }
+            handleCreateState(state)
         }
 
         viewModel.showExitDialog.observe(viewLifecycleOwner) { showDialog ->
@@ -139,11 +121,36 @@ open class NewPlaylistFragment : Fragment() {
         }
     }
 
+    private fun handleCreateState(state: NewPlaylistViewModel.CreatePlaylistState) {
+        when (state) {
+            is NewPlaylistViewModel.CreatePlaylistState.Loading -> {
+                showLoading(true)
+            }
+            is NewPlaylistViewModel.CreatePlaylistState.Success -> {
+                showLoading(false)
+                showSuccessMessage(state.playlistName)
+                findNavController().navigateUp()
+            }
+            is NewPlaylistViewModel.CreatePlaylistState.Error -> {
+                showLoading(false)
+                showError(getString(state.messageResId))
+            }
+            is NewPlaylistViewModel.CreatePlaylistState.Idle -> {
+                showLoading(false)
+            }
+        }
+    }
+
     private fun setFocusOnInputName() {
         binding.inputName.requestFocus()
         try {
-            val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-            imm.showSoftInput(binding.inputName, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+            val imm = requireContext().getSystemService(
+                android.content.Context.INPUT_METHOD_SERVICE
+            ) as android.view.inputmethod.InputMethodManager
+            imm.showSoftInput(
+                binding.inputName,
+                android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
+            )
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -152,24 +159,25 @@ open class NewPlaylistFragment : Fragment() {
     private fun setupKeyboardScrolling() {
         binding.inputDescription.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                binding.inputDescription.postDelayed({
-                    binding.scrollView.scrollTo(0, binding.inputDescriptionLayout.bottom)
-                }, 100)
+                scrollToView(binding.inputDescriptionLayout.bottom)
             }
         }
 
         binding.inputName.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                binding.inputName.postDelayed({
-                    binding.scrollView.scrollTo(0, binding.inputNameLayout.top)
-                }, 100)
+                scrollToView(binding.inputNameLayout.top)
             }
         }
     }
 
+    private fun scrollToView(targetY: Int) {
+        binding.scrollView.postDelayed({
+            binding.scrollView.scrollTo(0, targetY)
+        }, SCROLL_DELAY_MS)
+    }
+
     protected open fun showLoading(show: Boolean) {
         binding.progressBarContainer.isVisible = show
-        // Не меняем состояние кнопки здесь - этим управляет ViewModel через isCreateButtonEnabled
     }
 
     protected open fun showError(message: String) {
@@ -202,10 +210,14 @@ open class NewPlaylistFragment : Fragment() {
 
     private fun requestReadMediaImagesPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (shouldShowRequestPermissionRationale(android.Manifest.permission.READ_MEDIA_IMAGES)) {
+            if (shouldShowRequestPermissionRationale(
+                    android.Manifest.permission.READ_MEDIA_IMAGES
+                )) {
                 showPermissionRationaleDialog()
             } else {
-                requestPermissionLauncher.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+                requestPermissionLauncher.launch(
+                    android.Manifest.permission.READ_MEDIA_IMAGES
+                )
             }
         }
     }
@@ -215,7 +227,9 @@ open class NewPlaylistFragment : Fragment() {
             .setTitle(getString(R.string.permission_required_title))
             .setMessage(getString(R.string.permission_required_message))
             .setPositiveButton(getString(R.string.continue_text)) { dialog, _ ->
-                requestPermissionLauncher.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+                requestPermissionLauncher.launch(
+                    android.Manifest.permission.READ_MEDIA_IMAGES
+                )
                 dialog.dismiss()
             }
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
@@ -234,14 +248,9 @@ open class NewPlaylistFragment : Fragment() {
 
     protected fun launchGalleryIntent() {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = "image/*"
+            type = IMAGE_MIME_TYPE
             addCategory(Intent.CATEGORY_OPENABLE)
-            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf(
-                "image/jpeg",
-                "image/jpg",
-                "image/png",
-                "image/webp"
-            ))
+            putExtra(Intent.EXTRA_MIME_TYPES, SUPPORTED_IMAGE_TYPES)
         }
         pickImageLauncher.launch(intent)
     }
@@ -286,6 +295,15 @@ open class NewPlaylistFragment : Fragment() {
     }
 
     companion object {
+        private const val SCROLL_DELAY_MS = 100L
+        private const val IMAGE_MIME_TYPE = "image/*"
+        private val SUPPORTED_IMAGE_TYPES = arrayOf(
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/webp"
+        )
+
         fun newInstance() = NewPlaylistFragment()
     }
 }

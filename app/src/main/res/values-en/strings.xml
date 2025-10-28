@@ -101,6 +101,13 @@
     <string name="save">Save</string>
     <string name="playlist_updated_success">Playlist "%1$s" updated</string>
 
+    <!-- Playlist creation and editing errors -->
+    <string name="error_empty_playlist_name">The playlist name cannot be empty</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="error_load_playlist_data">Playlist data could not be loaded</string>
+    <string name="error_playlist_not_found">Playlist not found</string>
+    <string name="error_update_playlist">Playlist update error</string>
+
 
 
 </resources>

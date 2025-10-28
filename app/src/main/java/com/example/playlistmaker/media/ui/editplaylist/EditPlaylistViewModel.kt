@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.R
 import com.example.playlistmaker.media.data.storage.PlaylistFileStorage
 import com.example.playlistmaker.media.domain.interactor.PlaylistInteractor
 import com.example.playlistmaker.media.domain.model.Playlist
@@ -25,7 +26,7 @@ class EditPlaylistViewModel(
     private var originalCoverPath: String? = null
     private var isInitialLoad = true
 
-    // Оригинальные значения для сравнения - инициализируем пустыми строками
+    // Оригинальные значения для сравнения
     private var originalName: String = ""
     private var originalDescription: String = ""
     private var originalCoverUri: Uri? = null
@@ -33,11 +34,10 @@ class EditPlaylistViewModel(
     // Флаг для отслеживания загрузки данных
     private var isDataLoaded = false
 
-    //  используем родительский hasUnsavedChanges
+    // Используем локальный флаг и синхронизируем с родительским
     private var editModeHasUnsavedChanges: Boolean = false
         set(value) {
             field = value
-            // Синхронизируем с родительским флагом
             hasUnsavedChanges = value
         }
 
@@ -84,7 +84,9 @@ class EditPlaylistViewModel(
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _createState.value = CreatePlaylistState.Error("Не удалось загрузить данные плейлиста")
+                _createState.value = CreatePlaylistState.Error(
+                    R.string.error_load_playlist_data
+                )
             }
         }
     }
@@ -123,7 +125,7 @@ class EditPlaylistViewModel(
     override fun updateCreateButtonState() {
         val nameValid = _name.value?.trim()?.isNotEmpty() == true
 
-        // В режиме редактирования кнопка активна, только если название не пустое И есть изменения
+        // В режиме редактирования кнопка активна только если название не пустое И есть изменения
         val buttonShouldBeEnabled = nameValid && editModeHasUnsavedChanges
 
         if (_isCreateButtonEnabled.value != buttonShouldBeEnabled) {
@@ -144,9 +146,9 @@ class EditPlaylistViewModel(
         val currentDescription = _description.value ?: ""
         val currentCoverUri = _coverUri.value
 
-        // Сравниваем с оригинальными значениями - безопасно обрабатываем null
-        val nameChanged = currentName.trim() != (originalName ?: "").trim()
-        val descriptionChanged = currentDescription.trim() != (originalDescription ?: "").trim()
+        // Сравниваем с оригинальными значениями
+        val nameChanged = currentName.trim() != originalName.trim()
+        val descriptionChanged = currentDescription.trim() != originalDescription.trim()
         val coverChanged = currentCoverUri != originalCoverUri
 
         val newHasUnsavedChanges = nameChanged || descriptionChanged || coverChanged
@@ -162,7 +164,9 @@ class EditPlaylistViewModel(
     fun updatePlaylist() {
         val currentName = _name.value?.trim()
         if (currentName.isNullOrBlank()) {
-            _createState.value = CreatePlaylistState.Error("Название плейлиста не может быть пустым")
+            _createState.value = CreatePlaylistState.Error(
+                R.string.error_empty_playlist_name
+            )
             return
         }
 
@@ -171,7 +175,9 @@ class EditPlaylistViewModel(
         viewModelScope.launch {
             try {
                 val currentPlaylist = _playlist.value ?: run {
-                    _createState.value = CreatePlaylistState.Error("Плейлист не найден")
+                    _createState.value = CreatePlaylistState.Error(
+                        R.string.error_playlist_not_found
+                    )
                     return@launch
                 }
 
@@ -206,12 +212,12 @@ class EditPlaylistViewModel(
                     clearSavedState()
                     _createState.value = CreatePlaylistState.Success(currentName)
                 } else {
-                    _createState.value = CreatePlaylistState.Error(
-                        result.exceptionOrNull()?.message ?: "Неизвестная ошибка"
-                    )
+                    _createState.value = CreatePlaylistState.Error(R.string.error_unknown)
                 }
             } catch (e: Exception) {
-                _createState.value = CreatePlaylistState.Error(e.message ?: "Ошибка обновления")
+                _createState.value = CreatePlaylistState.Error(
+                    R.string.error_update_playlist
+                )
             }
         }
     }
@@ -222,9 +228,5 @@ class EditPlaylistViewModel(
     private fun hasCoverChanged(): Boolean {
         val currentUri = _coverUri.value
         return currentUri != originalCoverUri
-    }
-
-    companion object {
-        private const val TAG = "EditPlaylistViewModel"
     }
 }
