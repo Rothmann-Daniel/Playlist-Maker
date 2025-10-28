@@ -66,7 +66,6 @@ open class NewPlaylistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        android.util.Log.d("NewPlaylistFragment", "onViewCreated")
 
         setupToolbar()
         setupClickListeners()
@@ -110,7 +109,6 @@ open class NewPlaylistFragment : Fragment() {
 
     protected open fun setupObservers() {
         viewModel.isCreateButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
-            android.util.Log.d("NewPlaylistFragment", "Button enabled state changed: $isEnabled")
             binding.createPlaylist.isEnabled = isEnabled
         }
 
