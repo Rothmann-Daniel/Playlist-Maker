@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +22,7 @@ import com.example.playlistmaker.search.ui.track.TrackAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -169,38 +171,46 @@ class OpenPlaylistFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.state.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is OpenPlaylistViewModel.PlaylistState.Loading -> {
-                    showLoading(true)
-                }
-                is OpenPlaylistViewModel.PlaylistState.Content -> {
-                    showLoading(false)
-                    displayPlaylist(state)
-                }
-                is OpenPlaylistViewModel.PlaylistState.Error -> {
-                    showLoading(false)
-                    showError(state.message)
+        // Для StateFlow используем collect
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.state.collect { state ->
+                when (state) {
+                    is PlaylistState.Loading -> {
+                        showLoading(true)
+                    }
+                    is PlaylistState.Content -> {
+                        showLoading(false)
+                        displayPlaylist(state)
+                    }
+                    is PlaylistState.Error -> {
+                        showLoading(false)
+                        showError(state.message)
+                    }
                 }
             }
         }
 
+        // Для LiveData используем observe
         viewModel.deleteResult.observe(viewLifecycleOwner) { result ->
             result?.let {
-                if (it) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Плейлист удален",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    findNavController().navigateUp()
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Не удалось удалить плейлист",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                when (it) {
+                    is DeleteResult.Success -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "Плейлист удален",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        findNavController().navigateUp()
+                    }
+                    is DeleteResult.Error -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "Не удалось удалить плейлист: ${it.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
+                viewModel.clearDeleteResult()
             }
         }
     }
@@ -211,7 +221,7 @@ class OpenPlaylistFragment : Fragment() {
         binding.bottomSheetPlaylists.isVisible = !show
     }
 
-    private fun displayPlaylist(state: OpenPlaylistViewModel.PlaylistState.Content) {
+    private fun displayPlaylist(state: PlaylistState.Content) {
         with(binding) {
             // Обложка
             if (!state.playlist.coverImagePath.isNullOrEmpty()) {
@@ -294,7 +304,7 @@ class OpenPlaylistFragment : Fragment() {
     }
 
     private fun sharePlaylist() {
-        val state = viewModel.state.value as? OpenPlaylistViewModel.PlaylistState.Content
+        val state = viewModel.state.value as? PlaylistState.Content
 
         if (state == null || state.tracks.isEmpty()) {
             Toast.makeText(
@@ -362,7 +372,7 @@ class OpenPlaylistFragment : Fragment() {
     private fun showDeleteConfirmationDialog() {
         val currentState = viewModel.state.value
 
-        if (currentState !is OpenPlaylistViewModel.PlaylistState.Content) {
+        if (currentState !is PlaylistState.Content) {
             Toast.makeText(requireContext(), "Ошибка: данные плейлиста не загружены", Toast.LENGTH_SHORT).show()
             return
         }

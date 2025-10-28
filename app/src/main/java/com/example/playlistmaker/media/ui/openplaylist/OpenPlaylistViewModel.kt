@@ -7,28 +7,20 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.interactor.PlaylistInteractor
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class OpenPlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
-    sealed class PlaylistState {
-        object Loading : PlaylistState()
-        data class Content(
-            val playlist: Playlist,
-            val tracks: List<Track>,
-            val totalDuration: String,
-            val tracksCount: String
-        ) : PlaylistState()
-        data class Error(val message: String) : PlaylistState()
-    }
+    private val _state = MutableStateFlow<PlaylistState>(PlaylistState.Loading)
+    val state: StateFlow<PlaylistState> = _state.asStateFlow()
 
-    private val _state = MutableLiveData<PlaylistState>()
-    val state: LiveData<PlaylistState> = _state
-
-    private val _deleteResult = MutableLiveData<Boolean?>()
-    val deleteResult: LiveData<Boolean?> = _deleteResult
+    private val _deleteResult = MutableLiveData<DeleteResult?>()
+    val deleteResult: LiveData<DeleteResult?> = _deleteResult
 
     private var currentPlaylistId: Long = 0
 
@@ -73,11 +65,15 @@ class OpenPlaylistViewModel(
         viewModelScope.launch {
             try {
                 playlistInteractor.deletePlaylist(currentPlaylistId)
-                _deleteResult.value = true
+                _deleteResult.value = DeleteResult.Success
             } catch (e: Exception) {
-                _deleteResult.value = false
+                _deleteResult.value = DeleteResult.Error(e.message ?: "Не удалось удалить плейлист")
             }
         }
+    }
+
+    fun clearDeleteResult() {
+        _deleteResult.value = null
     }
 
     private fun updateState(playlist: Playlist, tracks: List<Track>) {
@@ -97,6 +93,7 @@ class OpenPlaylistViewModel(
         )
     }
 
+    // Fallback методы на случай, если plurals не установлены
     private fun formatDurationFallback(minutes: Int): String {
         return when {
             minutes % 10 == 1 && minutes % 100 != 11 -> "$minutes минута"
@@ -112,4 +109,9 @@ class OpenPlaylistViewModel(
             else -> "$count треков"
         }
     }
+}
+
+sealed class DeleteResult {
+    object Success : DeleteResult()
+    data class Error(val message: String) : DeleteResult()
 }
