@@ -45,7 +45,7 @@ class EditPlaylistFragment : NewPlaylistFragment() {
             playlist?.let {
                 android.util.Log.d("EditPlaylistFragment", "Playlist loaded: ${it.name}")
 
-                // --- ИСПРАВЛЕНИЕ 1: Предзаполнение полей UI ---
+                // --- Предзаполнение полей UI ---
                 // Заполнение полей Название и Описание
                 binding.inputName.setText(it.name)
                 binding.inputDescription.setText(it.description)
@@ -54,11 +54,9 @@ class EditPlaylistFragment : NewPlaylistFragment() {
                 it.coverImagePath?.let { path ->
                     val file = File(path)
                     if (file.exists()) {
-                        // Устанавливаем URI, чтобы фрагмент отобразил обложку
                         binding.playlistCover.setImageURI(Uri.fromFile(file))
                     }
                 }
-
 
                 android.util.Log.d("EditPlaylistFragment", "Button enabled after data load: ${binding.createPlaylist.isEnabled}")
             }
@@ -73,8 +71,13 @@ class EditPlaylistFragment : NewPlaylistFragment() {
             when (state) {
                 is NewPlaylistViewModel.CreatePlaylistState.Success -> {
                     showSuccessMessage(state.playlistName)
-                    // Возвращаемся на предыдущий экран (экран плейлиста), где увидим изменения
-                    findNavController().navigateUp()
+                    // Возвращаемся к экрану плейлиста с обновлением
+                    try {
+                        findNavController().popBackStack(R.id.openPlaylistFragment, false)
+                    } catch (e: Exception) {
+                        android.util.Log.e("EditPlaylistFragment", "Navigation error: $e")
+                        findNavController().navigateUp()
+                    }
                 }
                 else -> {
                     // Базовая обработка уже в родительском классе
@@ -82,7 +85,6 @@ class EditPlaylistFragment : NewPlaylistFragment() {
             }
         }
     }
-
 
     /**
      * Переопределяем логику обработки нажатия "Назад" (системная кнопка/жест)

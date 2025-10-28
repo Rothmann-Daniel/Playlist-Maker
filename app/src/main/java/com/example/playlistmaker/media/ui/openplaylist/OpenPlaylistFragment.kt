@@ -455,6 +455,12 @@ class OpenPlaylistFragment : Fragment() {
         findNavController().navigateUp()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Перезагружаем данные плейлиста при возврате на экран
+        viewModel.loadPlaylist(args.playlistId)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

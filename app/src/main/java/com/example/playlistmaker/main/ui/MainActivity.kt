@@ -35,7 +35,8 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.audioPlayerFragment,
                 R.id.openPlaylistFragment,
-                R.id.newPlayList -> { // Добавляем экран создания плейлиста
+                R.id.editPlaylistFragment,
+                R.id.newPlayList -> {
                     binding.bottomNavigation.visibility = android.view.View.GONE
                 }
                 else -> {
