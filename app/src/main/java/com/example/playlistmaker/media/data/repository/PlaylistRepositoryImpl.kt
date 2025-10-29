@@ -50,12 +50,16 @@ class PlaylistRepositoryImpl(
     override suspend fun deletePlaylist(playlistId: Long) {
         val playlist = getPlaylistById(playlistId)
 
+        // Удаление обложки
         playlist?.coverImagePath?.let { coverPath ->
             fileStorage.deleteCoverImage(coverPath)
         }
 
-        // Удаление плейлиста автоматически удалит все треки благодаря CASCADE
+        // Удаление плейлиста (CASCADE автоматически удалит записи из playlist_track_data)
         playlistDao.deletePlaylist(playlistId)
+
+        // После удаления плейлиста, записи из playlist_track_data уже удалены благодаря CASCADE
+        // Дополнительной очистки не требуется
     }
 
     override fun getAllPlaylists(): Flow<List<Playlist>> {
@@ -82,10 +86,20 @@ class PlaylistRepositoryImpl(
         updatePlaylistTrackCount(playlistId)
     }
 
-    override suspend fun removeTrackFromPlaylist(playlistId: Long, trackId: Int) {
+   override suspend fun removeTrackFromPlaylist(playlistId: Long, trackId: Int) {
+        // Удаляем трек из плейлиста
         playlistTrackDataDao.removeTrackFromPlaylist(playlistId, trackId)
 
-        // Обновляем счетчик треков
+        // Проверяем, используется ли трек в других плейлистах
+        val playlistsCount = playlistTrackDataDao.countPlaylistsWithTrack(trackId)
+
+        // Если трек больше не используется ни в одном плейлисте - удаляем его из таблицы
+        if (playlistsCount == 0) {
+            // Очищаем треки, которые больше не используются ни в одном плейлисте
+            playlistTrackDataDao.cleanupUnusedTracks()
+        }
+
+        // Обновляем счетчик треков в плейлисте
         updatePlaylistTrackCount(playlistId)
     }
 
@@ -123,5 +137,21 @@ class PlaylistRepositoryImpl(
     private suspend fun updatePlaylistTrackCount(playlistId: Long) {
         val count = playlistTrackDataDao.getTracksCount(playlistId)
         updatePlaylistTrackCount(playlistId, count)
+    }
+
+    override suspend fun getTracksByIds(trackIds: List<Int>): List<Track> {
+        if (trackIds.isEmpty()) return emptyList()
+
+        val allTracks = playlistTrackDataDao.getAllTracks()
+        val favoriteTrackIds = favoriteTrackDao.getFavoriteTrackIds().first()
+
+        return allTracks
+            .filter { it.trackId in trackIds }
+            .map { entity ->
+                PlaylistTrackDataConverter.mapEntityToTrack(
+                    entity,
+                    isFavorite = entity.trackId in favoriteTrackIds
+                )
+            }
     }
 }

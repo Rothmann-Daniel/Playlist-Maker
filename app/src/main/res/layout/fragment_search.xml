@@ -142,12 +142,13 @@
 
         </LinearLayout>
 
-        <!-- Плейсхолдер истории -->
+        <!-- Плейсхолдер истории -->
         <LinearLayout
             android:id="@+id/history_placeholder"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="?attr/actionBarSize">
 
             <TextView
                 android:id="@+id/historyTitle"
@@ -169,6 +170,9 @@
                 style="@style/clear_history_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/padding_16"
+                android:layout_marginBottom="@dimen/padding_16"
                 android:text="@string/clean_history" />
 
         </LinearLayout>

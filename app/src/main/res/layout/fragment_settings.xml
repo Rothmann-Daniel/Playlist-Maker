@@ -54,5 +54,32 @@
         android:text="@string/user_agreement"
         android:contentDescription="@string/user_agreement"/>
 
+    <!-- О приложении -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/padding_12"
+        android:text="@string/about_this_app2"
+        android:textSize="14sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/padding_12"
+        android:text="@string/about_this_app" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/padding_12"
+        android:layout_marginBottom="@dimen/padding_24"
+        android:text="@string/developer"
+        android:fontFamily="@font/ys_text_regular_italic"
+        android:textColor="@color/blue"/>
+
+
 
 </LinearLayout>

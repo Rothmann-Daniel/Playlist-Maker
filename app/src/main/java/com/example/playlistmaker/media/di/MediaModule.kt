@@ -9,10 +9,12 @@ import com.example.playlistmaker.media.domain.interactor.FavoriteTracksInteracto
 import com.example.playlistmaker.media.domain.interactor.PlaylistInteractor
 import com.example.playlistmaker.media.domain.repository.FavoriteTracksRepository
 import com.example.playlistmaker.media.domain.repository.PlaylistRepository
-import com.example.playlistmaker.media.ui.FavoriteTracksViewModel
-import com.example.playlistmaker.media.ui.MediaViewModel
-import com.example.playlistmaker.media.ui.NewPlaylistViewModel
-import com.example.playlistmaker.media.ui.PlaylistsViewModel
+import com.example.playlistmaker.media.ui.editplaylist.EditPlaylistViewModel
+import com.example.playlistmaker.media.ui.favorite.FavoriteTracksViewModel
+import com.example.playlistmaker.media.ui.mediafragment.MediaViewModel
+import com.example.playlistmaker.media.ui.newplaylist.NewPlaylistViewModel
+import com.example.playlistmaker.media.ui.openplaylist.OpenPlaylistViewModel
+import com.example.playlistmaker.media.ui.playlist.PlaylistsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -53,10 +55,24 @@ val mediaModule = module {
     viewModel { MediaViewModel() }
     viewModel { PlaylistsViewModel(get()) }
     viewModel { FavoriteTracksViewModel(get()) }
+
     viewModel { (savedStateHandle: SavedStateHandle) ->
         NewPlaylistViewModel(
             playlistInteractor = get(),
             savedStateHandle = savedStateHandle
         )
+    }
+
+    viewModel { (playlistId: Long) ->
+        EditPlaylistViewModel(
+            playlistInteractor = get(),
+            fileStorage = get(),
+            savedStateHandle = get(),
+            playlistId = playlistId
+        )
+    }
+
+    viewModel {
+        OpenPlaylistViewModel(get())
     }
 }

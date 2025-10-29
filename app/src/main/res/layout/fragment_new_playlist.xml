@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white_night"
     android:fitsSystemWindows="true"
-    tools:context=".media.ui.NewPlaylistFragment">
+    tools:context=".media.ui.newplaylist.NewPlaylistFragment">
 
     <!-- Фиксированный Toolbar -->
     <com.google.android.material.appbar.MaterialToolbar
@@ -23,20 +23,31 @@
         app:title="@string/title_NewPlayList"
         app:titleTextColor="@color/black" />
 
-    <!-- Фиксированная кнопка внизу -->
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/createPlaylist"
-        style="@style/CreateNewPlaylist"
+    <!-- Контейнер для кнопки с отступами -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomButtonContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="17dp"
-        android:layout_marginBottom="32dp"
-        android:enabled="false"
-        android:text="@string/create"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Фиксированная кнопка внизу -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/createPlaylist"
+            style="@style/CreateNewPlaylist"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:layout_marginBottom="32dp"
+            android:enabled="false"
+            android:text="@string/create"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Скроллируемая область между Toolbar и кнопкой -->
     <androidx.core.widget.NestedScrollView
@@ -45,7 +56,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         android:background="@color/white_night"
-        app:layout_constraintBottom_toTopOf="@id/createPlaylist"
+        app:layout_constraintBottom_toTopOf="@id/bottomButtonContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_newPlayList">
@@ -54,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white_night"
-            tools:context=".media.ui.NewPlaylistFragment">
+            tools:context=".media.ui.newplaylist.NewPlaylistFragment">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/left_guideline_24"
